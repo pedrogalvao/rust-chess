@@ -3,9 +3,9 @@ use crate::movement::Movement;
 
 fn is_valid_movement_for_rook(m: &Movement, b: &Board) -> bool {
     dbg!(m);
-    if (m.source[0] == m.destination[0]) {
+    if m.source[0] == m.destination[0] {
         let x = m.source[0];
-        if (m.source[1] < m.destination[1]) {
+        if m.source[1] < m.destination[1] {
             for y in (m.source[1] + 1)..m.destination[1] {
                 if None != b.positions[x][y] {
                     return false;
@@ -19,7 +19,7 @@ fn is_valid_movement_for_rook(m: &Movement, b: &Board) -> bool {
             }
         }
         return true;
-    } else if (m.source[1] == m.destination[1]) {
+    } else if m.source[1] == m.destination[1] {
         let x = m.source[0];
         if m.source[0] < m.destination[0] {
             for y in (m.source[0] + 1)..m.destination[0] {

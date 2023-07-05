@@ -22,32 +22,8 @@ impl Movement {
         let Some(piece_char) = chars.next() else {
             return Err(());
         };
-        let piece: Piece = match piece_char {
-            'K' | 'k' => Piece {
-                piece_type: PieceType::King,
-                color: b.player_to_move,
-            },
-            'Q' | 'q' => Piece {
-                piece_type: PieceType::Queen,
-                color: b.player_to_move,
-            },
-            'B' | 'b' => Piece {
-                piece_type: PieceType::Bishop,
-                color: b.player_to_move,
-            },
-            'N' | 'n' => Piece {
-                piece_type: PieceType::Knight,
-                color: b.player_to_move,
-            },
-            'R' | 'r' => Piece {
-                piece_type: PieceType::Rook,
-                color: b.player_to_move,
-            },
-            'P' | 'p' => Piece {
-                piece_type: PieceType::Pawn,
-                color: b.player_to_move,
-            },
-            _ => return Err(()),
+        let Ok(piece) = Piece::from_char(piece_char, b.player_to_move) else {
+            return Err(());
         };
         let Some(letter) = chars.next() else {
             return Err(());

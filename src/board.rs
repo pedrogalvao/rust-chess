@@ -12,6 +12,41 @@ pub enum PieceType {
     Pawn,
 }
 
+impl Piece {
+    pub fn to_char(&self) -> char {
+        match self.color {
+            Color::White => match self.piece_type {
+                PieceType::King => 'K',
+                PieceType::Queen => 'Q',
+                PieceType::Rook => 'R',
+                PieceType::Bishop => 'B',
+                PieceType::Knight => 'N',
+                PieceType::Pawn => 'P'
+            },
+            Color::Black => match self.piece_type {
+                PieceType::King => 'k',
+                PieceType::Queen => 'q',
+                PieceType::Rook => 'r',
+                PieceType::Bishop => 'b',
+                PieceType::Knight => 'n',
+                PieceType::Pawn => 'p'
+            }
+        }
+    }
+    pub fn from_char(piece_char: char, color: Color) -> Result<Self, ()> {
+        let piece_type = match piece_char {
+            'K' | 'k' => PieceType::King,
+            'Q' | 'q' => PieceType::Queen,
+            'B' | 'b' => PieceType::Bishop,
+            'N' | 'n' => PieceType::Knight,
+            'R' | 'r' => PieceType::Rook,
+            'P' | 'p' => PieceType::Pawn,
+            _ => {return Err(());}
+        };
+        Ok(Piece {piece_type: piece_type, color: color})
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Color {
     White,
@@ -170,24 +205,7 @@ impl fmt::Display for Board {
                 let piece_opt: Option<Piece> = self.positions[i][j];
 
                 let piece_char: char = match piece_opt {
-                    Some(piece) => match piece.color {
-                        Color::White => match piece.piece_type {
-                            PieceType::King => 'K',
-                            PieceType::Queen => 'Q',
-                            PieceType::Rook => 'R',
-                            PieceType::Bishop => 'B',
-                            PieceType::Knight => 'N',
-                            PieceType::Pawn => 'P',
-                        },
-                        Color::Black => match piece.piece_type {
-                            PieceType::King => 'k',
-                            PieceType::Queen => 'q',
-                            PieceType::Rook => 'r',
-                            PieceType::Bishop => 'b',
-                            PieceType::Knight => 'n',
-                            PieceType::Pawn => 'p',
-                        },
-                    },
+                    Some(piece) => piece.to_char(),
                     None => ' ',
                 };
                 write!(f, "| {} ", piece_char);
