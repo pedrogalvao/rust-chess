@@ -1,13 +1,12 @@
 mod board;
 mod movement;
+mod move_generator;
 mod rules;
 use std::io;
 
 fn main() {
     let mut b: board::Board = board::Board::new();
     println!("{}", b);
-    //movement::Movement{source:[0,0], destination:[0,0]}.is_valid_movement(&b);
-
     let mut buffer = String::new();
     let stdin = io::stdin();
     loop {
@@ -18,7 +17,10 @@ fn main() {
             println!("{}", b);
             continue;
         };
-        b.make_movement(&m);
+        b.make_movement(m);
+        if rules::is_in_check(&b, b.player_to_move) {
+            println!("Check!");
+        }
         println!("{}", b);
         buffer = String::new();
     }

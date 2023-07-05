@@ -1,8 +1,8 @@
 use crate::board::{Board, Color, Piece, PieceType};
 use crate::movement::Movement;
+use crate::move_generator::generate_movements_for_player;
 
 fn is_valid_movement_for_rook(m: &Movement, b: &Board) -> bool {
-    dbg!(m);
     if m.source[0] == m.destination[0] {
         let x = m.source[0];
         if m.source[1] < m.destination[1] {
@@ -48,7 +48,7 @@ fn is_valid_movement_for_bishop(m: &Movement, b: &Board) -> bool {
     } else {
         let mut x = m.source[0];
         let mut y = m.source[1];
-        while x != m.destination[0] {
+        loop {
             if m.source[0] < m.destination[0] {
                 x += 1;
             } else {
@@ -58,6 +58,9 @@ fn is_valid_movement_for_bishop(m: &Movement, b: &Board) -> bool {
                 y += 1;
             } else {
                 y -= 1;
+            }
+            if x != m.destination[0] {
+                break;
             }
             if None != b.positions[x][y] {
                 return false;
@@ -136,4 +139,47 @@ pub fn is_valid_movement(m: &Movement, b: &Board) -> bool {
     } else {
         false
     }
+}
+
+pub fn is_valid_movement_for_player(m: &Movement, b: &Board, player_color:Color) -> bool {
+    let piece = m.get_piece(b);
+    if piece.color == player_color && is_valid_destination(m, b, &piece) {
+        match piece.piece_type {
+            PieceType::King => is_valid_movement_for_king(m),
+            PieceType::Queen => is_valid_movement_for_queen(m, b),
+            PieceType::Bishop => is_valid_movement_for_bishop(m, b),
+            PieceType::Knight => is_valid_movement_for_knight(m),
+            PieceType::Rook => is_valid_movement_for_rook(m, b),
+            PieceType::Pawn => is_valid_movement_for_pawn(m, b, &piece),
+        }
+    } else {
+        false
+    }
+}
+
+pub fn is_in_check(board: &Board, player_color: Color) -> bool {
+    let opponent_color = player_color.get_opponent_color();
+    let player_king = Piece{piece_type: PieceType::King, color: player_color};
+    let king_position = *board.get_piece_positions(player_king).first().unwrap();
+
+    let Some(ref last_move) = board.last_move else {
+        return false;
+    };
+    let m = Movement{source: last_move.destination, destination: king_position};
+    if is_valid_movement_for_player(&m, board, opponent_color) {
+        return true;
+    }
+
+    // Check if any opponent's piece can attack the position
+    // let opponent_positions = board.get_positions_of_color(player_color);
+    // for opponent_position in opponent_positions {
+    //     let m = Movement{source:opponent_position, destination:king_position};
+    //     dbg!(&m);
+        
+    //     if is_valid_movement_for_player(&m, board, opponent_color) {
+    //         dbg!(&m);
+    //         return true;
+    //     }
+    // }
+    false
 }

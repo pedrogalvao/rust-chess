@@ -58,6 +58,15 @@ pub enum Color {
     Black,
 }
 
+impl Color {
+    pub fn get_opponent_color(&self) -> Color {
+        match self {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Piece {
     pub piece_type: PieceType,
@@ -67,6 +76,7 @@ pub struct Piece {
 pub struct Board {
     pub positions: [[Option<Piece>; 8]; 8],
     pub player_to_move: Color,
+    pub last_move: Option<Movement>
 }
 
 const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [
@@ -157,6 +167,7 @@ impl Board {
         Self {
             positions: INIT_POSITIONS,
             player_to_move: Color::White,
+            last_move: None,
         }
     }
 
@@ -165,21 +176,17 @@ impl Board {
         for i in 0..8 {
             for j in 0..8 {
                 match self.positions[i][j] {
-                    Some(piece2) => {
-                        if piece == piece2 {
-                            results.push([i, j])
-                        } else {
-                            continue;
-                        }
+                    Some(piece2) if piece == piece2 => {
+                        results.push([i, j])
                     }
-                    None => continue,
+                    _ => continue,
                 }
             }
         }
         results
     }
 
-    pub fn make_movement(&mut self, m: &Movement) {
+    pub fn make_movement(&mut self, m: Movement) {
         let [x, y] = m.source;
         let [x2, y2] = m.destination;
         self.positions[x2][y2] = mem::take(&mut self.positions[x][y]);
@@ -189,11 +196,25 @@ impl Board {
                 color: self.player_to_move,
             }); // promote the pawn
         }
-        self.player_to_move = match self.player_to_move {
-            Color::White => Color::Black,
-            Color::Black => Color::White,
-        };
+        self.player_to_move = self.player_to_move.get_opponent_color();
+        self.last_move = Some(m);
     }
+
+    pub fn get_positions_of_color(&self, color: Color) -> Vec<[usize; 2]> {
+        let mut results = vec![];
+        for i in 0..8 {
+            for j in 0..8 {
+                match self.positions[i][j] {
+                    Some(piece) if piece.color == color => {
+                        results.push([i, j])
+                    }
+                    _ => continue,
+                }
+            }
+        }
+        results
+    }
+
 }
 
 impl fmt::Display for Board {
