@@ -186,21 +186,21 @@ impl Board {
 }
 
 impl fmt::Display for Board {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _ = match self.player_to_move {
-            Color::White => write!(f, "White to move:\n  "),
-            Color::Black => write!(f, "Black to move:\n  "),
+            Color::White => print!("White to move:\n  "),
+            Color::Black => print!("Black to move:\n  "),
         };
         for c in 'a'..='h' {
-            write!(f, "  {} ", c);
+            print!("  {} ", c);
         }
-        write!(f, "\n  ");
+        print!("\n  ");
         for _ in 0..8 {
-            write!(f, "|---");
+            print!("|---");
         }
-        write!(f, "|\n");
+        print!("|\n");
         for i in 0..8 {
-            write!(f, "{} ", 1 + i);
+            print!("{} ", 1 + i);
             for j in 0..8 {
                 let piece_opt: Option<Piece> = self.positions[i][j];
 
@@ -208,13 +208,13 @@ impl fmt::Display for Board {
                     Some(piece) => piece.to_char(),
                     None => ' ',
                 };
-                write!(f, "| {} ", piece_char);
+                print!("| {} ", piece_char);
             }
-            write!(f, "|\n  ");
+            print!("|\n  ");
             for _ in 0..8 {
-                write!(f, "|---");
+                print!("|---");
             }
-            write!(f, "|\n");
+            print!("|\n");
         }
         Ok(())
     }

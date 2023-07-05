@@ -1,4 +1,4 @@
-use crate::board::{Board, Piece, PieceType};
+use crate::board::{Board, Piece};
 use crate::rules::is_valid_movement;
 
 #[derive(Debug)]
@@ -37,7 +37,6 @@ impl Movement {
         if column_number > 7 || row_number > 7 {
             return Err(());
         }
-        dbg!(piece);
         for source in b.get_piece_positions(piece) {
             let m = Movement {
                 source: source,
