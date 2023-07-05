@@ -21,7 +21,7 @@ impl Piece {
                 PieceType::Rook => 'R',
                 PieceType::Bishop => 'B',
                 PieceType::Knight => 'N',
-                PieceType::Pawn => 'P'
+                PieceType::Pawn => 'P',
             },
             Color::Black => match self.piece_type {
                 PieceType::King => 'k',
@@ -29,8 +29,8 @@ impl Piece {
                 PieceType::Rook => 'r',
                 PieceType::Bishop => 'b',
                 PieceType::Knight => 'n',
-                PieceType::Pawn => 'p'
-            }
+                PieceType::Pawn => 'p',
+            },
         }
     }
     pub fn from_char(piece_char: char, color: Color) -> Result<Self, ()> {
@@ -41,9 +41,14 @@ impl Piece {
             'N' | 'n' => PieceType::Knight,
             'R' | 'r' => PieceType::Rook,
             'P' | 'p' => PieceType::Pawn,
-            _ => {return Err(());}
+            _ => {
+                return Err(());
+            }
         };
-        Ok(Piece {piece_type: piece_type, color: color})
+        Ok(Piece {
+            piece_type: piece_type,
+            color: color,
+        })
     }
 }
 
@@ -178,13 +183,15 @@ impl Board {
         let [x, y] = m.source;
         let [x2, y2] = m.destination;
         self.positions[x2][y2] = mem::take(&mut self.positions[x][y]);
-        if (x2 == 0 || x2 == 7) &&
-                self.positions[x2][y2].unwrap().piece_type == PieceType::Pawn {
-            self.positions[x2][y2] = Some(Piece {piece_type: PieceType::Queen, color: self.player_to_move}); // promote the pawn
+        if (x2 == 0 || x2 == 7) && self.positions[x2][y2].unwrap().piece_type == PieceType::Pawn {
+            self.positions[x2][y2] = Some(Piece {
+                piece_type: PieceType::Queen,
+                color: self.player_to_move,
+            }); // promote the pawn
         }
         self.player_to_move = match self.player_to_move {
             Color::White => Color::Black,
-            Color::Black => Color::White
+            Color::Black => Color::White,
         };
     }
 }

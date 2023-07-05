@@ -84,30 +84,33 @@ fn is_valid_movement_for_knight(m: &Movement) -> bool {
 
 fn is_valid_movement_for_pawn(m: &Movement, b: &Board, piece: &Piece) -> bool {
     let dist_x = m.destination[0] as i8 - m.source[0] as i8;
-    let right_direction = (piece.color == Color::White && dist_x <= -1) || (piece.color == Color::Black && dist_x >= 1);
+    let right_direction = (piece.color == Color::White && dist_x <= -1)
+        || (piece.color == Color::Black && dist_x >= 1);
     if right_direction {
         if m.destination[1] != m.source[1] {
             let dist_y = (m.destination[1] as i8 - m.source[1] as i8).abs();
-            if dist_y == 1 && dist_x.abs() == 1 { // diagonal movement
+            if dist_y == 1 && dist_x.abs() == 1 {
+                // diagonal movement
                 let [x, y] = m.destination;
                 return match b.positions[x][y] {
                     Some(piece2) if piece.color != piece2.color => true, // capture
-                    _ => false
+                    _ => false,
                 };
-            }
-            else {
+            } else {
                 return false;
             }
         } else {
             return dist_x.abs() == 1 || //normal movement
-                    (dist_x == -2 && m.source[0] == 6) || (dist_x == 2 && m.source[0] == 1) // initial movement (2)
+                    (dist_x == -2 && m.source[0] == 6) || (dist_x == 2 && m.source[0] == 1);
+            // initial movement (2)
         }
     }
     false // wrong direction
 }
 
 fn is_valid_movement_for_king(m: &Movement) -> bool {
-    (m.destination[0] as i8 - m.source[0] as i8).abs() <= 1 && (m.destination[1] as i8 - m.source[1] as i8).abs() <= 1
+    (m.destination[0] as i8 - m.source[0] as i8).abs() <= 1
+        && (m.destination[1] as i8 - m.source[1] as i8).abs() <= 1
 }
 
 fn is_valid_destination(m: &Movement, b: &Board, piece: &Piece) -> bool {
