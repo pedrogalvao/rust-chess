@@ -1,4 +1,4 @@
-use crate::board::{Board, Piece};
+use crate::board::{Board, Piece, PieceType};
 use crate::rules::is_valid_movement;
 
 #[derive(Debug)]
@@ -19,19 +19,34 @@ impl Movement {
 
     pub fn from_str(move_str: &String, b: &Board) -> Result<Movement, ()> {
         let mut chars = move_str.chars();
-        let Some(piece_char) = chars.next() else {
-            return Err(());
-        };
-        let Ok(piece) = Piece::from_char(piece_char, b.player_to_move) else {
-            return Err(());
-        };
+        let piece : Piece;
+        let move_str = move_str.replace(&['\n', '\r'][..], "");
+        if move_str.len() >= 3 {
+            // The player indicated the piece type
+            let Some(piece_char) = chars.next() else {
+                return Err(());
+            };
+            match Piece::from_char(piece_char, b.player_to_move) {
+                Ok(piece2) => {piece = piece2},
+                _ => {return Err(());}
+            };
+        } else {
+            // Assume the piece is a pawn
+            piece = Piece{piece_type:PieceType::Pawn, color: b.player_to_move}
+        }
         let Some(letter) = chars.next() else {
             return Err(());
         };
         let Some(number_char) = chars.next() else {
             return Err(());
         };
+        if letter < 'a' || letter > 'h'  {
+            return Err(());
+        }
         let column_number: usize = (letter as usize) - ('a' as usize);
+        if number_char < '1' || number_char > '8'  {
+            return Err(());
+        }
         let row_number: usize = (number_char as usize) - ('1' as usize);
         let dest: [usize; 2] = [row_number, column_number];
         if column_number > 7 || row_number > 7 {

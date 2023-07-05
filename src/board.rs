@@ -178,10 +178,14 @@ impl Board {
         let [x, y] = m.source;
         let [x2, y2] = m.destination;
         self.positions[x2][y2] = mem::take(&mut self.positions[x][y]);
+        if (x2 == 0 || x2 == 7) &&
+                self.positions[x2][y2].unwrap().piece_type == PieceType::Pawn {
+            self.positions[x2][y2] = Some(Piece {piece_type: PieceType::Queen, color: self.player_to_move}); // promote the pawn
+        }
         self.player_to_move = match self.player_to_move {
             Color::White => Color::Black,
-            Color::Black => Color::White,
-        }
+            Color::Black => Color::White
+        };
     }
 }
 
