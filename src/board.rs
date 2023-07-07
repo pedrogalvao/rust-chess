@@ -73,6 +73,7 @@ pub struct Piece {
     pub color: Color,
 }
 
+#[derive(Debug, Clone)]
 pub struct Board {
     pub positions: [[Option<Piece>; 8]; 8],
     pub player_to_move: Color,

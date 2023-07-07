@@ -1,4 +1,4 @@
 pub mod board;
-mod movement;
-mod move_generator;
-mod rules;
+pub mod movement;
+pub mod move_generator;
+pub mod rules;

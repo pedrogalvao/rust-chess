@@ -1,7 +1,7 @@
 use crate::board::{Board, Piece, PieceType};
 use crate::rules::is_valid_movement;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Movement {
     pub source: [usize; 2],
     pub destination: [usize; 2],
