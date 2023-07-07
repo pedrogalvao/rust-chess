@@ -1,5 +1,4 @@
-name: 'rust-cargo'
-description: 'Run cargo command'
+name: 'rust'
 
 on:
   push:
