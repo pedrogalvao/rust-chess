@@ -1,6 +1,6 @@
 use crate::board::{Board, Color, Piece, PieceType};
 use crate::movement::Movement;
-use crate::move_generator::generate_movements_for_player;
+// use crate::move_generator::generate_movements_for_player;
 
 fn is_valid_movement_for_rook(m: &Movement, b: &Board) -> bool {
     if m.source[0] == m.destination[0] {
@@ -87,8 +87,8 @@ fn is_valid_movement_for_knight(m: &Movement) -> bool {
 
 fn is_valid_movement_for_pawn(m: &Movement, b: &Board, piece: &Piece) -> bool {
     let dist_x = m.destination[0] as i8 - m.source[0] as i8;
-    let right_direction = (piece.color == Color::White && dist_x <= -1)
-        || (piece.color == Color::Black && dist_x >= 1);
+    let right_direction = (piece.color == Color::White && dist_x >= 1)
+        || (piece.color == Color::Black && dist_x <= -1);
     if right_direction {
         if m.destination[1] != m.source[1] {
             let dist_y = (m.destination[1] as i8 - m.source[1] as i8).abs();

@@ -16,19 +16,19 @@ impl Piece {
     pub fn to_char(&self) -> char {
         match self.color {
             Color::White => match self.piece_type {
-                PieceType::King => 'K',
-                PieceType::Queen => 'Q',
-                PieceType::Rook => 'R',
-                PieceType::Bishop => 'B',
-                PieceType::Knight => 'N',
-                PieceType::Pawn => 'P',
+                PieceType::King => '♔',
+                PieceType::Queen => '♕',
+                PieceType::Rook => '♖',
+                PieceType::Bishop => '♗',
+                PieceType::Knight => '♘',
+                PieceType::Pawn => '♙',
             },
             Color::Black => match self.piece_type {
-                PieceType::King => 'k',
-                PieceType::Queen => 'q',
-                PieceType::Rook => 'r',
-                PieceType::Bishop => 'b',
-                PieceType::Knight => 'n',
+                PieceType::King => '♚',
+                PieceType::Queen => '♛',
+                PieceType::Rook => '♜',
+                PieceType::Bishop => '♝',
+                PieceType::Knight => '♞',
                 PieceType::Pawn => 'p',
             },
         }
@@ -79,85 +79,87 @@ pub struct Board {
     pub last_move: Option<Movement>
 }
 
-const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [
+const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [        
     [
         Some(Piece {
             piece_type: PieceType::Rook,
-            color: Color::Black,
+            color: Color::White,
         }),
         Some(Piece {
             piece_type: PieceType::Knight,
-            color: Color::Black,
+            color: Color::White,
         }),
         Some(Piece {
             piece_type: PieceType::Bishop,
-            color: Color::Black,
+            color: Color::White,
         }),
         Some(Piece {
             piece_type: PieceType::Queen,
-            color: Color::Black,
+            color: Color::White,
         }),
         Some(Piece {
             piece_type: PieceType::King,
-            color: Color::Black,
+            color: Color::White,
         }),
         Some(Piece {
             piece_type: PieceType::Bishop,
-            color: Color::Black,
+            color: Color::White,
         }),
         Some(Piece {
             piece_type: PieceType::Knight,
-            color: Color::Black,
+            color: Color::White,
         }),
         Some(Piece {
             piece_type: PieceType::Rook,
-            color: Color::Black,
+            color: Color::White,
         }),
     ],
     [Some(Piece {
         piece_type: PieceType::Pawn,
-        color: Color::Black,
+        color: Color::White,
     }); 8],
     [None; 8],
     [None; 8],
     [None; 8],
     [None; 8],
-    [Some(Piece {
-        piece_type: PieceType::Pawn,
-        color: Color::White,
+    
+    [
+        Some(Piece {
+            piece_type: PieceType::Pawn,
+            color: Color::Black,
     }); 8],
     [
         Some(Piece {
             piece_type: PieceType::Rook,
-            color: Color::White,
+            color: Color::Black,
         }),
         Some(Piece {
             piece_type: PieceType::Knight,
-            color: Color::White,
+            color: Color::Black,
         }),
         Some(Piece {
             piece_type: PieceType::Bishop,
-            color: Color::White,
+            color: Color::Black,
         }),
         Some(Piece {
             piece_type: PieceType::Queen,
-            color: Color::White,
+            color: Color::Black,
         }),
         Some(Piece {
             piece_type: PieceType::King,
-            color: Color::White,
+            color: Color::Black,
         }),
         Some(Piece {
             piece_type: PieceType::Bishop,
-            color: Color::White,
+            color: Color::Black,
         }),
         Some(Piece {
             piece_type: PieceType::Knight,
-            color: Color::White,
+            color: Color::Black,
         }),
         Some(Piece {
             piece_type: PieceType::Rook,
-            color: Color::White,
+            color: Color::Black,
         }),
     ],
 ];
@@ -223,18 +225,36 @@ impl fmt::Display for Board {
             Color::White => print!("White to move:\n  "),
             Color::Black => print!("Black to move:\n  "),
         };
-        for c in 'a'..='h' {
-            print!("  {} ", c);
+        let range: Vec<usize>;
+        if self.player_to_move == Color::White {
+            range = (0..8).rev().collect();
+        } else {
+            range = (0..8).collect();
+        }
+        let range2: Vec<usize>;
+        if self.player_to_move == Color::White {
+            range2 = (0..8).collect();
+        } else {
+            range2 = (0..8).rev().collect();
+        }
+        if self.player_to_move == Color::White {
+            for c in 'a'..='h' {
+                print!("  {} ", c);
+            }
+        } else {
+            for c in ('a'..='h').rev() {
+                print!("  {} ", c);
+            }
         }
         print!("\n  ");
         for _ in 0..8 {
             print!("|---");
         }
         print!("|\n");
-        for i in 0..8 {
+        for i in range {
             print!("{} ", 1 + i);
-            for j in 0..8 {
-                let piece_opt: Option<Piece> = self.positions[i][j];
+            for j in &range2 {
+                let piece_opt: Option<Piece> = self.positions[i][*j];
 
                 let piece_char: char = match piece_opt {
                     Some(piece) => piece.to_char(),
