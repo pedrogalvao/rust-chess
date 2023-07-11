@@ -6,7 +6,7 @@ fn generate_movements_for_pawn(board: &Board, x: usize, y: usize, piece: &Piece)
     let source = [x, y];
     let mut movements = Vec::new();
 
-    let forward_offset = if piece.color == Color::White { -1 } else { 1 };
+    let forward_offset = if piece.color == Color::White { 1 } else { -1 };
 
     // Normal one-step forward move
     let x2 = x as i8 + forward_offset;
@@ -18,7 +18,7 @@ fn generate_movements_for_pawn(board: &Board, x: usize, y: usize, piece: &Piece)
     }
 
     // Initial two-step forward move
-    let initial_row = if piece.color == Color::White { 6 } else { 1 };
+    let initial_row = if piece.color == Color::White { 1 } else { 6 };
     if x == initial_row {
         let x3 = x as i8 + 2 * forward_offset;
         if x3 >= 0 && x3 < 8 && board.positions[x3 as usize][y] == None && board.positions[x2 as usize][y] == None {

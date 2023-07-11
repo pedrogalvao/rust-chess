@@ -87,6 +87,7 @@ fn is_valid_movement_for_knight(m: &Movement) -> bool {
 
 fn is_valid_movement_for_pawn(m: &Movement, b: &Board, piece: &Piece) -> bool {
     let dist_x = m.destination[0] as i8 - m.source[0] as i8;
+    let [x, y] = m.destination;
     let right_direction = (piece.color == Color::White && dist_x >= 1)
         || (piece.color == Color::Black && dist_x <= -1);
     if right_direction {
@@ -94,7 +95,6 @@ fn is_valid_movement_for_pawn(m: &Movement, b: &Board, piece: &Piece) -> bool {
             let dist_y = (m.destination[1] as i8 - m.source[1] as i8).abs();
             if dist_y == 1 && dist_x.abs() == 1 {
                 // diagonal movement
-                let [x, y] = m.destination;
                 return match b.positions[x][y] {
                     Some(piece2) if piece.color != piece2.color => true, // capture
                     _ => false,
@@ -103,9 +103,26 @@ fn is_valid_movement_for_pawn(m: &Movement, b: &Board, piece: &Piece) -> bool {
                 return false;
             }
         } else {
-            return dist_x.abs() == 1 || //normal movement
-                    (dist_x == -2 && m.source[0] == 6) || (dist_x == 2 && m.source[0] == 1);
-            // initial movement (2)
+            match b.positions[x][y] {
+                Some(piece2) => {
+                    return false;
+                },
+                None => {
+                    if dist_x.abs() == 1 { // normal movement
+                        return true;
+                    } else if (dist_x == -2 && m.source[0] == 6) || (dist_x == 2 && m.source[0] == 1) {
+                        let x0 = m.source[0];
+                        match b.positions[(x+x0)/2][y] {
+                            Some(piece2) => {
+                                return false;
+                            },
+                            None => {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            };
         }
     }
     false // wrong direction
@@ -143,6 +160,12 @@ pub fn is_valid_movement(m: &Movement, b: &Board) -> bool {
 
 pub fn is_valid_movement_for_player(m: &Movement, b: &Board, player_color:Color) -> bool {
     let piece = m.get_piece(b);
+    /*
+    board2 = b.copy_make_move(m);
+    if is_in_check(board2, player_color) {
+        return false;
+    }
+    */
     if piece.color == player_color && is_valid_destination(m, b, &piece) {
         match piece.piece_type {
             PieceType::King => is_valid_movement_for_king(m),

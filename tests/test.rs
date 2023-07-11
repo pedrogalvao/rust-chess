@@ -10,24 +10,23 @@ mod tests {
     use super::*;
     
     #[test]
-    fn init_board() {
-        let mut b : Board = Board::new();
-        let mut movements : Vec<Movement> = generate_movements(&b);
-        for i in 0..1000 {
-            for movement in &movements {
-                if is_valid_movement(&movement, &b) != true {
-                    dbg!(movement.clone());
-                    println!("{}", b);
-                    let mut b2 = b.clone();
-                    b2.make_movement(movement.clone());
-                    println!("{}", b2);
-                    assert_eq!(false, true);
+    fn random_games() {
+        for j in 0..100 {
+            let mut b : Board = Board::new();
+            for i in 0..200 {
+                let mut movements : Vec<Movement> = generate_movements(&b);
+                for movement in &movements {
+                    assert_eq!(is_valid_movement(&movement, &b), true);
                 }
-                assert_eq!(is_valid_movement(&movement, &b), true);
+                if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
+                    b.make_movement(chosen_move.clone());
+                } else {
+                    println!("Game over {}", i);
+                    print!("{}", b);
+                    break;
+                }
             }
-            if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
-                b.make_movement(chosen_move.clone());
-            }
+            println!("New game...");
         }
     }
 }
