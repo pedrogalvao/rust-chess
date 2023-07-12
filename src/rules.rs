@@ -20,15 +20,15 @@ fn is_valid_movement_for_rook(m: &Movement, b: &Board) -> bool {
         }
         return true;
     } else if m.source[1] == m.destination[1] {
-        let x = m.source[0];
+        let y = m.source[1];
         if m.source[0] < m.destination[0] {
-            for y in (m.source[0] + 1)..m.destination[0] {
+            for x in (m.source[0] + 1)..m.destination[0] {
                 if None != b.positions[x][y] {
                     return false;
                 }
             }
         } else {
-            for y in (m.destination[0] + 1)..m.source[0] {
+            for x in (m.destination[0] + 1)..m.source[0] {
                 if None != b.positions[x][y] {
                     return false;
                 }
@@ -59,7 +59,7 @@ fn is_valid_movement_for_bishop(m: &Movement, b: &Board) -> bool {
             } else {
                 y -= 1;
             }
-            if x != m.destination[0] {
+            if x == m.destination[0] {
                 break;
             }
             if None != b.positions[x][y] {

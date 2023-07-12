@@ -20,6 +20,8 @@ mod tests {
             for i in 0..200 {
                 let mut movements : Vec<Movement> = generate_movements(&b);
                 for movement in &movements {
+                    //print!("{}", b);
+                    //dbg!(movement);
                     assert_eq!(is_valid_movement(&movement, &b), true);
                 }
                 if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
@@ -30,7 +32,7 @@ mod tests {
                     break;
                 }
             }
-            println!("New game...");
+            // println!("New game...");
         }
     }
 
