@@ -1,9 +1,12 @@
 
 use rust_chess::board::{Board, Color, Piece, PieceType};
 use rust_chess::move_generator::generate_movements;
-use rust_chess::rules::is_valid_movement;
+use rust_chess::rules::{is_valid_movement, is_in_check};
 use rust_chess::movement::Movement;
+mod boards;
+use boards::*;
 use rand::seq::SliceRandom; // 0.7.2
+
 
 #[cfg(test)]
 mod tests {
@@ -11,6 +14,7 @@ mod tests {
     
     #[test]
     fn random_games() {
+        // verify that all generated movements are valid
         for j in 0..100 {
             let mut b : Board = Board::new();
             for i in 0..200 {
@@ -29,4 +33,15 @@ mod tests {
             println!("New game...");
         }
     }
+
+    
+    #[test]
+    fn test_is_in_check() {
+        assert_eq!(is_in_check(&boards::test_board1, Color::White), true);
+        assert_eq!(is_in_check(&boards::test_board1, Color::Black), false);
+        assert_eq!(is_in_check(&boards::test_board2, Color::White), false);
+        assert_eq!(is_in_check(&boards::test_board2, Color::Black), false);
+        
+    }
+
 }

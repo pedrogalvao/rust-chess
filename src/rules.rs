@@ -185,24 +185,22 @@ pub fn is_in_check(board: &Board, player_color: Color) -> bool {
     let player_king = Piece{piece_type: PieceType::King, color: player_color};
     let king_position = *board.get_piece_positions(player_king).first().unwrap();
 
-    let Some(ref last_move) = board.last_move else {
-        return false;
-    };
-    let m = Movement{source: last_move.destination, destination: king_position};
-    if is_valid_movement_for_player(&m, board, opponent_color) {
-        return true;
-    }
+    // let Some(ref last_move) = board.last_move else {
+    //     return false;
+    // };
+    // let m = Movement{source: last_move.destination, destination: king_position};
+    // if is_valid_movement_for_player(&m, board, opponent_color) {
+    //     return true;
+    // }
 
     // Check if any opponent's piece can attack the position
-    // let opponent_positions = board.get_positions_of_color(player_color);
-    // for opponent_position in opponent_positions {
-    //     let m = Movement{source:opponent_position, destination:king_position};
-    //     dbg!(&m);
+    let opponent_positions = board.get_positions_of_color(player_color.get_opponent_color());
+    for opponent_position in opponent_positions {
+        let m = Movement{source:opponent_position, destination:king_position};
         
-    //     if is_valid_movement_for_player(&m, board, opponent_color) {
-    //         dbg!(&m);
-    //         return true;
-    //     }
-    // }
+        if is_valid_movement_for_player(&m, board, opponent_color) {
+            return true;
+        }
+    }
     false
 }
