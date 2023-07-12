@@ -2,4 +2,4 @@
 
 Command line chess game programmed in Rust
 
-Build with `cargo run`
+Run with `cargo run`
