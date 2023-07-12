@@ -44,4 +44,10 @@ mod tests {
         
     }
 
+    #[test]
+    fn test_rook() {
+        let mut movements : Vec<Movement> = generate_movements(&boards::one_rook_board);
+        assert_eq!(movements.len(), 14);
+    }
+
 }

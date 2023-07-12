@@ -93,6 +93,8 @@ fn generate_movements_in_one_direction(board: &Board, x: usize, y: usize, piece:
     let [dx, dy] = direction;
     let mut movements = vec![];
 
+    x2 += dx;
+    y2 += dy;
     while x2 >= 0 && x2 < 8 && y2 >= 0 && y2 < 8 {
         match board.positions[x2 as usize][y2 as usize] {
             None => {
@@ -111,7 +113,6 @@ fn generate_movements_in_one_direction(board: &Board, x: usize, y: usize, piece:
                 break;
             }
         }
-
         x2 += dx;
         y2 += dy;
     }
