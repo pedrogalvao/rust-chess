@@ -1,7 +1,6 @@
 use crate::board::{Board, Color, Piece, PieceType};
 use crate::movement::Movement;
 
-
 fn generate_movements_for_pawn(board: &Board, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
     let source = [x, y];
     let mut movements = Vec::new();
@@ -21,7 +20,11 @@ fn generate_movements_for_pawn(board: &Board, x: usize, y: usize, piece: &Piece)
     let initial_row = if piece.color == Color::White { 1 } else { 6 };
     if x == initial_row {
         let x3 = x as i8 + 2 * forward_offset;
-        if x3 >= 0 && x3 < 8 && board.positions[x3 as usize][y] == None && board.positions[x2 as usize][y] == None {
+        if x3 >= 0
+            && x3 < 8
+            && board.positions[x3 as usize][y] == None
+            && board.positions[x2 as usize][y] == None
+        {
             movements.push(Movement {
                 source,
                 destination: [x3 as usize, y],
@@ -57,7 +60,9 @@ fn generate_movements_for_pawn(board: &Board, x: usize, y: usize, piece: &Piece)
             if let Some(piece2) = &board.positions[x as usize][left_y as usize] {
                 if piece.color != piece2.color {
                     if let Some(last_move) = &board.last_move {
-                        if last_move.source == [x, left_y as usize] && last_move.destination == [x + forward_offset as usize, y] {
+                        if last_move.source == [x, left_y as usize]
+                            && last_move.destination == [x + forward_offset as usize, y]
+                        {
                             movements.push(Movement {
                                 source,
                                 destination: [x + forward_offset as usize, left_y as usize],
@@ -72,7 +77,9 @@ fn generate_movements_for_pawn(board: &Board, x: usize, y: usize, piece: &Piece)
             if let Some(piece2) = &board.positions[x][right_y as usize] {
                 if piece.color != piece2.color {
                     if let Some(last_move) = &board.last_move {
-                        if last_move.source == [x, right_y as usize] && last_move.destination == [x + forward_offset as usize, y] {
+                        if last_move.source == [x, right_y as usize]
+                            && last_move.destination == [x + forward_offset as usize, y]
+                        {
                             movements.push(Movement {
                                 source,
                                 destination: [x + forward_offset as usize, right_y as usize],
@@ -87,7 +94,13 @@ fn generate_movements_for_pawn(board: &Board, x: usize, y: usize, piece: &Piece)
     movements
 }
 
-fn generate_movements_in_one_direction(board: &Board, x: usize, y: usize, piece: &Piece, direction: [i8; 2]) -> Vec<Movement> {
+fn generate_movements_in_one_direction(
+    board: &Board,
+    x: usize,
+    y: usize,
+    piece: &Piece,
+    direction: [i8; 2],
+) -> Vec<Movement> {
     let source = [x, y];
     let [mut x2, mut y2] = [x as i8, y as i8];
     let [dx, dy] = direction;
@@ -121,30 +134,29 @@ fn generate_movements_in_one_direction(board: &Board, x: usize, y: usize, piece:
 
 fn generate_movements_for_rook(board: &Board, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
     let mut movements = vec![];
-    let directions : [[i8; 2]; 4] = [
-        [1, 0],
-        [-1, 0],
-        [0, 1],
-        [0, -1],
-    ];
+    let directions: [[i8; 2]; 4] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
     for direction in directions {
-        movements.extend(generate_movements_in_one_direction(board, x, y, piece, direction));
+        movements.extend(generate_movements_in_one_direction(
+            board, x, y, piece, direction,
+        ));
     }
     return movements;
 }
 
-fn generate_movements_for_bishop(board: &Board, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+fn generate_movements_for_bishop(
+    board: &Board,
+    x: usize,
+    y: usize,
+    piece: &Piece,
+) -> Vec<Movement> {
     let mut movements = vec![];
-    let directions : [[i8; 2]; 4] = [
-        [1, 1],
-        [-1, 1],
-        [1, -1],
-        [-1, -1],
-    ];
+    let directions: [[i8; 2]; 4] = [[1, 1], [-1, 1], [1, -1], [-1, -1]];
 
     for direction in directions {
-        movements.extend(generate_movements_in_one_direction(board, x, y, piece, direction));
+        movements.extend(generate_movements_in_one_direction(
+            board, x, y, piece, direction,
+        ));
     }
     return movements;
 }
@@ -155,14 +167,24 @@ fn generate_movements_for_queen(board: &Board, x: usize, y: usize, piece: &Piece
     return movements;
 }
 
-
-fn generate_movements_for_knight(board: &Board, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+fn generate_movements_for_knight(
+    board: &Board,
+    x: usize,
+    y: usize,
+    piece: &Piece,
+) -> Vec<Movement> {
     let source = [x, y];
     let mut movements = Vec::new();
 
     let offsets = [
-        (-2, 1), (-1, 2), (1, 2), (2, 1),
-        (2, -1), (1, -2), (-1, -2), (-2, -1),
+        (-2, 1),
+        (-1, 2),
+        (1, 2),
+        (2, 1),
+        (2, -1),
+        (1, -2),
+        (-1, -2),
+        (-2, -1),
     ];
 
     for &(dx, dy) in &offsets {
@@ -192,7 +214,12 @@ fn generate_movements_for_knight(board: &Board, x: usize, y: usize, piece: &Piec
     movements
 }
 
-pub fn generate_movements_for_piece(board: &Board, x: usize, y: usize, piece: Piece) -> Vec<Movement> {
+pub fn generate_movements_for_piece(
+    board: &Board,
+    x: usize,
+    y: usize,
+    piece: Piece,
+) -> Vec<Movement> {
     match piece.piece_type {
         PieceType::Queen => generate_movements_for_queen(board, x, y, &piece),
         PieceType::Rook => generate_movements_for_rook(board, x, y, &piece),
@@ -213,7 +240,6 @@ pub fn generate_movements_for_player(board: &Board, color: Color) -> Vec<Movemen
                 }
                 _ => continue,
             }
-            
         }
     }
     movements
@@ -229,7 +255,6 @@ pub fn generate_movements(board: &Board) -> Vec<Movement> {
                 }
                 _ => continue,
             }
-            
         }
     }
     movements

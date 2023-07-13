@@ -77,10 +77,10 @@ pub struct Piece {
 pub struct Board {
     pub positions: [[Option<Piece>; 8]; 8],
     pub player_to_move: Color,
-    pub last_move: Option<Movement>
+    pub last_move: Option<Movement>,
 }
 
-const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [        
+const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [
     [
         Some(Piece {
             piece_type: PieceType::Rook,
@@ -123,11 +123,9 @@ const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [
     [None; 8],
     [None; 8],
     [None; 8],
-    
-    [
-        Some(Piece {
-            piece_type: PieceType::Pawn,
-            color: Color::Black,
+    [Some(Piece {
+        piece_type: PieceType::Pawn,
+        color: Color::Black,
     }); 8],
     [
         Some(Piece {
@@ -179,9 +177,7 @@ impl Board {
         for i in 0..8 {
             for j in 0..8 {
                 match self.positions[i][j] {
-                    Some(piece2) if piece == piece2 => {
-                        results.push([i, j])
-                    }
+                    Some(piece2) if piece == piece2 => results.push([i, j]),
                     _ => continue,
                 }
             }
@@ -208,16 +204,13 @@ impl Board {
         for i in 0..8 {
             for j in 0..8 {
                 match self.positions[i][j] {
-                    Some(piece) if piece.color == color => {
-                        results.push([i, j])
-                    }
+                    Some(piece) if piece.color == color => results.push([i, j]),
                     _ => continue,
                 }
             }
         }
         results
     }
-
 }
 
 impl fmt::Display for Board {

@@ -1,6 +1,6 @@
 mod board;
-mod movement;
 mod move_generator;
+mod movement;
 mod rules;
 use std::io;
 
