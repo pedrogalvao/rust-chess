@@ -2,11 +2,16 @@ mod board;
 mod move_generator;
 mod movement;
 mod rules;
+mod view;
 use std::io;
+
+use crate::view::{GameDisplay, UnicodeDisplay, AsciiDisplay};
 
 fn main() {
     let mut game_state: board::GameState = board::GameState::new();
-    println!("{}", game_state);
+    let game_display = UnicodeDisplay;
+    // let game_display = AsciiDisplay;
+    game_display.display_game(&game_state);
     let mut buffer = String::new();
     let stdin = io::stdin();
     loop {
@@ -15,7 +20,8 @@ fn main() {
         let Ok(m) = movement::Movement::from_str(&buffer, &game_state) else {
             buffer = String::new();
             println!("Invalid move");
-            println!("{}", game_state);
+            //println!("{}", game_state);
+            game_display.display_game(&game_state);
             continue;
         };
         game_state.make_movement(m);
@@ -29,7 +35,7 @@ fn main() {
             println!("Draw!");
             return;
         }
-        println!("{}", game_state);
+        game_display.display_game(&game_state);
         buffer = String::new();
     }
 }

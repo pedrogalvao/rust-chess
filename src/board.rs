@@ -13,7 +13,27 @@ pub enum PieceType {
 }
 
 impl Piece {
-    pub fn to_char(&self) -> char {
+    pub fn to_ascii(&self) -> char {
+        match self.color {
+            Color::White => match self.piece_type {
+                PieceType::King => 'K',
+                PieceType::Queen => 'Q',
+                PieceType::Rook => 'R',
+                PieceType::Bishop => 'B',
+                PieceType::Knight => 'N',
+                PieceType::Pawn => 'P',
+            },
+            Color::Black => match self.piece_type {
+                PieceType::King => 'k',
+                PieceType::Queen => 'q',
+                PieceType::Rook => 'r',
+                PieceType::Bishop => 'b',
+                PieceType::Knight => 'n',
+                PieceType::Pawn => 'p',
+            },
+        }
+    }
+    pub fn to_unicode(&self) -> char {
         match self.color {
             Color::White => match self.piece_type {
                 PieceType::King => '♔',
@@ -223,55 +243,4 @@ impl GameState {
     }
 }
 
-impl fmt::Display for GameState {
-    fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let _ = match self.player_to_move {
-            Color::White => print!("White to move:\n  "),
-            Color::Black => print!("Black to move:\n  "),
-        };
-        let range: Vec<usize>;
-        if self.player_to_move == Color::White {
-            range = (0..8).rev().collect();
-        } else {
-            range = (0..8).collect();
-        }
-        let range2: Vec<usize>;
-        if self.player_to_move == Color::White {
-            range2 = (0..8).collect();
-        } else {
-            range2 = (0..8).rev().collect();
-        }
-        if self.player_to_move == Color::White {
-            for c in 'a'..='h' {
-                print!("  {} ", c);
-            }
-        } else {
-            for c in ('a'..='h').rev() {
-                print!("  {} ", c);
-            }
-        }
-        print!("\n  ");
-        for _ in 0..8 {
-            print!("|---");
-        }
-        print!("|\n");
-        for i in range {
-            print!("{} ", 1 + i);
-            for j in &range2 {
-                let piece_opt: Option<Piece> = self.board[i][*j];
 
-                let piece_char: char = match piece_opt {
-                    Some(piece) => piece.to_char(),
-                    None => ' ',
-                };
-                print!("| {} ", piece_char);
-            }
-            print!("|\n  ");
-            for _ in 0..8 {
-                print!("|---");
-            }
-            print!("|\n");
-        }
-        Ok(())
-    }
-}
