@@ -14,19 +14,19 @@ mod tests {
     fn random_games() {
         // verify that all generated movements are valid
         for _ in 0..100 {
-            let mut b: GameState = GameState::new();
+            let mut game_state: GameState = GameState::new();
             for i in 0..200 {
-                let movements: Vec<Movement> = generate_movements(&b);
+                let movements: Vec<Movement> = generate_movements(&game_state);
                 for movement in &movements {
                     //print!("{}", b);
                     //dbg!(movement);
-                    assert_eq!(is_valid_movement(&movement, &b), true);
+                    assert_eq!(is_valid_movement(&movement, &game_state), true);
                 }
                 if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
-                    b.make_movement(chosen_move.clone());
+                    game_state.make_movement(chosen_move.clone());
                 } else {
                     println!("Game over {}", i);
-                    print!("{}", b);
+                    print!("{}", game_state);
                     break;
                 }
             }

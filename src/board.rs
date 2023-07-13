@@ -187,9 +187,9 @@ impl GameState {
         results
     }
 
-    pub fn make_movement(&mut self, m: Movement) {
-        let [x, y] = m.source;
-        let [x2, y2] = m.destination;
+    pub fn make_movement(&mut self, movement: Movement) {
+        let [x, y] = movement.source;
+        let [x2, y2] = movement.destination;
         self.board[x2][y2] = mem::take(&mut self.board[x][y]);
         if (x2 == 0 || x2 == 7) && self.board[x2][y2].unwrap().piece_type == PieceType::Pawn {
             self.board[x2][y2] = Some(Piece {
@@ -198,7 +198,7 @@ impl GameState {
             }); // promote the pawn
         }
         self.player_to_move = self.player_to_move.get_opponent_color();
-        self.last_move = Some(m);
+        self.last_move = Some(movement);
     }
 
     pub fn get_positions_of_color(&self, color: Color) -> Vec<[usize; 2]> {

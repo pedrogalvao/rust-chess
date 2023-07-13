@@ -1,7 +1,7 @@
 use crate::board::{GameState, Color, Piece, PieceType};
 use crate::movement::Movement;
 
-fn generate_movements_for_pawn(board: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+fn generate_movements_for_pawn(game_state: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
     let source = [x, y];
     let mut movements = Vec::new();
 
@@ -9,7 +9,7 @@ fn generate_movements_for_pawn(board: &GameState, x: usize, y: usize, piece: &Pi
 
     // Normal one-step forward move
     let x2 = x as i8 + forward_offset;
-    if x2 >= 0 && x2 < 8 && board.board[x2 as usize][y] == None {
+    if x2 >= 0 && x2 < 8 && game_state.board[x2 as usize][y] == None {
         movements.push(Movement {
             source,
             destination: [x2 as usize, y],
@@ -22,8 +22,8 @@ fn generate_movements_for_pawn(board: &GameState, x: usize, y: usize, piece: &Pi
         let x3 = x as i8 + 2 * forward_offset;
         if x3 >= 0
             && x3 < 8
-            && board.board[x3 as usize][y] == None
-            && board.board[x2 as usize][y] == None
+            && game_state.board[x3 as usize][y] == None
+            && game_state.board[x2 as usize][y] == None
         {
             movements.push(Movement {
                 source,
@@ -39,7 +39,7 @@ fn generate_movements_for_pawn(board: &GameState, x: usize, y: usize, piece: &Pi
         let y4 = y as i8 + dx;
 
         if x4 >= 0 && x4 < 8 && y4 >= 0 && y4 < 8 {
-            if let Some(piece2) = &board.board[x4 as usize][y4 as usize] {
+            if let Some(piece2) = &game_state.board[x4 as usize][y4 as usize] {
                 if piece.color != piece2.color {
                     movements.push(Movement {
                         source,
@@ -57,9 +57,9 @@ fn generate_movements_for_pawn(board: &GameState, x: usize, y: usize, piece: &Pi
         let right_y = y as i8 + 1;
 
         if left_y >= 0 {
-            if let Some(piece2) = &board.board[x as usize][left_y as usize] {
+            if let Some(piece2) = &game_state.board[x as usize][left_y as usize] {
                 if piece.color != piece2.color {
-                    if let Some(last_move) = &board.last_move {
+                    if let Some(last_move) = &game_state.last_move {
                         if last_move.source == [x, left_y as usize]
                             && last_move.destination == [x + forward_offset as usize, y]
                         {
@@ -74,9 +74,9 @@ fn generate_movements_for_pawn(board: &GameState, x: usize, y: usize, piece: &Pi
         }
 
         if right_y < 8 {
-            if let Some(piece2) = &board.board[x][right_y as usize] {
+            if let Some(piece2) = &game_state.board[x][right_y as usize] {
                 if piece.color != piece2.color {
-                    if let Some(last_move) = &board.last_move {
+                    if let Some(last_move) = &game_state.last_move {
                         if last_move.source == [x, right_y as usize]
                             && last_move.destination == [x + forward_offset as usize, y]
                         {
@@ -95,7 +95,7 @@ fn generate_movements_for_pawn(board: &GameState, x: usize, y: usize, piece: &Pi
 }
 
 fn generate_movements_in_one_direction(
-    board: &GameState,
+    game_state: &GameState,
     x: usize,
     y: usize,
     piece: &Piece,
@@ -109,7 +109,7 @@ fn generate_movements_in_one_direction(
     x2 += dx;
     y2 += dy;
     while x2 >= 0 && x2 < 8 && y2 >= 0 && y2 < 8 {
-        match board.board[x2 as usize][y2 as usize] {
+        match game_state.board[x2 as usize][y2 as usize] {
             None => {
                 movements.push(Movement {
                     source: source,
@@ -132,20 +132,20 @@ fn generate_movements_in_one_direction(
     movements
 }
 
-fn generate_movements_for_rook(board: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+fn generate_movements_for_rook(game_state: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
     let mut movements = vec![];
     let directions: [[i8; 2]; 4] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
     for direction in directions {
         movements.extend(generate_movements_in_one_direction(
-            board, x, y, piece, direction,
+            game_state, x, y, piece, direction,
         ));
     }
     return movements;
 }
 
 fn generate_movements_for_bishop(
-    board: &GameState,
+    game_state: &GameState,
     x: usize,
     y: usize,
     piece: &Piece,
@@ -155,20 +155,20 @@ fn generate_movements_for_bishop(
 
     for direction in directions {
         movements.extend(generate_movements_in_one_direction(
-            board, x, y, piece, direction,
+            game_state, x, y, piece, direction,
         ));
     }
     return movements;
 }
 
-fn generate_movements_for_queen(board: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
-    let mut movements = generate_movements_for_bishop(board, x, y, piece);
-    movements.extend(generate_movements_for_rook(board, x, y, piece));
+fn generate_movements_for_queen(game_state: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+    let mut movements = generate_movements_for_bishop(game_state, x, y, piece);
+    movements.extend(generate_movements_for_rook(game_state, x, y, piece));
     return movements;
 }
 
 fn generate_movements_for_knight(
-    board: &GameState,
+    game_state: &GameState,
     x: usize,
     y: usize,
     piece: &Piece,
@@ -192,14 +192,14 @@ fn generate_movements_for_knight(
         let y2 = y as i8 + dy;
 
         if x2 >= 0 && x2 < 8 && y2 >= 0 && y2 < 8 {
-            if let None = board.board[x2 as usize][y2 as usize] {
+            if let None = game_state.board[x2 as usize][y2 as usize] {
                 movements.push(Movement {
                     source,
                     destination: [x2 as usize, y2 as usize],
                 });
             } else {
                 // Check if the piece at the destination is of a different color
-                if let Some(piece2) = &board.board[x2 as usize][y2 as usize] {
+                if let Some(piece2) = &game_state.board[x2 as usize][y2 as usize] {
                     if piece.color != piece2.color {
                         movements.push(Movement {
                             source,
@@ -215,28 +215,28 @@ fn generate_movements_for_knight(
 }
 
 pub fn generate_movements_for_piece(
-    board: &GameState,
+    game_state: &GameState,
     x: usize,
     y: usize,
     piece: Piece,
 ) -> Vec<Movement> {
     match piece.piece_type {
-        PieceType::Queen => generate_movements_for_queen(board, x, y, &piece),
-        PieceType::Rook => generate_movements_for_rook(board, x, y, &piece),
-        PieceType::Bishop => generate_movements_for_bishop(board, x, y, &piece),
-        PieceType::Knight => generate_movements_for_knight(board, x, y, &piece),
-        PieceType::Pawn => generate_movements_for_pawn(board, x, y, &piece),
+        PieceType::Queen => generate_movements_for_queen(game_state, x, y, &piece),
+        PieceType::Rook => generate_movements_for_rook(game_state, x, y, &piece),
+        PieceType::Bishop => generate_movements_for_bishop(game_state, x, y, &piece),
+        PieceType::Knight => generate_movements_for_knight(game_state, x, y, &piece),
+        PieceType::Pawn => generate_movements_for_pawn(game_state, x, y, &piece),
         _ => vec![],
     }
 }
 
-pub fn generate_movements_for_player(board: &GameState, color: Color) -> Vec<Movement> {
+pub fn generate_movements_for_player(game_state: &GameState, color: Color) -> Vec<Movement> {
     let mut movements = Vec::new();
     for x in 0..8 {
         for y in 0..8 {
-            match board.board[x][y] {
+            match game_state.board[x][y] {
                 Some(piece) if piece.color == color => {
-                    movements.extend(generate_movements_for_piece(board, x, y, piece));
+                    movements.extend(generate_movements_for_piece(game_state, x, y, piece));
                 }
                 _ => continue,
             }
@@ -245,13 +245,13 @@ pub fn generate_movements_for_player(board: &GameState, color: Color) -> Vec<Mov
     movements
 }
 
-pub fn generate_movements(board: &GameState) -> Vec<Movement> {
+pub fn generate_movements(game_state: &GameState) -> Vec<Movement> {
     let mut movements = Vec::new();
     for x in 0..8 {
         for y in 0..8 {
-            match board.board[x][y] {
-                Some(piece) if piece.color == board.player_to_move => {
-                    movements.extend(generate_movements_for_piece(board, x, y, piece));
+            match game_state.board[x][y] {
+                Some(piece) if piece.color == game_state.player_to_move => {
+                    movements.extend(generate_movements_for_piece(game_state, x, y, piece));
                 }
                 _ => continue,
             }
