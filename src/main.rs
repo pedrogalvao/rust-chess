@@ -20,7 +20,14 @@ fn main() {
         };
         game_state.make_movement(m);
         if rules::is_in_check(&game_state, game_state.player_to_move) {
+            if rules::is_in_check_mate(&game_state, game_state.player_to_move) {
+                println!("Check mate!");
+                return;
+            }
             println!("Check!");
+        } else if rules::is_draw(&game_state) {
+            println!("Draw!");
+            return;
         }
         println!("{}", game_state);
         buffer = String::new();

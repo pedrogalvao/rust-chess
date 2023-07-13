@@ -302,3 +302,16 @@ pub fn generate_movements_for_player(game_state: &GameState, color: Color) -> Ve
 pub fn generate_movements(game_state: &GameState) -> Vec<Movement> {
     generate_movements_for_player(game_state, game_state.player_to_move)
 }
+
+fn push_if_not_in_check(
+    movements: &mut Vec<Movement>,
+    movement: Movement,
+    color: Color,
+    game_state: &GameState,
+) {
+    let mut game_state2 = game_state.clone();
+    game_state2.make_movement(movement.clone());
+    if !is_in_check(&game_state2, color) {
+        movements.push(movement);
+    }
+}

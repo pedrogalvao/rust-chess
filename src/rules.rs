@@ -1,4 +1,5 @@
 use crate::board::{Color, GameState, Piece, PieceType};
+use crate::move_generator::generate_movements;
 use crate::movement::Movement;
 // use crate::move_generator::generate_movements_for_player;
 
@@ -243,4 +244,14 @@ fn square_is_threatened_by(position: [usize; 2], game_state: &GameState, color: 
         }
     }
     return false;
+}
+
+pub fn is_in_check_mate(game_state: &GameState, player_color: Color) -> bool {
+    is_in_check(game_state, player_color) && generate_movements(game_state).len() == 0
+}
+
+pub fn is_draw(game_state: &GameState) -> bool {
+    !is_in_check(game_state, game_state.player_to_move)
+        && !is_in_check(game_state, game_state.player_to_move.get_opponent_color())
+        && generate_movements(game_state).len() == 0
 }
