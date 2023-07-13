@@ -144,20 +144,7 @@ fn is_valid_destination(movement: &Movement, game_state: &GameState, piece: &Pie
 
 pub fn is_valid_movement(movement: &Movement, game_state: &GameState) -> bool {
     let piece = movement.get_piece(game_state);
-    if piece.color == game_state.player_to_move
-        && is_valid_destination(movement, game_state, &piece)
-    {
-        match piece.piece_type {
-            PieceType::King => is_valid_movement_for_king(movement),
-            PieceType::Queen => is_valid_movement_for_queen(movement, game_state),
-            PieceType::Bishop => is_valid_movement_for_bishop(movement, game_state),
-            PieceType::Knight => is_valid_movement_for_knight(movement),
-            PieceType::Rook => is_valid_movement_for_rook(movement, game_state),
-            PieceType::Pawn => is_valid_movement_for_pawn(movement, game_state, &piece),
-        }
-    } else {
-        false
-    }
+    is_valid_movement_for_player(movement, game_state, game_state.player_to_move)
 }
 
 pub fn is_valid_movement_for_player(
@@ -165,21 +152,20 @@ pub fn is_valid_movement_for_player(
     game_state: &GameState,
     player_color: Color,
 ) -> bool {
-    let piece = movement.get_piece(game_state);
-    /*
-    board2 = b.copy_make_move(movement);
-    if is_in_check(board2, player_color) {
+    let piece: Piece = movement.get_piece(game_state);
+    let mut game_state2 = game_state.clone();
+    game_state2.make_movement(movement.clone());
+    if is_in_check(&game_state2, player_color) {
         return false;
     }
-    */
-    if piece.color == player_color && is_valid_destination(movement, game_state, &piece) {
+    if piece.color == player_color && is_valid_destination(&movement, game_state, &piece) {
         match piece.piece_type {
-            PieceType::King => is_valid_movement_for_king(movement),
-            PieceType::Queen => is_valid_movement_for_queen(movement, game_state),
-            PieceType::Bishop => is_valid_movement_for_bishop(movement, game_state),
-            PieceType::Knight => is_valid_movement_for_knight(movement),
-            PieceType::Rook => is_valid_movement_for_rook(movement, game_state),
-            PieceType::Pawn => is_valid_movement_for_pawn(movement, game_state, &piece),
+            PieceType::King => is_valid_movement_for_king(&movement),
+            PieceType::Queen => is_valid_movement_for_queen(&movement, game_state),
+            PieceType::Bishop => is_valid_movement_for_bishop(&movement, game_state),
+            PieceType::Knight => is_valid_movement_for_knight(&movement),
+            PieceType::Rook => is_valid_movement_for_rook(&movement, game_state),
+            PieceType::Pawn => is_valid_movement_for_pawn(&movement, game_state, &piece),
         }
     } else {
         false
@@ -192,15 +178,13 @@ pub fn is_in_check(game_state: &GameState, player_color: Color) -> bool {
         piece_type: PieceType::King,
         color: player_color,
     };
-    let king_position = *game_state.get_piece_positions(player_king).first().unwrap();
-
-    // let Some(ref last_move) = board.last_move else {
-    //     return false;
-    // };
-    // let m = Movement{source: last_move.destination, destination: king_position};
-    // if is_valid_movement_for_player(&movement, board, opponent_color) {
-    //     return true;
-    // }
+    let king_positions = game_state.get_piece_positions(player_king);
+    if king_positions.len() == 0 {
+        return false;
+    }
+    let Some(king_position) = king_positions.first() else {
+        return false;
+    };
 
     // Check if any opponent's piece can attack the position
     let opponent_positions: Vec<[usize; 2]> =
@@ -208,7 +192,7 @@ pub fn is_in_check(game_state: &GameState, player_color: Color) -> bool {
     for opponent_position in opponent_positions {
         let movement = Movement {
             source: opponent_position,
-            destination: king_position,
+            destination: *king_position,
         };
 
         if is_valid_movement_for_player(&movement, game_state, opponent_color) {
@@ -216,4 +200,47 @@ pub fn is_in_check(game_state: &GameState, player_color: Color) -> bool {
         }
     }
     false
+}
+
+pub fn last_move_was_check(game_state: &GameState) -> bool {
+    let Some(ref last_move) = game_state.last_move else {
+        return false;
+    };
+    let king_positions = game_state.get_piece_positions(Piece {
+        piece_type: PieceType::King,
+        color: game_state.player_to_move,
+    });
+    for king_position in king_positions {
+        if is_valid_movement(
+            &Movement {
+                source: last_move.destination,
+                destination: king_position,
+            },
+            game_state,
+        ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+pub fn move_is_check(movement: Movement, game_state: &GameState) -> bool {
+    let mut next_game_state = game_state.clone();
+    next_game_state.make_movement(movement);
+    return last_move_was_check(&next_game_state);
+}
+
+fn square_is_threatened_by(position: [usize; 2], game_state: &GameState, color: Color) -> bool {
+    for position2 in game_state.get_positions_of_color(color) {
+        if is_valid_movement(
+            &Movement {
+                source: position2,
+                destination: position,
+            },
+            game_state,
+        ) {
+            return true;
+        }
+    }
+    return false;
 }

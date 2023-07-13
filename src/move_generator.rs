@@ -1,5 +1,6 @@
 use crate::board::{Color, GameState, Piece, PieceType};
 use crate::movement::Movement;
+use crate::rules::is_in_check;
 
 fn generate_movements_for_pawn(
     game_state: &GameState,
@@ -282,7 +283,14 @@ pub fn generate_movements_for_player(game_state: &GameState, color: Color) -> Ve
         for y in 0..8 {
             match game_state.board[x][y] {
                 Some(piece) if piece.color == color => {
-                    movements.extend(generate_movements_for_piece(game_state, x, y, piece));
+                    for movement in generate_movements_for_piece(game_state, x, y, piece) {
+                        let mut game_state2 = game_state.clone();
+                        game_state2.make_movement(movement.clone());
+                        if !is_in_check(&game_state2, color) {
+                            // Player can't put himself in check
+                            movements.push(movement);
+                        }
+                    }
                 }
                 _ => continue,
             }
@@ -292,16 +300,5 @@ pub fn generate_movements_for_player(game_state: &GameState, color: Color) -> Ve
 }
 
 pub fn generate_movements(game_state: &GameState) -> Vec<Movement> {
-    let mut movements = Vec::new();
-    for x in 0..8 {
-        for y in 0..8 {
-            match game_state.board[x][y] {
-                Some(piece) if piece.color == game_state.player_to_move => {
-                    movements.extend(generate_movements_for_piece(game_state, x, y, piece));
-                }
-                _ => continue,
-            }
-        }
-    }
-    movements
+    generate_movements_for_player(game_state, game_state.player_to_move)
 }
