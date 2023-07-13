@@ -1,4 +1,4 @@
-use rust_chess::board::{GameState, Color};
+use rust_chess::board::{Color, GameState};
 use rust_chess::move_generator::generate_movements;
 use rust_chess::movement::Movement;
 use rust_chess::rules::{is_in_check, is_valid_movement};
@@ -52,5 +52,11 @@ mod tests {
     fn test_bishop() {
         let movements: Vec<Movement> = generate_movements(&ONE_BISHOP_STATE);
         assert_eq!(movements.len(), 9);
+    }
+
+    #[test]
+    fn test_king() {
+        let movements: Vec<Movement> = generate_movements(&ONE_KING_STATE);
+        assert_eq!(movements.len(), 8);
     }
 }

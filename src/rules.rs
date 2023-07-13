@@ -1,4 +1,4 @@
-use crate::board::{GameState, Color, Piece, PieceType};
+use crate::board::{Color, GameState, Piece, PieceType};
 use crate::movement::Movement;
 // use crate::move_generator::generate_movements_for_player;
 
@@ -71,7 +71,8 @@ fn is_valid_movement_for_bishop(movement: &Movement, game_state: &GameState) -> 
 }
 
 fn is_valid_movement_for_queen(movement: &Movement, game_state: &GameState) -> bool {
-    is_valid_movement_for_rook(&movement, game_state) || is_valid_movement_for_bishop(&movement, game_state)
+    is_valid_movement_for_rook(&movement, game_state)
+        || is_valid_movement_for_bishop(&movement, game_state)
 }
 
 fn is_valid_movement_for_knight(movement: &Movement) -> bool {
@@ -118,7 +119,7 @@ fn is_valid_movement_for_pawn(movement: &Movement, game_state: &GameState, piece
                         return match game_state.board[(x + x0) / 2][y] {
                             Some(_) => false,
                             None => true,
-                        }
+                        };
                     }
                 }
             };
@@ -143,7 +144,9 @@ fn is_valid_destination(movement: &Movement, game_state: &GameState, piece: &Pie
 
 pub fn is_valid_movement(movement: &Movement, game_state: &GameState) -> bool {
     let piece = movement.get_piece(game_state);
-    if piece.color == game_state.player_to_move && is_valid_destination(movement, game_state, &piece) {
+    if piece.color == game_state.player_to_move
+        && is_valid_destination(movement, game_state, &piece)
+    {
         match piece.piece_type {
             PieceType::King => is_valid_movement_for_king(movement),
             PieceType::Queen => is_valid_movement_for_queen(movement, game_state),
@@ -157,7 +160,11 @@ pub fn is_valid_movement(movement: &Movement, game_state: &GameState) -> bool {
     }
 }
 
-pub fn is_valid_movement_for_player(movement: &Movement, game_state: &GameState, player_color: Color) -> bool {
+pub fn is_valid_movement_for_player(
+    movement: &Movement,
+    game_state: &GameState,
+    player_color: Color,
+) -> bool {
     let piece = movement.get_piece(game_state);
     /*
     board2 = b.copy_make_move(movement);
@@ -196,7 +203,8 @@ pub fn is_in_check(game_state: &GameState, player_color: Color) -> bool {
     // }
 
     // Check if any opponent's piece can attack the position
-    let opponent_positions: Vec<[usize; 2]> = game_state.get_positions_of_color(player_color.get_opponent_color());
+    let opponent_positions: Vec<[usize; 2]> =
+        game_state.get_positions_of_color(player_color.get_opponent_color());
     for opponent_position in opponent_positions {
         let movement = Movement {
             source: opponent_position,

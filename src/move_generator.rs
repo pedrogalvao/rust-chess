@@ -1,7 +1,12 @@
-use crate::board::{GameState, Color, Piece, PieceType};
+use crate::board::{Color, GameState, Piece, PieceType};
 use crate::movement::Movement;
 
-fn generate_movements_for_pawn(game_state: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+fn generate_movements_for_pawn(
+    game_state: &GameState,
+    x: usize,
+    y: usize,
+    piece: &Piece,
+) -> Vec<Movement> {
     let source = [x, y];
     let mut movements = Vec::new();
 
@@ -132,7 +137,12 @@ fn generate_movements_in_one_direction(
     movements
 }
 
-fn generate_movements_for_rook(game_state: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+fn generate_movements_for_rook(
+    game_state: &GameState,
+    x: usize,
+    y: usize,
+    piece: &Piece,
+) -> Vec<Movement> {
     let mut movements = vec![];
     let directions: [[i8; 2]; 4] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
@@ -161,7 +171,12 @@ fn generate_movements_for_bishop(
     return movements;
 }
 
-fn generate_movements_for_queen(game_state: &GameState, x: usize, y: usize, piece: &Piece) -> Vec<Movement> {
+fn generate_movements_for_queen(
+    game_state: &GameState,
+    x: usize,
+    y: usize,
+    piece: &Piece,
+) -> Vec<Movement> {
     let mut movements = generate_movements_for_bishop(game_state, x, y, piece);
     movements.extend(generate_movements_for_rook(game_state, x, y, piece));
     return movements;
@@ -214,6 +229,38 @@ fn generate_movements_for_knight(
     movements
 }
 
+fn generate_movements_for_king(
+    game_state: &GameState,
+    x: usize,
+    y: usize,
+    piece: &Piece,
+) -> Vec<Movement> {
+    let mut movements = Vec::new();
+    for dx in -1..=1 {
+        for dy in -1..=1 {
+            let x2 = x as i32 + dx;
+            let y2: i32 = y as i32 + dy;
+            dbg!(x2);
+            dbg!(y2);
+            if 0 <= x2 && x2 < 8 && 0 <= y2 && y2 < 8 {
+                match game_state.board[x2 as usize][y2 as usize] {
+                    Some(piece2) if piece.color == piece2.color => {
+                        // position is blocked
+                        continue;
+                    }
+                    _ => {
+                        movements.push(Movement {
+                            source: [x, y],
+                            destination: [x2 as usize, y2 as usize],
+                        });
+                    }
+                }
+            }
+        }
+    }
+    movements
+}
+
 pub fn generate_movements_for_piece(
     game_state: &GameState,
     x: usize,
@@ -221,6 +268,7 @@ pub fn generate_movements_for_piece(
     piece: Piece,
 ) -> Vec<Movement> {
     match piece.piece_type {
+        PieceType::King => generate_movements_for_king(game_state, x, y, &piece),
         PieceType::Queen => generate_movements_for_queen(game_state, x, y, &piece),
         PieceType::Rook => generate_movements_for_rook(game_state, x, y, &piece),
         PieceType::Bishop => generate_movements_for_bishop(game_state, x, y, &piece),

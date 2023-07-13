@@ -1,4 +1,4 @@
-use rust_chess::board::{GameState, Board, Color, Piece, PieceType};
+use rust_chess::board::{Board, Color, GameState, Piece, PieceType};
 
 const TEST_BOARD_1: Board = [
     [
@@ -142,6 +142,35 @@ const ONE_BISHOP_BOARD: Board = [
 
 pub const ONE_BISHOP_STATE: GameState = GameState {
     board: ONE_BISHOP_BOARD,
+    player_to_move: Color::White,
+    last_move: None,
+};
+
+const ONE_KING_BOARD: Board = [
+    [None; 8],
+    [
+        None,
+        None,
+        Some(Piece {
+            piece_type: PieceType::King,
+            color: Color::White,
+        }),
+        None,
+        None,
+        None,
+        None,
+        None,
+    ],
+    [None; 8],
+    [None; 8],
+    [None; 8],
+    [None; 8],
+    [None; 8],
+    [None; 8],
+];
+
+pub const ONE_KING_STATE: GameState = GameState {
+    board: ONE_KING_BOARD,
     player_to_move: Color::White,
     last_move: None,
 };
