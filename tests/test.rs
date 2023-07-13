@@ -52,4 +52,10 @@ mod tests {
         assert_eq!(movements.len(), 14);
     }
 
+    #[test]
+    fn test_bishop() {
+        let mut movements : Vec<Movement> = generate_movements(&boards::one_bishop_board);
+        assert_eq!(movements.len(), 9);
+    }
+
 }

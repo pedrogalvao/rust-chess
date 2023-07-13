@@ -83,3 +83,25 @@ pub const one_rook_board : rust_chess::board::Board = rust_chess::board::Board {
     player_to_move: Color::White,
     last_move: None,
 };
+
+const one_bishop_position: [[Option<Piece>; 8]; 8] = [   
+        [None; 8],
+        [
+            None, None, Some(Piece {
+                piece_type: PieceType::Bishop,
+                color: Color::White,
+            }), None, None, None, None, None,
+        ],
+        [None; 8],
+        [None; 8],
+        [None; 8],
+        [None; 8],
+        [None; 8],
+        [None; 8],
+    ];
+
+pub const one_bishop_board : rust_chess::board::Board = rust_chess::board::Board {
+    positions: one_bishop_position,
+    player_to_move: Color::White,
+    last_move: None,
+};
