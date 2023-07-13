@@ -10,6 +10,7 @@ fn main() {
     let mut buffer = String::new();
     let stdin = io::stdin();
     loop {
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         let _ = stdin.read_line(&mut buffer);
         let Ok(m) = movement::Movement::from_str(&buffer, &game_state) else {
             buffer = String::new();

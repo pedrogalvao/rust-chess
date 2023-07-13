@@ -240,8 +240,6 @@ fn generate_movements_for_king(
         for dy in -1..=1 {
             let x2 = x as i32 + dx;
             let y2: i32 = y as i32 + dy;
-            dbg!(x2);
-            dbg!(y2);
             if 0 <= x2 && x2 < 8 && 0 <= y2 && y2 < 8 {
                 match game_state.board[x2 as usize][y2 as usize] {
                     Some(piece2) if piece.color == piece2.color => {

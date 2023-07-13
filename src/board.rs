@@ -166,9 +166,17 @@ const INIT_POSITIONS: Board = [
 ];
 
 impl GameState {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             board: INIT_POSITIONS,
+            player_to_move: Color::White,
+            last_move: None,
+        }
+    }
+
+    pub const fn new_empty() -> Self {
+        Self {
+            board: [[None; 8]; 8],
             player_to_move: Color::White,
             last_move: None,
         }
