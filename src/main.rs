@@ -5,7 +5,7 @@ mod rules;
 use std::io;
 
 fn main() {
-    let mut b: board::Board = board::Board::new();
+    let mut b: board::GameState = board::GameState::new();
     println!("{}", b);
     let mut buffer = String::new();
     let stdin = io::stdin();

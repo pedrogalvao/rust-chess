@@ -1,4 +1,4 @@
-use crate::board::{Board, Piece, PieceType};
+use crate::board::{GameState, Piece, PieceType};
 use crate::rules::is_valid_movement;
 
 #[derive(Debug, Clone)]
@@ -8,16 +8,16 @@ pub struct Movement {
 }
 
 impl Movement {
-    pub fn get_piece(&self, b: &Board) -> Piece {
+    pub fn get_piece(&self, b: &GameState) -> Piece {
         let [x, y] = self.source;
-        if let Some(piece) = b.positions[x][y] {
+        if let Some(piece) = b.board[x][y] {
             return piece;
         } else {
             todo!()
         }
     }
 
-    pub fn from_str(move_str: &String, b: &Board) -> Result<Movement, ()> {
+    pub fn from_str(move_str: &String, b: &GameState) -> Result<Movement, ()> {
         let mut chars = move_str.chars();
         let piece: Piece;
         let move_str = move_str.replace(&['\n', '\r'][..], "");

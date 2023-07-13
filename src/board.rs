@@ -73,14 +73,16 @@ pub struct Piece {
     pub color: Color,
 }
 
+pub type Board = [[Option<Piece>; 8]; 8];
+
 #[derive(Debug, Clone)]
-pub struct Board {
-    pub positions: [[Option<Piece>; 8]; 8],
+pub struct GameState {
+    pub board: Board,
     pub player_to_move: Color,
     pub last_move: Option<Movement>,
 }
 
-const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [
+const INIT_POSITIONS: Board = [
     [
         Some(Piece {
             piece_type: PieceType::Rook,
@@ -163,10 +165,10 @@ const INIT_POSITIONS: [[Option<Piece>; 8]; 8] = [
     ],
 ];
 
-impl Board {
+impl GameState {
     pub fn new() -> Self {
         Self {
-            positions: INIT_POSITIONS,
+            board: INIT_POSITIONS,
             player_to_move: Color::White,
             last_move: None,
         }
@@ -176,7 +178,7 @@ impl Board {
         let mut results = vec![];
         for i in 0..8 {
             for j in 0..8 {
-                match self.positions[i][j] {
+                match self.board[i][j] {
                     Some(piece2) if piece == piece2 => results.push([i, j]),
                     _ => continue,
                 }
@@ -188,9 +190,9 @@ impl Board {
     pub fn make_movement(&mut self, m: Movement) {
         let [x, y] = m.source;
         let [x2, y2] = m.destination;
-        self.positions[x2][y2] = mem::take(&mut self.positions[x][y]);
-        if (x2 == 0 || x2 == 7) && self.positions[x2][y2].unwrap().piece_type == PieceType::Pawn {
-            self.positions[x2][y2] = Some(Piece {
+        self.board[x2][y2] = mem::take(&mut self.board[x][y]);
+        if (x2 == 0 || x2 == 7) && self.board[x2][y2].unwrap().piece_type == PieceType::Pawn {
+            self.board[x2][y2] = Some(Piece {
                 piece_type: PieceType::Queen,
                 color: self.player_to_move,
             }); // promote the pawn
@@ -203,7 +205,7 @@ impl Board {
         let mut results = vec![];
         for i in 0..8 {
             for j in 0..8 {
-                match self.positions[i][j] {
+                match self.board[i][j] {
                     Some(piece) if piece.color == color => results.push([i, j]),
                     _ => continue,
                 }
@@ -213,7 +215,7 @@ impl Board {
     }
 }
 
-impl fmt::Display for Board {
+impl fmt::Display for GameState {
     fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _ = match self.player_to_move {
             Color::White => print!("White to move:\n  "),
@@ -248,7 +250,7 @@ impl fmt::Display for Board {
         for i in range {
             print!("{} ", 1 + i);
             for j in &range2 {
-                let piece_opt: Option<Piece> = self.positions[i][*j];
+                let piece_opt: Option<Piece> = self.board[i][*j];
 
                 let piece_char: char = match piece_opt {
                     Some(piece) => piece.to_char(),

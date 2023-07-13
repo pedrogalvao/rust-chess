@@ -1,6 +1,6 @@
-use rust_chess::board::{Board, Color, Piece, PieceType};
+use rust_chess::board::{GameState, Board, Color, Piece, PieceType};
 
-const test_positions1: [[Option<Piece>; 8]; 8] = [
+const TEST_BOARD_1: Board = [
     [
         Some(Piece {
             piece_type: PieceType::King,
@@ -38,13 +38,13 @@ const test_positions1: [[Option<Piece>; 8]; 8] = [
     [None; 8],
 ];
 
-pub const test_board1: rust_chess::board::Board = rust_chess::board::Board {
-    positions: test_positions1,
+pub const TEST_STATE_1: GameState = GameState {
+    board: TEST_BOARD_1,
     player_to_move: Color::White,
     last_move: None,
 };
 
-const test_positions2: [[Option<Piece>; 8]; 8] = [
+const TEST_BOARD_2: Board = [
     [
         Some(Piece {
             piece_type: PieceType::King,
@@ -82,13 +82,13 @@ const test_positions2: [[Option<Piece>; 8]; 8] = [
     [None; 8],
 ];
 
-pub const test_board2: rust_chess::board::Board = rust_chess::board::Board {
-    positions: test_positions2,
+pub const TEST_STATE_2: GameState = GameState {
+    board: TEST_BOARD_2,
     player_to_move: Color::White,
     last_move: None,
 };
 
-const one_rook_position: [[Option<Piece>; 8]; 8] = [
+const ONE_ROOK_BOARD: Board = [
     [None; 8],
     [
         None,
@@ -111,13 +111,13 @@ const one_rook_position: [[Option<Piece>; 8]; 8] = [
     [None; 8],
 ];
 
-pub const one_rook_board: rust_chess::board::Board = rust_chess::board::Board {
-    positions: one_rook_position,
+pub const ONE_ROOK_STATE: GameState = GameState {
+    board: ONE_ROOK_BOARD,
     player_to_move: Color::White,
     last_move: None,
 };
 
-const one_bishop_position: [[Option<Piece>; 8]; 8] = [
+const ONE_BISHOP_BOARD: Board = [
     [None; 8],
     [
         None,
@@ -140,8 +140,8 @@ const one_bishop_position: [[Option<Piece>; 8]; 8] = [
     [None; 8],
 ];
 
-pub const one_bishop_board: rust_chess::board::Board = rust_chess::board::Board {
-    positions: one_bishop_position,
+pub const ONE_BISHOP_STATE: GameState = GameState {
+    board: ONE_BISHOP_BOARD,
     player_to_move: Color::White,
     last_move: None,
 };
