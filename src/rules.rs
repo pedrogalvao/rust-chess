@@ -144,7 +144,6 @@ fn is_valid_destination(movement: &Movement, game_state: &GameState, piece: &Pie
 }
 
 pub fn is_valid_movement(movement: &Movement, game_state: &GameState) -> bool {
-    let piece = movement.get_piece(game_state);
     is_valid_movement_for_player(movement, game_state, game_state.player_to_move)
 }
 

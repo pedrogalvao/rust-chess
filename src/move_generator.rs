@@ -39,8 +39,7 @@ fn generate_movements_for_pawn(
     }
 
     // Diagonal capture moves
-    let capture_offsets = [(-1, 1), (1, 1)]; // Left and right diagonal offsets
-    for &(dx, dy) in &capture_offsets {
+    for dx in [-1, 1] {
         let x4 = x as i8 + forward_offset;
         let y4 = y as i8 + dx;
 
@@ -273,7 +272,6 @@ pub fn generate_movements_for_piece(
         PieceType::Bishop => generate_movements_for_bishop(game_state, x, y, &piece),
         PieceType::Knight => generate_movements_for_knight(game_state, x, y, &piece),
         PieceType::Pawn => generate_movements_for_pawn(game_state, x, y, &piece),
-        _ => vec![],
     }
 }
 
