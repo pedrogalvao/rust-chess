@@ -1,7 +1,7 @@
 use crate::board::{GameState, Piece, PieceType};
-use crate::movement::Movement;
-use crate::rules::{is_draw, is_in_check, is_in_check_mate, is_valid_movement};
 use crate::control::control::{Command, Controller};
+use crate::movement::Movement;
+use crate::rules::is_valid_movement;
 
 use std::io;
 use substring::Substring;
@@ -124,16 +124,6 @@ impl Controller for LocalHuman {
         };
         if let Command::Move(m) = cmd {
             game_state.make_movement(m);
-            if is_in_check(&game_state, game_state.player_to_move) {
-                if is_in_check_mate(&game_state, game_state.player_to_move) {
-                    println!("Check mate!");
-                    return;
-                }
-                println!("Check!");
-            } else if is_draw(&game_state) {
-                println!("Draw!");
-                return;
-            }
         }
     }
 }

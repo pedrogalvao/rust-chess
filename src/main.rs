@@ -7,11 +7,10 @@ mod movement;
 mod rules;
 mod view;
 
-use control::local_human::LocalHuman;
-use control::random_bot::RandomBot;
 use crate::game::Game;
 use crate::view::{AsciiDisplay, GameDisplay, UnicodeDisplay};
-
+use control::local_human::LocalHuman;
+use control::random_bot::RandomBot;
 
 fn main() {
     let mut game: Game<UnicodeDisplay, LocalHuman, RandomBot> = Game {
