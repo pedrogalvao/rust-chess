@@ -134,6 +134,30 @@ fn is_valid_movement_for_king(movement: &Movement) -> bool {
         && (movement.destination[1] as i8 - movement.source[1] as i8).abs() <= 1
 }
 
+pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
+    if !game_state.can_castle_queen_side {
+        return false;
+    }
+    let king_row = match game_state.player_to_move {
+        Color::White => 0,
+        Color::Black => 7,
+    };
+    return game_state.board[king_row][1] == None
+        && game_state.board[king_row][2] == None
+        && game_state.board[king_row][3] == None;
+}
+
+pub fn king_castle_is_valid(game_state: &GameState) -> bool {
+    if !game_state.can_castle_queen_side {
+        return false;
+    }
+    let king_row = match game_state.player_to_move {
+        Color::White => 0,
+        Color::Black => 7,
+    };
+    return game_state.board[king_row][5] == None && game_state.board[king_row][6] == None;
+}
+
 fn is_valid_destination(movement: &Movement, game_state: &GameState, piece: &Piece) -> bool {
     let [x, y] = movement.destination;
     match game_state.board[x][y] {

@@ -231,8 +231,61 @@ impl GameState {
                 color: self.player_to_move,
             }); // promote the pawn
         }
+        let king_row = match self.player_to_move {
+            Color::White => 0,
+            Color::Black => 7,
+        };
+        if self.can_castle_king_side {
+            if movement.source == [king_row, 4] || movement.source == [king_row, 7] {
+                self.can_castle_king_side = false
+            }
+        }
+        if self.can_castle_queen_side {
+            if movement.source == [king_row, 4] || movement.source == [king_row, 0] {
+                self.can_castle_queen_side = false
+            }
+        }
+
         self.player_to_move = self.player_to_move.get_opponent_color();
         self.last_move = Some(movement);
+    }
+
+    pub fn castle_king_side(&mut self) {
+        self.can_castle_king_side = false;
+        self.can_castle_queen_side = false;
+        let king_row = match self.player_to_move {
+            Color::White => 0,
+            Color::Black => 7,
+        };
+        self.board[king_row][6] = Some(Piece {
+            piece_type: PieceType::King,
+            color: self.player_to_move,
+        });
+        self.board[king_row][5] = Some(Piece {
+            piece_type: PieceType::Rook,
+            color: self.player_to_move,
+        });
+        self.board[king_row][7] = None;
+        self.board[king_row][4] = None;
+    }
+
+    pub fn castle_queen_side(&mut self) {
+        self.can_castle_king_side = false;
+        self.can_castle_queen_side = false;
+        let king_row = match self.player_to_move {
+            Color::White => 0,
+            Color::Black => 7,
+        };
+        self.board[king_row][2] = Some(Piece {
+            piece_type: PieceType::King,
+            color: self.player_to_move,
+        });
+        self.board[king_row][3] = Some(Piece {
+            piece_type: PieceType::Rook,
+            color: self.player_to_move,
+        });
+        self.board[king_row][0] = None;
+        self.board[king_row][4] = None;
     }
 
     pub fn get_positions_of_color(&self, color: Color) -> Vec<[usize; 2]> {

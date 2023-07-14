@@ -9,10 +9,12 @@ use substring::Substring;
 pub struct LocalHuman;
 impl LocalHuman {
     pub fn parse_command(&self, cmd_str: &str, game_state: &GameState) -> Result<Command, ()> {
-        match cmd_str {
+        match cmd_str.replace("\n", "").as_str() {
             "undo" => Ok(Command::Undo),
             "resign" => Ok(Command::Resign),
             "save" => Ok(Command::Save),
+            "0-0" | "O-O" => Ok(Command::CastleKingSide),
+            "0-0-0" | "O-O-O" => Ok(Command::CastleQueenSide),
             _ => match self.parse_movement(cmd_str, game_state) {
                 Err(()) => Err(()),
                 Ok(m) => Ok(Command::Move(m)),
@@ -122,8 +124,6 @@ impl Controller for LocalHuman {
             println!("Invalid move");
             return;
         };
-        if let Command::Move(m) = cmd {
-            game_state.make_movement(m);
-        }
+        self.execute_command(game_state, cmd);
     }
 }
