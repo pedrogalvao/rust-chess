@@ -1,4 +1,4 @@
-use crate::board::GameState;
+use crate::model::GameState;
 use crate::movement::Movement;
 
 // enum Player {

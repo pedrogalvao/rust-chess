@@ -1,4 +1,4 @@
-use crate::board::GameState;
+use crate::model::GameState;
 use crate::control::control::Controller;
 use crate::move_generator::generate_movements;
 use rand::seq::SliceRandom;

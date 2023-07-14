@@ -1,4 +1,4 @@
-mod board;
+mod model;
 mod bot;
 mod control;
 mod game;
@@ -14,7 +14,7 @@ use control::random_bot::RandomBot;
 
 fn main() {
     let mut game: Game<UnicodeDisplay, LocalHuman, RandomBot> = Game {
-        game_state: board::GameState::new(),
+        game_state: model::GameState::new(),
         game_display: UnicodeDisplay,
         controller1: LocalHuman,
         controller2: RandomBot,

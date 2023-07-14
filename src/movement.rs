@@ -1,4 +1,4 @@
-use crate::board::{GameState, Piece};
+use crate::model::{GameState, Piece};
 
 #[derive(Debug, Clone)]
 pub struct Movement {

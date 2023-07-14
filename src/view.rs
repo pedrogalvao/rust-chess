@@ -1,4 +1,4 @@
-use crate::board::{Color, GameState, Piece};
+use crate::model::{Color, GameState, Piece};
 
 pub trait GameDisplay {
     fn display_line() {

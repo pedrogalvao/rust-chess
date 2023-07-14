@@ -1,4 +1,4 @@
-use crate::board::{Color, GameState, Piece, PieceType};
+use crate::model::{Color, GameState, Piece, PieceType};
 use crate::move_generator::generate_movements;
 use crate::movement::Movement;
 // use crate::move_generator::generate_movements_for_player;

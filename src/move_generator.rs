@@ -1,4 +1,4 @@
-use crate::board::{Color, GameState, Piece, PieceType};
+use crate::model::{Color, GameState, Piece, PieceType};
 use crate::movement::Movement;
 use crate::rules::is_in_check;
 
