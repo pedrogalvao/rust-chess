@@ -1,4 +1,4 @@
-pub mod board;
+pub mod model;
 pub mod control;
 pub mod game;
 pub mod move_generator;
