@@ -1,5 +1,4 @@
 use crate::movement::Movement;
-use std::fmt;
 use std::mem;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -242,5 +241,3 @@ impl GameState {
         results
     }
 }
-
-

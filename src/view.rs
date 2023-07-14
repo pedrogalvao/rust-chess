@@ -1,5 +1,4 @@
-use crate::board::{GameState, Piece, Color};
-
+use crate::board::{Color, GameState, Piece};
 
 pub trait GameDisplay {
     fn display_line() {
@@ -27,6 +26,7 @@ pub trait GameDisplay {
     }
 
     fn display_game(&self, game_state: &GameState) {
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         let _ = match game_state.player_to_move {
             Color::White => print!("White to move:\n  "),
             Color::Black => print!("Black to move:\n  "),
@@ -78,3 +78,13 @@ impl GameDisplay for AsciiDisplay {
 //         todo!()
 //     }
 // }
+
+pub struct NoDisplay;
+impl GameDisplay for NoDisplay {
+    fn display_game(&self, _game_state: &GameState) {
+        return;
+    }
+    fn piece_to_char(&self, _piece: &Piece) -> char {
+        return ' ';
+    }
+}

@@ -1,8 +1,10 @@
 use rust_chess::board::{Color, GameState};
+use rust_chess::control::random_bot::RandomBot;
+use rust_chess::game::Game;
 use rust_chess::move_generator::generate_movements;
 use rust_chess::movement::Movement;
-use rust_chess::view::{GameDisplay, AsciiDisplay};
 use rust_chess::rules::{is_draw, is_in_check, is_in_check_mate, is_valid_movement};
+use rust_chess::view::{AsciiDisplay, GameDisplay};
 mod boards;
 use boards::*;
 use rand::seq::SliceRandom; // 0.7.2
@@ -14,7 +16,7 @@ mod tests {
     #[test]
     fn random_games() {
         // verify that all generated movements are valid
-        let game_display = AsciiDisplay{};
+        let game_display = AsciiDisplay {};
         for _ in 0..50 {
             let mut game_state: GameState = GameState::new();
             for i in 0..200 {
@@ -42,6 +44,17 @@ mod tests {
             }
             // println!("New game...");
         }
+    }
+
+    #[test]
+    fn random_games2() {
+        let mut game: Game<AsciiDisplay, RandomBot> = Game {
+            game_state: GameState::new(),
+            game_display: AsciiDisplay,
+            controller1: RandomBot,
+            controller2: RandomBot,
+        };
+        game.play();
     }
 
     #[test]
