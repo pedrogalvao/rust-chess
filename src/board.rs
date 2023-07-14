@@ -193,6 +193,7 @@ impl GameState {
         }
     }
 
+    #[allow(dead_code)]
     pub const fn new_empty() -> Self {
         Self {
             board: [[None; 8]; 8],

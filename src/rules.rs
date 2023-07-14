@@ -202,6 +202,7 @@ pub fn is_in_check(game_state: &GameState, player_color: Color) -> bool {
     false
 }
 
+#[allow(dead_code)]
 pub fn last_move_was_check(game_state: &GameState) -> bool {
     let Some(ref last_move) = game_state.last_move else {
         return false;
@@ -224,12 +225,14 @@ pub fn last_move_was_check(game_state: &GameState) -> bool {
     return false;
 }
 
+#[allow(dead_code)]
 pub fn move_is_check(movement: Movement, game_state: &GameState) -> bool {
     let mut next_game_state = game_state.clone();
     next_game_state.make_movement(movement);
     return last_move_was_check(&next_game_state);
 }
 
+#[allow(dead_code)]
 fn square_is_threatened_by(position: [usize; 2], game_state: &GameState, color: Color) -> bool {
     for position2 in game_state.get_positions_of_color(color) {
         if is_valid_movement(

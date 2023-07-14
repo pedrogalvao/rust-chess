@@ -301,6 +301,7 @@ pub fn generate_movements(game_state: &GameState) -> Vec<Movement> {
     generate_movements_for_player(game_state, game_state.player_to_move)
 }
 
+#[allow(dead_code)]
 fn push_if_not_in_check(
     movements: &mut Vec<Movement>,
     movement: Movement,

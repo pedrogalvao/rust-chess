@@ -48,7 +48,7 @@ mod tests {
 
     #[test]
     fn random_games2() {
-        let mut game: Game<AsciiDisplay, RandomBot> = Game {
+        let mut game: Game<AsciiDisplay, RandomBot, RandomBot> = Game {
             game_state: GameState::new(),
             game_display: AsciiDisplay,
             controller1: RandomBot,
