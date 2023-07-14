@@ -1,6 +1,6 @@
-mod model;
 mod control;
 mod game;
+mod model;
 mod move_generator;
 mod movement;
 mod rules;

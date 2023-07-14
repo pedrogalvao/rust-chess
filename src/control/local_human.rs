@@ -1,5 +1,5 @@
-use crate::model::{GameState, Piece, PieceType};
 use crate::control::control::{Command, Controller};
+use crate::model::{GameState, Piece, PieceType};
 use crate::movement::Movement;
 use crate::rules::is_valid_movement;
 
