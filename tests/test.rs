@@ -1,4 +1,4 @@
-use rust_chess::board::{Color, GameState};
+use rust_chess::model::{Color, GameState};
 use rust_chess::control::random_bot::RandomBot;
 use rust_chess::game::Game;
 use rust_chess::move_generator::generate_movements;

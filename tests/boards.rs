@@ -1,4 +1,4 @@
-use rust_chess::board::{Board, Color, GameState, Piece, PieceType};
+use rust_chess::model::{Board, Color, GameState, Piece, PieceType};
 
 const TEST_BOARD_1: Board = [
     [
