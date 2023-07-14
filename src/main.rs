@@ -12,8 +12,6 @@ use control::random_bot::RandomBot;
 use crate::game::Game;
 use crate::view::{AsciiDisplay, GameDisplay, UnicodeDisplay};
 
-use std::io;
-
 
 fn main() {
     let mut game: Game<UnicodeDisplay, LocalHuman, RandomBot> = Game {

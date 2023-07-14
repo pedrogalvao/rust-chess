@@ -1,7 +1,6 @@
 use crate::board::GameState;
 use crate::control::control::Controller;
 use crate::move_generator::generate_movements;
-use crate::movement::Movement;
 use rand::seq::SliceRandom;
 
 pub struct RandomBot;
