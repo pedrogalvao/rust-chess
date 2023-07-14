@@ -1,16 +1,18 @@
-use rust_chess::model::{Color, GameState};
 use rust_chess::control::random_bot::RandomBot;
 use rust_chess::game::Game;
+use rust_chess::model::{Color, GameState};
 use rust_chess::move_generator::generate_movements;
 use rust_chess::movement::Movement;
 use rust_chess::rules::{is_draw, is_in_check, is_in_check_mate, is_valid_movement};
-use rust_chess::view::{AsciiDisplay, GameDisplay};
+use rust_chess::view::{AsciiDisplay, GameDisplay, NoDisplay};
 mod boards;
 use boards::*;
 use rand::seq::SliceRandom; // 0.7.2
 
 #[cfg(test)]
 mod tests {
+    use rust_chess::view::NoDisplay;
+
     use super::*;
 
     #[test]

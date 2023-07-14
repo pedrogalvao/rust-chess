@@ -252,8 +252,41 @@ pub fn is_in_check_mate(game_state: &GameState, player_color: Color) -> bool {
     is_in_check(game_state, player_color) && generate_movements(game_state).len() == 0
 }
 
+fn has_insufficient_material(game_state: &GameState) -> bool {
+    let mut white_piece_count: u8 = 0;
+    let mut black_piece_count: u8 = 0;
+    for x in 0..8 {
+        for y in 0..8 {
+            if let Some(piece) = game_state.board[x][y] {
+                match piece.piece_type {
+                    PieceType::Rook | PieceType::Queen | PieceType::Pawn => {
+                        return false;
+                    }
+                    PieceType::Bishop => match piece.color {
+                        Color::White => {
+                            white_piece_count += 1;
+                        }
+                        Color::Black => {
+                            black_piece_count += 1;
+                        }
+                    },
+                    _ => {
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+    if white_piece_count <= 1 && black_piece_count <= 1 {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 pub fn is_draw(game_state: &GameState) -> bool {
     !is_in_check(game_state, game_state.player_to_move)
-        && !is_in_check(game_state, game_state.player_to_move.get_opponent_color())
-        && generate_movements(game_state).len() == 0
+        && ((!is_in_check(game_state, game_state.player_to_move.get_opponent_color())
+            && generate_movements(game_state).len() == 0)
+            || has_insufficient_material(game_state))
 }
