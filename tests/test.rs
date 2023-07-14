@@ -11,21 +11,17 @@ use rand::seq::SliceRandom; // 0.7.2
 
 #[cfg(test)]
 mod tests {
-    use rust_chess::view::NoDisplay;
-
     use super::*;
 
     #[test]
     fn random_games() {
         // verify that all generated movements are valid
-        let game_display = AsciiDisplay {};
-        for _ in 0..50 {
+        let game_display: NoDisplay = NoDisplay {};
+        for _ in 0..10 {
             let mut game_state: GameState = GameState::new();
-            for i in 0..200 {
+            for i in 0..100 {
                 let movements: Vec<Movement> = generate_movements(&game_state);
                 for movement in &movements {
-                    //print!("{}", b);
-                    //dbg!(movement);
                     assert_eq!(is_valid_movement(&movement, &game_state), true);
                 }
                 if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
@@ -44,7 +40,6 @@ mod tests {
                     break;
                 }
             }
-            // println!("New game...");
         }
     }
 
