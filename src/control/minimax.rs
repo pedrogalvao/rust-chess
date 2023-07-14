@@ -16,7 +16,3 @@ fn chose_move(game_state: &GameState) {
         evaluate_state(game_state2);
     }
 }
-
-trait Bot {
-    pub fn chose_move(game_state: &GameState);
-}

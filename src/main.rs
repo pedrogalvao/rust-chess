@@ -1,5 +1,4 @@
 mod model;
-mod bot;
 mod control;
 mod game;
 mod move_generator;
