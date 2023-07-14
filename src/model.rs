@@ -99,6 +99,8 @@ pub struct GameState {
     pub board: Board,
     pub player_to_move: Color,
     pub last_move: Option<Movement>,
+    pub can_castle_queen_side: bool,
+    pub can_castle_king_side: bool,
 }
 
 const INIT_POSITIONS: Board = [
@@ -190,6 +192,8 @@ impl GameState {
             board: INIT_POSITIONS,
             player_to_move: Color::White,
             last_move: None,
+            can_castle_queen_side: true,
+            can_castle_king_side: true,
         }
     }
 
@@ -199,6 +203,8 @@ impl GameState {
             board: [[None; 8]; 8],
             player_to_move: Color::White,
             last_move: None,
+            can_castle_queen_side: true,
+            can_castle_king_side: true,
         }
     }
 
