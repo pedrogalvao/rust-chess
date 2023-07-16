@@ -267,6 +267,9 @@ impl GameState {
         });
         self.board[king_row][7] = None;
         self.board[king_row][4] = None;
+
+        self.player_to_move = self.player_to_move.get_opponent_color();
+        self.last_move = None;
     }
 
     pub fn castle_queen_side(&mut self) {
@@ -286,6 +289,9 @@ impl GameState {
         });
         self.board[king_row][0] = None;
         self.board[king_row][4] = None;
+
+        self.player_to_move = self.player_to_move.get_opponent_color();
+        self.last_move = None;
     }
 
     pub fn get_positions_of_color(&self, color: Color) -> Vec<[usize; 2]> {
