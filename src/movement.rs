@@ -1,10 +1,11 @@
 use crate::model::{GameState, Piece};
 
-#[derive(Debug, Clone)]
+#[derive(Eq, PartialEq, Debug, Clone)]
 pub struct Movement {
     pub source: [usize; 2],
     pub destination: [usize; 2],
 }
+
 
 impl Movement {
     pub fn get_piece(&self, game_state: &GameState) -> Piece {
