@@ -26,7 +26,7 @@ pub trait GameDisplay {
     }
 
     fn display_game(&self, game_state: &GameState) {
-        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+        //print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         let _ = match game_state.player_to_move {
             Color::White => print!("White to move:\n  "),
             Color::Black => print!("Black to move:\n  "),

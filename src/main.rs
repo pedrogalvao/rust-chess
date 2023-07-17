@@ -16,7 +16,7 @@ fn main() {
         game_state: model::GameState::new(),
         game_display: UnicodeDisplay,
         controller1: LocalHuman,
-        controller2: MinimaxBot,
+        controller2: MinimaxBot::new(),
     };
     game.play();
 }

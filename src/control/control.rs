@@ -11,5 +11,5 @@ pub enum Command {
 }
 
 pub trait Controller {
-    fn choose_command(&self, game_state: &mut GameState) -> Command;
+    fn choose_command(&mut self, game_state: &mut GameState) -> Command;
 }

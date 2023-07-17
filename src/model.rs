@@ -94,7 +94,7 @@ pub struct Piece {
 
 pub type Board = [[Option<Piece>; 8]; 8];
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct GameState {
     pub board: Board,
     pub player_to_move: Color,

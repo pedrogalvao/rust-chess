@@ -22,6 +22,5 @@ pub fn evaluate_state(game_state: &GameState, player_color: Color) -> i32 {
             }
         }
     }
-    dbg!(score);
     return score;
 }

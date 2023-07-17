@@ -9,7 +9,7 @@ use substring::Substring;
 pub struct LocalHuman;
 impl LocalHuman {
     pub fn parse_command(&self, cmd_str: &str, game_state: &GameState) -> Result<Command, ()> {
-        match cmd_str.replace("\n", "").as_str() {
+        match cmd_str.replace("\n", "").replace("\r", "").as_str() {
             "undo" => Ok(Command::Undo),
             "resign" => Ok(Command::Resign),
             "save" => Ok(Command::Save),
@@ -116,7 +116,7 @@ impl LocalHuman {
 }
 
 impl Controller for LocalHuman {
-    fn choose_command(&self, game_state: &mut GameState) -> super::control::Command {
+    fn choose_command(&mut self, game_state: &mut GameState) -> super::control::Command {
         let mut buffer: String = String::new();
         let stdin = io::stdin();
         let _ = stdin.read_line(&mut buffer);

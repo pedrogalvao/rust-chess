@@ -7,7 +7,7 @@ use rand::seq::SliceRandom;
 pub struct RandomBot;
 
 impl Controller for RandomBot {
-    fn choose_command(&self, game_state: &mut GameState) -> super::control::Command {
+    fn choose_command(&mut self, game_state: &mut GameState) -> super::control::Command {
         let movements = generate_movements(game_state);
         if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
             return Command::Move(chosen_move.clone());
