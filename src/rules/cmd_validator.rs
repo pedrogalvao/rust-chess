@@ -139,6 +139,11 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
     {
         return false;
     }
+
+    if is_in_check(game_state, game_state.player_to_move) {
+        return false;
+    }
+
     let king_row = match game_state.player_to_move {
         Color::White => 0,
         Color::Black => 7,
@@ -152,6 +157,9 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
     if !((game_state.player_to_move == Color::White && game_state.white_can_castle_king_side)
         || (game_state.player_to_move == Color::Black && game_state.black_can_castle_king_side))
     {
+        return false;
+    }
+    if is_in_check(game_state, game_state.player_to_move) {
         return false;
     }
     let king_row = match game_state.player_to_move {
