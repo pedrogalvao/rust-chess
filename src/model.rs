@@ -99,8 +99,10 @@ pub struct GameState {
     pub board: Board,
     pub player_to_move: Color,
     pub last_move: Option<Movement>,
-    pub can_castle_queen_side: bool,
-    pub can_castle_king_side: bool,
+    pub white_can_castle_queen_side: bool,
+    pub white_can_castle_king_side: bool,
+    pub black_can_castle_queen_side: bool,
+    pub black_can_castle_king_side: bool,
 }
 
 const INIT_POSITIONS: Board = [
@@ -192,8 +194,10 @@ impl GameState {
             board: INIT_POSITIONS,
             player_to_move: Color::White,
             last_move: None,
-            can_castle_queen_side: true,
-            can_castle_king_side: true,
+            white_can_castle_queen_side: true,
+            white_can_castle_king_side: true,
+            black_can_castle_king_side: true,
+            black_can_castle_queen_side: true,
         }
     }
 
@@ -203,8 +207,10 @@ impl GameState {
             board: [[None; 8]; 8],
             player_to_move: Color::White,
             last_move: None,
-            can_castle_queen_side: true,
-            can_castle_king_side: true,
+            white_can_castle_queen_side: true,
+            white_can_castle_king_side: true,
+            black_can_castle_king_side: true,
+            black_can_castle_queen_side: true,
         }
     }
 
@@ -221,6 +227,32 @@ impl GameState {
         results
     }
 
+    fn update_can_castle(&mut self, movement: &Movement) {
+        if self.player_to_move == Color::White {
+            if self.white_can_castle_king_side {
+                if movement.source == [0, 4] || movement.source == [0, 7] {
+                    self.white_can_castle_king_side = false
+                }
+            }
+            if self.white_can_castle_queen_side {
+                if movement.source == [0, 4] || movement.source == [0, 0] {
+                    self.white_can_castle_queen_side = false
+                }
+            }
+        } else {
+            if self.black_can_castle_king_side {
+                if movement.source == [7, 4] || movement.source == [7, 7] {
+                    self.black_can_castle_king_side = false
+                }
+            }
+            if self.black_can_castle_queen_side {
+                if movement.source == [7, 4] || movement.source == [7, 0] {
+                    self.black_can_castle_queen_side = false
+                }
+            }
+        }
+    }
+
     pub fn make_movement(&mut self, movement: Movement) {
         let [x, y] = movement.source;
         let [x2, y2] = movement.destination;
@@ -231,28 +263,19 @@ impl GameState {
                 color: self.player_to_move,
             }); // promote the pawn
         }
-        let king_row = match self.player_to_move {
-            Color::White => 0,
-            Color::Black => 7,
-        };
-        if self.can_castle_king_side {
-            if movement.source == [king_row, 4] || movement.source == [king_row, 7] {
-                self.can_castle_king_side = false
-            }
-        }
-        if self.can_castle_queen_side {
-            if movement.source == [king_row, 4] || movement.source == [king_row, 0] {
-                self.can_castle_queen_side = false
-            }
-        }
-
+        self.update_can_castle(&movement);
         self.player_to_move = self.player_to_move.get_opponent_color();
         self.last_move = Some(movement);
     }
 
     pub fn castle_king_side(&mut self) {
-        self.can_castle_king_side = false;
-        self.can_castle_queen_side = false;
+        if self.player_to_move == Color::White {
+            self.white_can_castle_king_side = false;
+            self.white_can_castle_queen_side = false;
+        } else {
+            self.black_can_castle_king_side = false;
+            self.black_can_castle_queen_side = false;
+        }
         let king_row = match self.player_to_move {
             Color::White => 0,
             Color::Black => 7,
@@ -273,8 +296,13 @@ impl GameState {
     }
 
     pub fn castle_queen_side(&mut self) {
-        self.can_castle_king_side = false;
-        self.can_castle_queen_side = false;
+        if self.player_to_move == Color::White {
+            self.white_can_castle_king_side = false;
+            self.white_can_castle_queen_side = false;
+        } else {
+            self.black_can_castle_king_side = false;
+            self.black_can_castle_queen_side = false;
+        }
         let king_row = match self.player_to_move {
             Color::White => 0,
             Color::Black => 7,

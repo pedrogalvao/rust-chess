@@ -1,6 +1,6 @@
-use crate::{evaluation::evaluate_state, movement};
 use crate::model::GameState;
 use crate::movement::Movement;
+use crate::{evaluation::evaluate_state, movement};
 
 use crate::rules::move_generator::generate_movements;
 
@@ -50,28 +50,26 @@ pub struct MinimaxBot {
 }
 
 impl MinimaxBot {
-    
     pub fn new() -> Self {
-        Self { 
+        Self {
             tree: MinimaxTree {
                 movement: None,
                 score: 0,
                 game_state: GameState::new(),
                 children: BinaryHeap::new(),
-            }
+            },
         }
     }
 }
 
 impl MinimaxTree {
-
     fn get_depth(&self) -> u32 {
         let mut depth_heap = BinaryHeap::new();
         for child in &self.children {
             depth_heap.push(child.get_depth());
         }
         if let Some(n) = depth_heap.pop() {
-            return n+1;
+            return n + 1;
         } else {
             return 0;
         }
@@ -93,7 +91,7 @@ impl MinimaxTree {
             });
         }
         // update score
-        if let Some(child) = self.children.peek(){
+        if let Some(child) = self.children.peek() {
             self.score = -child.score;
         } else {
             // TODO: verify draw or check mate
@@ -122,10 +120,8 @@ impl MinimaxTree {
 }
 
 impl MinimaxBot {
-
     fn update_tree(&mut self, game_state: &GameState) {
         if self.tree.children.len() == 0 {
-            print!("update_tree len 0");
             self.tree = MinimaxTree {
                 movement: None,
                 score: evaluate_state(game_state, game_state.player_to_move),
@@ -134,32 +130,34 @@ impl MinimaxBot {
             };
             return;
         }
+
+        // look for corresponding tree node
         while let Some(child) = self.tree.children.pop() {
             if child.game_state == *game_state {
                 self.tree = child;
-                print!("update_tree found tree");
                 return;
             }
         }
-        panic!();
-        // self.tree = MinimaxTree {
-        //     movement: None,
-        //     score: evaluate_state(game_state, game_state.player_to_move),
-        //     game_state: game_state.clone(),
-        //     children: BinaryHeap::new(),
-        // };
+
+        // movement was not in the tree
+        self.tree = MinimaxTree {
+            movement: None,
+            score: evaluate_state(game_state, game_state.player_to_move),
+            game_state: game_state.clone(),
+            children: BinaryHeap::new(),
+        };
     }
 
     fn choose_move(&mut self, game_state: &GameState) -> Movement {
-        if *game_state != self.tree.game_state  {
+        if *game_state != self.tree.game_state {
             self.update_tree(game_state);
         }
-        // for _ in 0..5 {
-        //     self.tree.expand_leaves();
-        // }
-        while self.tree.get_depth() < 5 {
+        for _ in 0..2 {
             self.tree.expand_leaves();
         }
+        // while self.tree.get_depth() < 5 {
+        //     self.tree.expand_leaves();
+        // }
         dbg!(self.tree.get_depth());
         let chosen_child = self.tree.children.pop().unwrap();
         let chosen_movement = chosen_child.movement.clone().unwrap();
