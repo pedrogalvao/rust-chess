@@ -2,7 +2,6 @@ mod control;
 mod evaluation;
 mod game;
 mod model;
-mod move_generator;
 mod movement;
 mod rules;
 mod view;
@@ -10,7 +9,6 @@ mod view;
 use crate::game::Game;
 use crate::view::{AsciiDisplay, GameDisplay, UnicodeDisplay};
 use control::local_human::LocalHuman;
-use control::random_bot::RandomBot;
 use control::minimax::MinimaxBot;
 
 fn main() {

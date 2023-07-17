@@ -1,6 +1,6 @@
 use crate::model::{Color, GameState, Piece, PieceType};
 use crate::movement::Movement;
-use crate::rules::is_in_check;
+use crate::rules::cmd_validator::is_in_check;
 
 fn generate_movements_for_pawn(
     game_state: &GameState,

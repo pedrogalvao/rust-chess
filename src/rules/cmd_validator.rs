@@ -1,7 +1,6 @@
+use crate::control::control::Command;
 use crate::model::{Color, GameState, Piece, PieceType};
-use crate::move_generator::generate_movements;
 use crate::movement::Movement;
-// use crate::move_generator::generate_movements_for_player;
 
 fn is_valid_movement_for_rook(movement: &Movement, game_state: &GameState) -> bool {
     if movement.source[0] == movement.destination[0] {
@@ -224,29 +223,6 @@ pub fn is_in_check(game_state: &GameState, player_color: Color) -> bool {
 }
 
 #[allow(dead_code)]
-pub fn last_move_was_check(game_state: &GameState) -> bool {
-    let Some(ref last_move) = game_state.last_move else {
-        return false;
-    };
-    let king_positions = game_state.get_piece_positions(Piece {
-        piece_type: PieceType::King,
-        color: game_state.player_to_move,
-    });
-    for king_position in king_positions {
-        if is_valid_movement(
-            &Movement {
-                source: last_move.destination,
-                destination: king_position,
-            },
-            game_state,
-        ) {
-            return true;
-        }
-    }
-    return false;
-}
-
-#[allow(dead_code)]
 pub fn move_is_check(movement: Movement, game_state: &GameState) -> bool {
     let mut next_game_state = game_state.clone();
     next_game_state.make_movement(movement);
@@ -269,45 +245,35 @@ fn square_is_threatened_by(position: [usize; 2], game_state: &GameState, color: 
     return false;
 }
 
-pub fn is_in_check_mate(game_state: &GameState, player_color: Color) -> bool {
-    is_in_check(game_state, player_color) && generate_movements(game_state).len() == 0
-}
-
-fn has_insufficient_material(game_state: &GameState) -> bool {
-    let mut white_piece_count: u8 = 0;
-    let mut black_piece_count: u8 = 0;
-    for x in 0..8 {
-        for y in 0..8 {
-            if let Some(piece) = game_state.board[x][y] {
-                match piece.piece_type {
-                    PieceType::Rook | PieceType::Queen | PieceType::Pawn => {
-                        return false;
-                    }
-                    PieceType::Bishop | PieceType::Knight => match piece.color {
-                        Color::White => {
-                            white_piece_count += 1;
-                        }
-                        Color::Black => {
-                            black_piece_count += 1;
-                        }
-                    },
-                    _ => {
-                        continue;
-                    }
-                }
-            }
+#[allow(dead_code)]
+pub fn last_move_was_check(game_state: &GameState) -> bool {
+    let Some(ref last_move) = game_state.last_move else {
+        return false;
+    };
+    let king_positions = game_state.get_piece_positions(Piece {
+        piece_type: PieceType::King,
+        color: game_state.player_to_move,
+    });
+    for king_position in king_positions {
+        if is_valid_movement(
+            &Movement {
+                source: last_move.destination,
+                destination: king_position,
+            },
+            game_state,
+        ) {
+            return true;
         }
     }
-    if white_piece_count <= 1 && black_piece_count <= 1 {
-        return true;
-    } else {
-        return false;
-    }
+    return false;
 }
 
-pub fn is_draw(game_state: &GameState) -> bool {
-    !is_in_check(game_state, game_state.player_to_move)
-        && ((!is_in_check(game_state, game_state.player_to_move.get_opponent_color())
-            && generate_movements(game_state).len() == 0)
-            || has_insufficient_material(game_state))
+pub fn is_valid_cmd(cmd: &Command, game_state: &GameState) -> bool {
+    match cmd {
+        Command::Resign => true,
+        Command::Move(movement) => is_valid_movement(&movement, game_state),
+        Command::CastleKingSide => king_castle_is_valid(game_state),
+        Command::CastleQueenSide => queen_castle_is_valid(game_state),
+        _ => false,
+    }
 }

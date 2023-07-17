@@ -1,30 +1,29 @@
 use crate::evaluation::evaluate_state;
-use crate::model::{GameState, Color};
+use crate::model::{Color, GameState};
 use crate::movement::Movement;
 
-use crate::move_generator::generate_movements;
+use crate::rules::move_generator::generate_movements;
 use crate::view::{AsciiDisplay, GameDisplay};
 
-use std::cmp::Ordering;
-use std::collections::BinaryHeap;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use std::cmp::Ordering;
+use std::collections::BinaryHeap;
 
-use super::control::Controller;
+use super::control::{Command, Controller};
 
 struct MinimaxTree {
     movement: Movement,
     game_state: GameState,
     score: f32,
     //parent: Option<MinimaxTree>,
-    children: BinaryHeap<MinimaxTree>
+    children: BinaryHeap<MinimaxTree>,
 }
-
 
 #[derive(Eq, PartialEq)]
 struct MovementScore {
     movement: Movement,
-    score: i32
+    score: i32,
 }
 
 impl PartialOrd for MovementScore {
@@ -38,8 +37,6 @@ impl Ord for MovementScore {
         self.score.cmp(&other.score)
     }
 }
-
-
 
 pub struct MinimaxBot;
 
@@ -55,15 +52,14 @@ impl MinimaxBot {
             game_state2.make_movement(movement.clone());
             AsciiDisplay.display_game(&game_state2);
             let score = evaluate_state(&game_state2, game_state.player_to_move);
-            moves_heap.push(MovementScore{movement, score});
+            moves_heap.push(MovementScore { movement, score });
         }
         return moves_heap.pop().unwrap().movement;
     }
 }
 
 impl Controller for MinimaxBot {
-    fn control(&self, game_state: &mut GameState) {
-        let chosen_move = self.choose_move(game_state);
-        game_state.make_movement(chosen_move.clone());
+    fn choose_command(&self, game_state: &mut GameState) -> super::control::Command {
+        return Command::Move(self.choose_move(game_state));
     }
 }

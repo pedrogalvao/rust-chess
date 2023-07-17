@@ -1,7 +1,7 @@
 use crate::control::control::{Command, Controller};
 use crate::model::{GameState, Piece, PieceType};
 use crate::movement::Movement;
-use crate::rules::is_valid_movement;
+use crate::rules::cmd_validator::is_valid_movement;
 
 use std::io;
 use substring::Substring;
@@ -116,14 +116,14 @@ impl LocalHuman {
 }
 
 impl Controller for LocalHuman {
-    fn control(&self, game_state: &mut GameState) {
+    fn choose_command(&self, game_state: &mut GameState) -> super::control::Command {
         let mut buffer: String = String::new();
         let stdin = io::stdin();
         let _ = stdin.read_line(&mut buffer);
         let Ok(cmd) = self.parse_command(buffer.as_str(), game_state) else {
             println!("Invalid move");
-            return;
+            return self.choose_command(game_state);
         };
-        self.execute_command(game_state, cmd);
+        return cmd;
     }
 }

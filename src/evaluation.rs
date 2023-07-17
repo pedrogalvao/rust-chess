@@ -1,5 +1,4 @@
-use crate::model::{GameState, PieceType, Color};
-
+use crate::model::{Color, GameState, PieceType};
 
 pub fn evaluate_state(game_state: &GameState, player_color: Color) -> i32 {
     let mut score = 0;
@@ -12,7 +11,7 @@ pub fn evaluate_state(game_state: &GameState, player_color: Color) -> i32 {
                     PieceType::Rook => 5,
                     PieceType::Bishop => 3,
                     PieceType::Knight => 3,
-                    PieceType::Pawn => 1
+                    PieceType::Pawn => 1,
                 };
 
                 if piece.color == player_color {

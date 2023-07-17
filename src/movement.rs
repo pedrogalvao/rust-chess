@@ -6,7 +6,6 @@ pub struct Movement {
     pub destination: [usize; 2],
 }
 
-
 impl Movement {
     pub fn get_piece(&self, game_state: &GameState) -> Piece {
         let [x, y] = self.source;
