@@ -93,9 +93,6 @@ impl MinimaxTree {
         // update score
         if let Some(child) = self.children.peek() {
             self.score = -child.score;
-        } else {
-            // TODO: verify draw or check mate
-            self.score = -100;
         }
     }
 

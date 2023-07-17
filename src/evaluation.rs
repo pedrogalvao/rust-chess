@@ -1,7 +1,15 @@
 use crate::model::{Color, GameState, PieceType};
+use crate::rules::game_over::{is_draw, is_in_check_mate};
 
 pub fn evaluate_state(game_state: &GameState, player_color: Color) -> i32 {
     let mut score = 0;
+    if is_draw(game_state) {
+        return 0;
+    } else if is_in_check_mate(game_state, player_color) {
+        return -200;
+    } else if is_in_check_mate(game_state, player_color.get_opponent_color()) {
+        return -200;
+    }
     for x in 0..8 {
         for y in 0..8 {
             if let Some(piece) = game_state.board[x][y] {
