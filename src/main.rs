@@ -7,7 +7,7 @@ mod rules;
 mod view;
 
 use crate::game::Game;
-use crate::view::{AsciiDisplay, GameDisplay, UnicodeDisplay};
+use crate::view::UnicodeDisplay;
 use control::local_human::LocalHuman;
 use control::minimax::MinimaxBot;
 

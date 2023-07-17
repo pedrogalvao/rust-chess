@@ -1,6 +1,6 @@
+use crate::evaluation::evaluate_state;
 use crate::model::GameState;
 use crate::movement::Movement;
-use crate::{evaluation::evaluate_state, movement};
 
 use crate::rules::move_generator::generate_movements;
 
@@ -8,11 +8,9 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
-use std::mem;
 
 use super::control::{Command, Controller};
 
-//#[derive(Clone)]
 struct MinimaxTree {
     movement: Option<Movement>,
     game_state: GameState,
@@ -26,12 +24,6 @@ impl PartialEq for MinimaxTree {
     }
 }
 impl Eq for MinimaxTree {}
-
-#[derive(Eq, PartialEq)]
-struct MovementScore {
-    movement: Movement,
-    score: i32,
-}
 
 impl PartialOrd for MinimaxTree {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
