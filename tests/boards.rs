@@ -42,8 +42,10 @@ pub const TEST_STATE_1: GameState = GameState {
     board: TEST_BOARD_1,
     player_to_move: Color::White,
     last_move: None,
-    can_castle_queen_side: true,
-    can_castle_king_side: true,
+    white_can_castle_queen_side: true,
+    white_can_castle_king_side: true,
+    black_can_castle_king_side: true,
+    black_can_castle_queen_side: true,
 };
 
 const TEST_BOARD_2: Board = [
@@ -88,8 +90,10 @@ pub const TEST_STATE_2: GameState = GameState {
     board: TEST_BOARD_2,
     player_to_move: Color::White,
     last_move: None,
-    can_castle_queen_side: true,
-    can_castle_king_side: true,
+    white_can_castle_queen_side: true,
+    white_can_castle_king_side: true,
+    black_can_castle_king_side: true,
+    black_can_castle_queen_side: true,
 };
 
 const ONE_ROOK_BOARD: Board = [
@@ -119,8 +123,10 @@ pub const ONE_ROOK_STATE: GameState = GameState {
     board: ONE_ROOK_BOARD,
     player_to_move: Color::White,
     last_move: None,
-    can_castle_queen_side: true,
-    can_castle_king_side: true,
+    white_can_castle_queen_side: true,
+    white_can_castle_king_side: true,
+    black_can_castle_king_side: true,
+    black_can_castle_queen_side: true,
 };
 
 const ONE_BISHOP_BOARD: Board = [
@@ -150,8 +156,10 @@ pub const ONE_BISHOP_STATE: GameState = GameState {
     board: ONE_BISHOP_BOARD,
     player_to_move: Color::White,
     last_move: None,
-    can_castle_queen_side: true,
-    can_castle_king_side: true,
+    white_can_castle_queen_side: true,
+    white_can_castle_king_side: true,
+    black_can_castle_king_side: true,
+    black_can_castle_queen_side: true,
 };
 
 const ONE_KING_BOARD: Board = [
@@ -181,6 +189,8 @@ pub const ONE_KING_STATE: GameState = GameState {
     board: ONE_KING_BOARD,
     player_to_move: Color::White,
     last_move: None,
-    can_castle_queen_side: true,
-    can_castle_king_side: true,
+    white_can_castle_queen_side: true,
+    white_can_castle_king_side: true,
+    black_can_castle_king_side: true,
+    black_can_castle_queen_side: true,
 };
