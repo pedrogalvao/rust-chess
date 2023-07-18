@@ -46,11 +46,11 @@ mod tests {
 
     #[test]
     fn random_games2() {
-        let mut game: Game<AsciiDisplay, RandomBot, RandomBot> = Game {
+        let mut game: Game = Game {
             game_state: GameState::new(),
-            game_display: AsciiDisplay,
-            controller1: RandomBot,
-            controller2: RandomBot,
+            game_display: Box::new(AsciiDisplay),
+            controller1: Box::new(RandomBot),
+            controller2: Box::new(RandomBot),
         };
         game.play();
     }
