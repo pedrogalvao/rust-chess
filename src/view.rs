@@ -1,7 +1,7 @@
 use crate::model::{Color, GameState, Piece};
 
 pub trait GameDisplay {
-    fn display_line() {
+    fn display_line(&self) {
         print!("\n  ");
         for _ in 0..8 {
             print!("|---");
@@ -9,7 +9,7 @@ pub trait GameDisplay {
         print!("|\n");
     }
 
-    fn choose_ranges(game_state: &GameState) -> [Vec<usize>; 2] {
+    fn choose_ranges(&self, game_state: &GameState) -> [Vec<usize>; 2] {
         let range1: Vec<usize>;
         if game_state.player_to_move == Color::White {
             range1 = (0..8).rev().collect();
@@ -40,8 +40,8 @@ pub trait GameDisplay {
                 print!("  {} ", c);
             }
         }
-        Self::display_line();
-        let [range1, range2] = Self::choose_ranges(game_state);
+        self.display_line();
+        let [range1, range2] = self.choose_ranges(game_state);
         for i in range1 {
             print!("{} ", 1 + i);
             for j in &range2 {
@@ -53,7 +53,7 @@ pub trait GameDisplay {
                 };
                 print!("| {} ", piece_char);
             }
-            Self::display_line();
+            self.display_line();
         }
     }
     fn piece_to_char(&self, piece: &Piece) -> char;

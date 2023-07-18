@@ -5,18 +5,12 @@ mod model;
 mod movement;
 mod rules;
 mod view;
+mod menu;
 
 use crate::game::Game;
-use crate::view::UnicodeDisplay;
-use control::local_human::LocalHuman;
-use control::minimax::MinimaxBot;
+use menu::menu;
 
 fn main() {
-    let mut game: Game<UnicodeDisplay, LocalHuman, MinimaxBot> = Game {
-        game_state: model::GameState::new(),
-        game_display: UnicodeDisplay,
-        controller1: LocalHuman,
-        controller2: MinimaxBot::new(3),
-    };
+    let mut game: Game = menu();
     game.play();
 }
