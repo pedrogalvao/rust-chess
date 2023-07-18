@@ -8,7 +8,7 @@ pub fn evaluate_state(game_state: &GameState, player_color: Color) -> i32 {
     } else if is_in_check_mate(game_state, player_color) {
         return -200;
     } else if is_in_check_mate(game_state, player_color.get_opponent_color()) {
-        return -200;
+        return 200;
     }
     for x in 0..8 {
         for y in 0..8 {
