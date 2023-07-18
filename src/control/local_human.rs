@@ -49,6 +49,10 @@ impl LocalHuman {
         let piece: Piece;
         let move_str = move_str.replace(&['\n', '\r'][..], "");
 
+        if move_str.len() <= 1 {
+            return Err(());
+        }
+
         // Get the piece type
         if move_str.len() == 3 || move_str.len() == 6 {
             // The player indicated the piece type
