@@ -256,7 +256,10 @@ impl GameState {
     pub fn make_movement(&mut self, movement: Movement) {
         let [x, y] = movement.source;
         let [x2, y2] = movement.destination;
-        if (y != y2 && (x2 == 4 || x2 == 5)) && self.board[x][y].unwrap().piece_type == PieceType::Pawn && self.board[x2][y2] == None {
+        if (y != y2 && (x2 == 4 || x2 == 5))
+            && self.board[x][y].unwrap().piece_type == PieceType::Pawn
+            && self.board[x2][y2] == None
+        {
             // en passant
             self.board[x][y2] = None;
         }
@@ -266,7 +269,7 @@ impl GameState {
                 piece_type: PieceType::Queen,
                 color: self.player_to_move,
             }); // promote the pawn
-        } 
+        }
         self.update_can_castle(&movement);
         self.player_to_move = self.player_to_move.get_opponent_color();
         self.last_move = Some(movement);
