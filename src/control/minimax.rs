@@ -103,7 +103,7 @@ impl MinimaxTree {
                 reordered_children.push(child);
             }
             self.children = reordered_children;
-            self.score = self.children.peek().unwrap().score;
+            self.score = -self.children.peek().unwrap().score;
         }
     }
 }
@@ -144,9 +144,9 @@ impl MinimaxBot {
         for _ in 0..2 {
             self.tree.expand_leaves();
         }
-        // while self.tree.get_depth() < 5 {
-        //     self.tree.expand_leaves();
-        // }
+        while self.tree.get_depth() < 3 {
+            self.tree.expand_leaves();
+        }
         let chosen_child = self.tree.children.pop().unwrap();
         let chosen_movement = chosen_child.movement.clone().unwrap();
         self.tree = chosen_child;
