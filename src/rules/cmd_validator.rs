@@ -98,7 +98,32 @@ fn is_valid_movement_for_pawn(movement: &Movement, game_state: &GameState, piece
                 // diagonal movement
                 return match game_state.board[x][y] {
                     Some(piece2) if piece.color != piece2.color => true, // capture
-                    _ => false,
+                    Some(_) => false, // blocked
+                    None => {
+                        let [x0, _] = movement.source;
+
+                        let en_passant_row = match game_state.player_to_move {
+                            Color::White => 4,
+                            Color::Black => 3
+                        };
+                        let opponent_pawn_row = match game_state.player_to_move {
+                            Color::White => 6,
+                            Color::Black => 1
+                        };
+                        if let Some(last_movement) = &game_state.last_move {
+                            if last_movement.destination[0] == en_passant_row &&
+                                    last_movement.source[0] == opponent_pawn_row &&
+                                    last_movement.destination[0] == x0 &&
+                                    last_movement.destination[1] == y {
+                                if let Some(captured_piece) = game_state.board[x0][y] {
+                                    if captured_piece.piece_type == PieceType::Pawn {
+                                        return true;
+                                    }
+                                };
+                            }
+                        };
+                        return false;
+                    },
                 };
             } else {
                 return false;
