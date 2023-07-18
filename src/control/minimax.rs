@@ -38,11 +38,12 @@ impl Ord for MinimaxTree {
 }
 
 pub struct MinimaxBot {
+    depth: u32,
     tree: MinimaxTree,
 }
 
 impl MinimaxBot {
-    pub fn new() -> Self {
+    pub fn new(depth: u32) -> Self {
         Self {
             tree: MinimaxTree {
                 movement: None,
@@ -50,6 +51,7 @@ impl MinimaxBot {
                 game_state: GameState::new(),
                 children: BinaryHeap::new(),
             },
+            depth
         }
     }
 }
@@ -144,7 +146,7 @@ impl MinimaxBot {
         for _ in 0..2 {
             self.tree.expand_leaves();
         }
-        while self.tree.get_depth() < 3 {
+        while self.tree.get_depth() < self.depth {
             self.tree.expand_leaves();
         }
         let chosen_child = self.tree.children.pop().unwrap();
