@@ -147,7 +147,6 @@ impl MinimaxBot {
         // while self.tree.get_depth() < 5 {
         //     self.tree.expand_leaves();
         // }
-        dbg!(self.tree.get_depth());
         let chosen_child = self.tree.children.pop().unwrap();
         let chosen_movement = chosen_child.movement.clone().unwrap();
         self.tree = chosen_child;

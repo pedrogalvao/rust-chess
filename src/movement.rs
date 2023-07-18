@@ -12,7 +12,8 @@ impl Movement {
         if let Some(piece) = game_state.board[x][y] {
             return piece;
         } else {
-            todo!()
+            // Invalid movement. No piece
+            panic!()
         }
     }
 }
