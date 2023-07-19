@@ -8,9 +8,9 @@ mod rules;
 mod view;
 
 use crate::game::Game;
-use menu::menu;
+use menu::main_menu;
 
 fn main() {
-    let mut game: Game = menu();
+    let mut game: Game = main_menu();
     game.play();
 }

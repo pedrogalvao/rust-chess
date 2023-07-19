@@ -5,7 +5,7 @@ use crate::control::local_human::LocalHuman;
 use crate::control::minimax::MinimaxBot;
 use crate::control::random_bot::RandomBot;
 use crate::game::Game;
-use crate::model::GameState;
+use crate::model::{GameState, load_game_state_from_json};
 use crate::view::UnicodeDisplay;
 
 pub fn read_number() -> u32 {
@@ -58,7 +58,36 @@ fn color_menu() -> u32 {
     }
 }
 
-pub fn menu() -> Game {
+pub fn load_menu() -> GameState {
+    println!(" 1 - Start new game");
+    println!(" 2 - Open saved game");
+    match read_number() {
+        1 => {
+            return GameState::new();
+        },
+        2 => {
+            println!("Type file path:");
+            let mut file_path: String = String::new();
+            let stdin: io::Stdin = io::stdin();
+            let Ok(_) = stdin.read_line(&mut file_path) else {
+                println!("Error");
+                return load_menu();
+            };
+            let Ok(game_state) = load_game_state_from_json(file_path.trim()) else {
+                println!("No such file");
+                return load_menu();
+            };
+            game_state
+        },
+        _ => {
+            println!("Invalid option\n");
+            load_menu()
+        }
+    }
+}
+
+pub fn main_menu() -> Game {
+    let game_state = load_menu();
     let opponent_controller = opponent_menu();
     let [controller1, controller2]: [Box<dyn Controller>; 2] = match color_menu() {
         1 => [Box::new(LocalHuman), opponent_controller],
@@ -66,7 +95,7 @@ pub fn menu() -> Game {
         _ => panic!(), // unreachable
     };
     Game {
-        game_state: GameState::new(),
+        game_state,
         game_display: Box::new(UnicodeDisplay),
         controller1: controller1,
         controller2: controller2,
