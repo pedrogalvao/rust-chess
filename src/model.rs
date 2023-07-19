@@ -1,5 +1,10 @@
 use crate::movement::Movement;
 use std::mem;
+use serde::{Deserialize, Serialize, Serializer, Deserializer};
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
+
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum PieceType {
@@ -71,7 +76,49 @@ impl Piece {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+impl Serialize for Piece {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let piece_char = self.to_ascii();
+        serializer.serialize_str(piece_char.to_string().as_str())
+    }
+}
+
+impl<'de> Deserialize<'de> for Piece {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let piece_str: &str = Deserialize::deserialize(deserializer)?;
+
+        let (piece_type, color) = match piece_str {
+            "K" => (PieceType::King, Color::White),
+            "k" => (PieceType::King, Color::Black),
+            "Q" => (PieceType::Queen, Color::White),
+            "q" => (PieceType::Queen, Color::Black),
+            "R" => (PieceType::Rook, Color::White),
+            "r" => (PieceType::Rook, Color::Black),
+            "B" => (PieceType::Bishop, Color::White),
+            "b" => (PieceType::Bishop, Color::Black),
+            "N" => (PieceType::Knight, Color::White),
+            "n" => (PieceType::Knight, Color::Black),
+            "P" => (PieceType::Pawn, Color::White),
+            "p" => (PieceType::Pawn, Color::Black),
+            _ => {
+                return Err(serde::de::Error::custom("Invalid piece type or color"));
+            }
+        };
+
+        Ok(Piece {
+            piece_type,
+            color,
+        })
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Color {
     White,
     Black,
@@ -94,7 +141,7 @@ pub struct Piece {
 
 pub type Board = [[Option<Piece>; 8]; 8];
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GameState {
     pub board: Board,
     pub player_to_move: Color,
@@ -103,6 +150,23 @@ pub struct GameState {
     pub white_can_castle_king_side: bool,
     pub black_can_castle_queen_side: bool,
     pub black_can_castle_king_side: bool,
+}
+
+
+pub fn write_game_state_to_json(game_state: &GameState, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let file = File::create(file_path)?;
+    serde_json::to_writer_pretty(file, game_state)?;
+    println!("{}", serde_json::to_string_pretty(game_state).unwrap());
+    Ok(())
+}
+
+pub fn load_game_state_from_json(file_path: &str) -> Result<GameState, Box<dyn std::error::Error>> {
+    let path = Path::new(file_path);
+    let mut file = File::open(path)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    let game_state: GameState = serde_json::from_str(&contents)?;
+    Ok(game_state)
 }
 
 const INIT_POSITIONS: Board = [

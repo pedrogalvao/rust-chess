@@ -309,6 +309,7 @@ pub fn last_move_was_check(game_state: &GameState) -> bool {
 pub fn is_valid_cmd(cmd: &Command, game_state: &GameState) -> bool {
     match cmd {
         Command::Resign => true,
+        Command::Save => true,
         Command::Move(movement) => is_valid_movement(&movement, game_state),
         Command::CastleKingSide => king_castle_is_valid(game_state),
         Command::CastleQueenSide => queen_castle_is_valid(game_state),

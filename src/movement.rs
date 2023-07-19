@@ -1,6 +1,7 @@
 use crate::model::{GameState, Piece};
+use serde::{Deserialize, Serialize};
 
-#[derive(Eq, PartialEq, Debug, Clone)]
+#[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Movement {
     pub source: [usize; 2],
     pub destination: [usize; 2],
