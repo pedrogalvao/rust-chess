@@ -1,4 +1,3 @@
-use rust_chess::control::random_bot::RandomBot;
 use rust_chess::game::Game;
 use rust_chess::model::GameState;
 use rust_chess::view::NoDisplay;
@@ -17,8 +16,8 @@ mod test {
         let mut game: Game = Game {
             game_state: GameState::new(),
             game_display: Box::new(NoDisplay),
-            controller1: Box::new(MinimaxBot::new(4)),
-            controller2: Box::new(MinimaxBot::new(4)),
+            controller1: Box::new(MinimaxBot::new(5)),
+            controller2: Box::new(MinimaxBot::new(5)),
         };
         let mut times = vec![];
         let mut n_turns = 0;
@@ -29,10 +28,9 @@ mod test {
             //evaluate_state(&game.game_state, game.game_state.player_to_move);
             n_turns += 1;
         }
-        let total_time : u128 = times.iter().sum();
-        println!("total time: {}", total_time);
-        dbg!(total_time);
-        println!("average time: {}", total_time/n_turns);
-        dbg!(total_time/n_turns);
+        let total_time: u128 = times.iter().sum();
+        println!("Minimax performance");
+        println!("total time: {} ms", total_time);
+        println!("average time: {} ms", total_time / n_turns);
     }
 }

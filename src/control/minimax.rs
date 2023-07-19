@@ -1,8 +1,9 @@
-use crate::evaluation::{evaluate_material, evaluate_game_over};
+use crate::evaluation::{evaluate_game_over, evaluate_material};
 use crate::model::GameState;
 use crate::movement::Movement;
 
-use crate::rules::move_generator::generate_movements;
+use crate::rules::cmd_exec::execute_command;
+use crate::rules::move_generator::generate_commands;
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -12,7 +13,6 @@ use std::collections::BinaryHeap;
 use super::control::{Command, Controller};
 
 struct MinimaxTree {
-    movement: Option<Movement>,
     game_state: GameState,
     score: i32,
     children: BinaryHeap<MinimaxTree>,
@@ -46,12 +46,11 @@ impl MinimaxBot {
     pub fn new(depth: u32) -> Self {
         Self {
             tree: MinimaxTree {
-                movement: None,
                 score: 0,
                 game_state: GameState::new(),
                 children: BinaryHeap::new(),
             },
-            depth
+            depth,
         }
     }
 }
@@ -70,15 +69,14 @@ impl MinimaxTree {
     }
 
     fn expand_node(&mut self) {
-        let mut possible_moves = generate_movements(&self.game_state);
+        let mut possible_commands = generate_commands(&self.game_state);
         let mut rng = thread_rng();
-        possible_moves.shuffle(&mut rng);
-        for movement in possible_moves {
+        possible_commands.shuffle(&mut rng);
+        for command in possible_commands {
             let mut game_state2 = self.game_state.clone();
-            game_state2.make_movement(movement.clone());
+            execute_command(command, &mut game_state2);
             let score = evaluate_material(&game_state2, self.game_state.player_to_move);
             self.children.push(MinimaxTree {
-                movement: Some(movement),
                 score,
                 game_state: game_state2,
                 children: BinaryHeap::new(),
@@ -116,7 +114,6 @@ impl MinimaxBot {
     fn update_tree(&mut self, game_state: &GameState) {
         if self.tree.children.len() == 0 {
             self.tree = MinimaxTree {
-                movement: None,
                 score: evaluate_material(game_state, game_state.player_to_move),
                 game_state: game_state.clone(),
                 children: BinaryHeap::new(),
@@ -134,7 +131,6 @@ impl MinimaxBot {
 
         // movement was not in the tree
         self.tree = MinimaxTree {
-            movement: None,
             score: evaluate_material(game_state, game_state.player_to_move),
             game_state: game_state.clone(),
             children: BinaryHeap::new(),
@@ -152,7 +148,7 @@ impl MinimaxBot {
             self.tree.expand_leaves();
         }
         let chosen_child = self.tree.children.pop().unwrap();
-        let chosen_movement = chosen_child.movement.clone().unwrap();
+        let chosen_movement = chosen_child.game_state.last_move.clone().unwrap();
         self.tree = chosen_child;
         return chosen_movement;
     }

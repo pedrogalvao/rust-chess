@@ -1,13 +1,12 @@
 use crate::model::{Color, GameState, PieceType};
 use crate::rules::game_over::{is_draw, is_in_check_mate};
 
-const KING_VALUE : i32 = 100;
-const QUEEN_VALUE : i32 = 40;
-const KNIGHT_VALUE : i32 = 12;
-const BISHOP_VALUE : i32 = 13;
-const ROOK_VALUE : i32 = 20;
-const PAWN_VALUE : i32 = 4;
-
+const KING_VALUE: i32 = 100;
+const QUEEN_VALUE: i32 = 40;
+const KNIGHT_VALUE: i32 = 12;
+const BISHOP_VALUE: i32 = 13;
+const ROOK_VALUE: i32 = 20;
+const PAWN_VALUE: i32 = 4;
 
 pub fn evaluate_material(game_state: &GameState, player_color: Color) -> i32 {
     let mut score = 0;
@@ -34,11 +33,12 @@ pub fn evaluate_material(game_state: &GameState, player_color: Color) -> i32 {
     return score;
 }
 
+#[allow(dead_code)]
 pub fn evaluate_positions(game_state: &GameState, player_color: Color) -> i32 {
     let mut score = 0;
     let first_row = match player_color {
         Color::White => 0,
-        Color::Black => 7
+        Color::Black => 7,
     };
     for x in 0..8 {
         for y in 0..8 {
@@ -50,7 +50,7 @@ pub fn evaluate_positions(game_state: &GameState, player_color: Color) -> i32 {
                         } else {
                             KING_VALUE - 1
                         }
-                    },
+                    }
                     PieceType::Queen => QUEEN_VALUE,
                     PieceType::Rook => ROOK_VALUE,
                     PieceType::Bishop => {
@@ -59,15 +59,15 @@ pub fn evaluate_positions(game_state: &GameState, player_color: Color) -> i32 {
                         } else {
                             BISHOP_VALUE
                         }
-                    },
+                    }
                     PieceType::Knight => {
                         if x == first_row {
                             KNIGHT_VALUE - 1
                         } else {
                             KNIGHT_VALUE
                         }
-                    },
-                    PieceType::Pawn => PAWN_VALUE // + ((x).abs_diff(first_row) as i32),
+                    }
+                    PieceType::Pawn => PAWN_VALUE, // + ((x).abs_diff(first_row) as i32),
                 };
 
                 if piece.color == player_color {

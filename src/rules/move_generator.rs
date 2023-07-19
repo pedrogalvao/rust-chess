@@ -1,6 +1,9 @@
+use crate::control::control::Command;
 use crate::model::{Color, GameState, Piece, PieceType};
 use crate::movement::Movement;
 use crate::rules::cmd_validator::is_in_check;
+
+use super::cmd_validator::{king_castle_is_valid, queen_castle_is_valid};
 
 fn generate_movements_for_pawn(
     game_state: &GameState,
@@ -299,6 +302,20 @@ pub fn generate_movements_for_player(game_state: &GameState, color: Color) -> Ve
 
 pub fn generate_movements(game_state: &GameState) -> Vec<Movement> {
     generate_movements_for_player(game_state, game_state.player_to_move)
+}
+
+pub fn generate_commands(game_state: &GameState) -> Vec<Command> {
+    let mut commands = vec![];
+    for movement in generate_movements_for_player(game_state, game_state.player_to_move) {
+        commands.push(Command::Move(movement));
+    }
+    if king_castle_is_valid(game_state) {
+        commands.push(Command::CastleKingSide);
+    }
+    if queen_castle_is_valid(game_state) {
+        commands.push(Command::CastleQueenSide);
+    }
+    commands
 }
 
 #[allow(dead_code)]

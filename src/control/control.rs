@@ -1,6 +1,7 @@
 use crate::model::GameState;
 use crate::movement::Movement;
 
+#[derive(Clone)]
 pub enum Command {
     Undo,
     Resign,
