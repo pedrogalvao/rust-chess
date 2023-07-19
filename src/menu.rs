@@ -30,7 +30,7 @@ fn opponent_menu() -> Box<dyn Controller> {
     let controller: Box<dyn Controller> = match read_number() {
         1 => Box::new(LocalHuman),
         2 => Box::new(RandomBot),
-        3 => Box::new(MinimaxBot::new(3)),
+        3 => Box::new(MinimaxBot::new(4)),
         _ => {
             println!("Invalid option\n");
             opponent_menu()

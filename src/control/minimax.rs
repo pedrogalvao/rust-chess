@@ -1,4 +1,4 @@
-use crate::evaluation::evaluate_state;
+use crate::evaluation::{evaluate_material, evaluate_game_over};
 use crate::model::GameState;
 use crate::movement::Movement;
 
@@ -76,7 +76,7 @@ impl MinimaxTree {
         for movement in possible_moves {
             let mut game_state2 = self.game_state.clone();
             game_state2.make_movement(movement.clone());
-            let score = evaluate_state(&game_state2, self.game_state.player_to_move);
+            let score = evaluate_material(&game_state2, self.game_state.player_to_move);
             self.children.push(MinimaxTree {
                 movement: Some(movement),
                 score,
@@ -87,6 +87,8 @@ impl MinimaxTree {
         // update score
         if let Some(child) = self.children.peek() {
             self.score = -child.score;
+        } else {
+            self.score = evaluate_game_over(&self.game_state, self.game_state.player_to_move)
         }
     }
 
@@ -115,7 +117,7 @@ impl MinimaxBot {
         if self.tree.children.len() == 0 {
             self.tree = MinimaxTree {
                 movement: None,
-                score: evaluate_state(game_state, game_state.player_to_move),
+                score: evaluate_material(game_state, game_state.player_to_move),
                 game_state: game_state.clone(),
                 children: BinaryHeap::new(),
             };
@@ -133,7 +135,7 @@ impl MinimaxBot {
         // movement was not in the tree
         self.tree = MinimaxTree {
             movement: None,
-            score: evaluate_state(game_state, game_state.player_to_move),
+            score: evaluate_material(game_state, game_state.player_to_move),
             game_state: game_state.clone(),
             children: BinaryHeap::new(),
         };

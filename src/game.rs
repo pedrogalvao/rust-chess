@@ -13,7 +13,7 @@ pub struct Game {
 }
 
 impl Game {
-    fn player_turn(&mut self) {
+    pub fn player_turn(&mut self) {
         self.game_display.display_game(&self.game_state);
         if self.game_state.player_to_move == Color::White {
             let cmd = self.controller1.choose_command(&mut self.game_state);
