@@ -331,3 +331,32 @@ fn push_if_not_in_check(
         movements.push(movement);
     }
 }
+
+pub fn generate_movements_for_player_ignoring_check(game_state: &GameState, color: Color) -> Vec<Movement> {
+    let mut movements = Vec::new();
+    for x in 0..8 {
+        for y in 0..8 {
+            match game_state.board[x][y] {
+                Some(piece) if piece.color == color => {
+                    movements.extend(generate_movements_for_piece(game_state, x, y, piece));
+                }
+                _ => continue,
+            }
+        }
+    }
+    movements
+}
+
+pub fn generate_commands_ignoring_check(game_state: &GameState) -> Vec<Command> {
+    let mut commands = vec![];
+    for movement in generate_movements_for_player_ignoring_check(game_state, game_state.player_to_move) {
+        commands.push(Command::Move(movement));
+    }
+    if king_castle_is_valid(game_state) {
+        commands.push(Command::CastleKingSide);
+    }
+    if queen_castle_is_valid(game_state) {
+        commands.push(Command::CastleQueenSide);
+    }
+    commands
+}

@@ -3,7 +3,7 @@ use crate::model::GameState;
 use crate::movement::Movement;
 
 use crate::rules::cmd_exec::execute_command;
-use crate::rules::move_generator::generate_commands;
+use crate::rules::move_generator::generate_commands_ignoring_check;
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -69,7 +69,7 @@ impl MinimaxTree {
     }
 
     fn expand_node(&mut self) {
-        let mut possible_commands = generate_commands(&self.game_state);
+        let mut possible_commands = generate_commands_ignoring_check(&self.game_state);
         let mut rng = thread_rng();
         possible_commands.shuffle(&mut rng);
         for command in possible_commands {
