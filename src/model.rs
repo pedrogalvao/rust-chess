@@ -5,7 +5,7 @@ use std::io::Read;
 use std::mem;
 use std::path::Path;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum PieceType {
     King,
     Queen,
@@ -114,7 +114,7 @@ impl<'de> Deserialize<'de> for Piece {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Color {
     White,
     Black,
@@ -129,7 +129,7 @@ impl Color {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Piece {
     pub piece_type: PieceType,
     pub color: Color,
@@ -290,63 +290,73 @@ impl GameState {
     }
 
     fn update_can_castle(&mut self, movement: &Movement) {
+        let Movement::Normal { from: source, to: destination } = movement else {
+            return;
+        };
         if self.player_to_move == Color::White {
             if self.white_can_castle_king_side {
-                if movement.source == [0, 4] || movement.source == [0, 7] {
+                if source == &[0, 4] || source == &[0, 7] {
                     self.white_can_castle_king_side = false
                 }
             }
             if self.white_can_castle_queen_side {
-                if movement.source == [0, 4] || movement.source == [0, 0] {
+                if source == &[0, 4] || source == &[0, 0] {
                     self.white_can_castle_queen_side = false
                 }
             }
-            if movement.destination == [7, 0] {
+            if destination == &[7, 0] {
                 self.black_can_castle_queen_side = false
             }
-            if movement.destination == [7, 7] {
+            if destination == &[7, 7] {
                 self.black_can_castle_king_side = false
             }
         } else {
             if self.black_can_castle_king_side {
-                if movement.source == [7, 4] || movement.source == [7, 7] {
+                if source == &[7, 4] || source == &[7, 7] {
                     self.black_can_castle_king_side = false
                 }
             }
             if self.black_can_castle_queen_side {
-                if movement.source == [7, 4] || movement.source == [7, 0] {
+                if source == &[7, 4] || source == &[7, 0] {
                     self.black_can_castle_queen_side = false
                 }
             }
-            if movement.destination == [0, 0] {
+            if destination == &[0, 0] {
                 self.white_can_castle_queen_side = false
             }
-            if movement.destination == [0, 7] {
+            if destination == &[0, 7] {
                 self.white_can_castle_king_side = false
             }
         }
     }
 
     pub fn make_movement(&mut self, movement: Movement) {
-        let [x, y] = movement.source;
-        let [x2, y2] = movement.destination;
-        if (y != y2 && (x2 == 4 || x2 == 5))
-            && self.board[x][y].unwrap().piece_type == PieceType::Pawn
-            && self.board[x2][y2] == None
-        {
-            // en passant
-            self.board[x][y2] = None;
+        match movement {
+            Movement::Normal{from: source, to: destination} => {
+                let [x, y] = source;
+                let [x2, y2] = destination;
+                if (y != y2 && (x2 == 4 || x2 == 5))
+                    && self.board[x][y].unwrap().piece_type == PieceType::Pawn
+                    && self.board[x2][y2] == None
+                {
+                    // en passant
+                    self.board[x][y2] = None;
+                }
+                self.board[x2][y2] = mem::take(&mut self.board[x][y]);
+                if (x2 == 0 || x2 == 7) && self.board[x2][y2].unwrap().piece_type == PieceType::Pawn {
+                    self.board[x2][y2] = Some(Piece {
+                        piece_type: PieceType::Queen,
+                        color: self.player_to_move,
+                    }); // promote the pawn
+                }
+                self.update_can_castle(&movement);
+                self.player_to_move = self.player_to_move.get_opponent_color();
+                self.last_move = Some(movement);
+            }
+            Movement::CastleKingSide(_) => {self.castle_king_side()},
+            Movement::CastleQueenSide(_) => {self.castle_queen_side()}
+
         }
-        self.board[x2][y2] = mem::take(&mut self.board[x][y]);
-        if (x2 == 0 || x2 == 7) && self.board[x2][y2].unwrap().piece_type == PieceType::Pawn {
-            self.board[x2][y2] = Some(Piece {
-                piece_type: PieceType::Queen,
-                color: self.player_to_move,
-            }); // promote the pawn
-        }
-        self.update_can_castle(&movement);
-        self.player_to_move = self.player_to_move.get_opponent_color();
-        self.last_move = Some(movement);
     }
 
     pub fn castle_king_side(&mut self) {
@@ -372,8 +382,8 @@ impl GameState {
         self.board[king_row][7] = None;
         self.board[king_row][4] = None;
 
+        self.last_move = Some(Movement::CastleKingSide(self.player_to_move));
         self.player_to_move = self.player_to_move.get_opponent_color();
-        self.last_move = None;
     }
 
     pub fn castle_queen_side(&mut self) {
@@ -399,8 +409,8 @@ impl GameState {
         self.board[king_row][0] = None;
         self.board[king_row][4] = None;
 
+        self.last_move = Some(Movement::CastleQueenSide(self.player_to_move));
         self.player_to_move = self.player_to_move.get_opponent_color();
-        self.last_move = None;
     }
 
     pub fn get_positions_of_color(&self, color: Color) -> Vec<[usize; 2]> {

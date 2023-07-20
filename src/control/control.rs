@@ -6,8 +6,6 @@ pub enum Command {
     Undo,
     Resign,
     Save,
-    CastleKingSide,
-    CastleQueenSide,
     Move(Movement),
 }
 

@@ -13,8 +13,8 @@ impl LocalHuman {
             "undo" => Ok(Command::Undo),
             "resign" => Ok(Command::Resign),
             "save" => Ok(Command::Save),
-            "0-0" | "O-O" => Ok(Command::CastleKingSide),
-            "0-0-0" | "O-O-O" => Ok(Command::CastleQueenSide),
+            "0-0" | "O-O" => Ok(Command::Move(Movement::CastleKingSide(game_state.player_to_move))),
+            "0-0-0" | "O-O-O" => Ok(Command::Move(Movement::CastleQueenSide(game_state.player_to_move))),
             _ => match self.parse_movement(cmd_str, game_state) {
                 Err(()) => Err(()),
                 Ok(m) => Ok(Command::Move(m)),
@@ -88,9 +88,9 @@ impl LocalHuman {
                 if source_str.len() == 2 && dest_str.len() == 2 {
                     let Ok(source) = Self::str_to_position(&source_str) else {return Err(());};
                     let Ok(dest) = Self::str_to_position(&dest_str) else {return Err(());};
-                    let movement = Movement {
-                        source: source,
-                        destination: dest,
+                    let movement = Movement::Normal {
+                        from: source,
+                        to: dest,
                     };
                     if is_valid_movement(&movement, &game_state) {
                         return Ok(movement);
@@ -107,10 +107,7 @@ impl LocalHuman {
         return Err(());
     };
         for source in game_state.get_piece_positions(piece) {
-            let movement = Movement {
-                source: source,
-                destination: dest,
-            };
+            let movement = Movement::Normal { from: source, to: dest };
             if is_valid_movement(&movement, &game_state) {
                 return Ok(movement);
             }

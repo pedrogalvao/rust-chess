@@ -11,7 +11,7 @@ fn generate_movements_for_pawn(
     y: usize,
     piece: &Piece,
 ) -> Vec<Movement> {
-    let source = [x, y];
+    let from = [x, y];
     let mut movements = Vec::new();
 
     let forward_offset = if piece.color == Color::White { 1 } else { -1 };
@@ -19,9 +19,9 @@ fn generate_movements_for_pawn(
     // Normal one-step forward move
     let x2 = x as i8 + forward_offset;
     if x2 >= 0 && x2 < 8 && game_state.board[x2 as usize][y] == None {
-        movements.push(Movement {
-            source,
-            destination: [x2 as usize, y],
+        movements.push(Movement::Normal {
+            from,
+            to: [x2 as usize, y],
         });
     }
 
@@ -34,9 +34,9 @@ fn generate_movements_for_pawn(
             && game_state.board[x3 as usize][y] == None
             && game_state.board[x2 as usize][y] == None
         {
-            movements.push(Movement {
-                source,
-                destination: [x3 as usize, y],
+            movements.push(Movement::Normal {
+                from,
+                to: [x3 as usize, y],
             });
         }
     }
@@ -49,9 +49,9 @@ fn generate_movements_for_pawn(
         if x4 >= 0 && x4 < 8 && y4 >= 0 && y4 < 8 {
             if let Some(piece2) = &game_state.board[x4 as usize][y4 as usize] {
                 if piece.color != piece2.color {
-                    movements.push(Movement {
-                        source,
-                        destination: [x4 as usize, y4 as usize],
+                    movements.push(Movement::Normal {
+                        from,
+                        to: [x4 as usize, y4 as usize],
                     });
                 }
             }
@@ -60,44 +60,42 @@ fn generate_movements_for_pawn(
 
     // En passant capture
     let en_passant_row = if piece.color == Color::White { 3 } else { 4 };
-    if x == en_passant_row {
-        let left_y = y as i8 - 1;
-        let right_y = y as i8 + 1;
+    if let Some(Movement::Normal { from: last_from, to: last_to }) = &game_state.last_move {
+        if x == en_passant_row {
+            let left_y = y as i8 - 1;
+            let right_y = y as i8 + 1;
 
-        if left_y >= 0 {
-            if let Some(piece2) = &game_state.board[x as usize][left_y as usize] {
-                if piece.color != piece2.color {
-                    if let Some(last_move) = &game_state.last_move {
-                        if last_move.source == [x, left_y as usize]
-                            && last_move.destination == [x + forward_offset as usize, y]
+            if left_y >= 0 {
+                if let Some(piece2) = &game_state.board[x as usize][left_y as usize] {
+                    if piece.color != piece2.color {
+                        if last_from == &[x, left_y as usize]
+                            && last_to == &[x + forward_offset as usize, y]
                         {
-                            movements.push(Movement {
-                                source,
-                                destination: [x + forward_offset as usize, left_y as usize],
+                            movements.push(Movement::Normal {
+                                from,
+                                to: [x + forward_offset as usize, left_y as usize],
+                            });
+                        }
+                    }
+                }
+            }
+
+            if right_y < 8 {
+                if let Some(piece2) = &game_state.board[x][right_y as usize] {
+                    if piece.color != piece2.color {
+                        if last_from == &[x, right_y as usize]
+                            && last_to == &[x + forward_offset as usize, y]
+                        {
+                            movements.push(Movement::Normal {
+                                from,
+                                to: [x + forward_offset as usize, right_y as usize],
                             });
                         }
                     }
                 }
             }
         }
-
-        if right_y < 8 {
-            if let Some(piece2) = &game_state.board[x][right_y as usize] {
-                if piece.color != piece2.color {
-                    if let Some(last_move) = &game_state.last_move {
-                        if last_move.source == [x, right_y as usize]
-                            && last_move.destination == [x + forward_offset as usize, y]
-                        {
-                            movements.push(Movement {
-                                source,
-                                destination: [x + forward_offset as usize, right_y as usize],
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
+    };
 
     movements
 }
@@ -119,16 +117,16 @@ fn generate_movements_in_one_direction(
     while x2 >= 0 && x2 < 8 && y2 >= 0 && y2 < 8 {
         match game_state.board[x2 as usize][y2 as usize] {
             None => {
-                movements.push(Movement {
-                    source: source,
-                    destination: [x2 as usize, y2 as usize],
+                movements.push(Movement::Normal {
+                    from: source,
+                    to: [x2 as usize, y2 as usize],
                 });
             }
             Some(piece2) => {
                 if piece.color != piece2.color {
-                    movements.push(Movement {
-                        source: source,
-                        destination: [x2 as usize, y2 as usize],
+                    movements.push(Movement::Normal {
+                        from: source,
+                        to: [x2 as usize, y2 as usize],
                     });
                 }
                 break;
@@ -211,17 +209,17 @@ fn generate_movements_for_knight(
 
         if x2 >= 0 && x2 < 8 && y2 >= 0 && y2 < 8 {
             if let None = game_state.board[x2 as usize][y2 as usize] {
-                movements.push(Movement {
-                    source,
-                    destination: [x2 as usize, y2 as usize],
+                movements.push(Movement::Normal {
+                    from: source,
+                    to: [x2 as usize, y2 as usize],
                 });
             } else {
                 // Check if the piece at the destination is of a different color
                 if let Some(piece2) = &game_state.board[x2 as usize][y2 as usize] {
                     if piece.color != piece2.color {
-                        movements.push(Movement {
-                            source,
-                            destination: [x2 as usize, y2 as usize],
+                        movements.push(Movement::Normal {
+                            from: source,
+                            to: [x2 as usize, y2 as usize],
                         });
                     }
                 }
@@ -250,9 +248,9 @@ fn generate_movements_for_king(
                         continue;
                     }
                     _ => {
-                        movements.push(Movement {
-                            source: [x, y],
-                            destination: [x2 as usize, y2 as usize],
+                        movements.push(Movement::Normal {
+                            from: [x, y],
+                            to: [x2 as usize, y2 as usize],
                         });
                     }
                 }
@@ -297,6 +295,12 @@ pub fn generate_movements_for_player(game_state: &GameState, color: Color) -> Ve
             }
         }
     }
+    if king_castle_is_valid(game_state) {
+        movements.push(Movement::CastleKingSide(color));
+    }
+    if queen_castle_is_valid(game_state) {
+        movements.push(Movement::CastleQueenSide(color));
+    }
     movements
 }
 
@@ -308,12 +312,6 @@ pub fn generate_commands(game_state: &GameState) -> Vec<Command> {
     let mut commands = vec![];
     for movement in generate_movements_for_player(game_state, game_state.player_to_move) {
         commands.push(Command::Move(movement));
-    }
-    if king_castle_is_valid(game_state) {
-        commands.push(Command::CastleKingSide);
-    }
-    if queen_castle_is_valid(game_state) {
-        commands.push(Command::CastleQueenSide);
     }
     commands
 }
@@ -347,6 +345,12 @@ pub fn generate_movements_for_player_ignoring_check(
             }
         }
     }
+    if king_castle_is_valid(game_state) {
+        movements.push(Movement::CastleKingSide(color));
+    }
+    if queen_castle_is_valid(game_state) {
+        movements.push(Movement::CastleQueenSide(color));
+    }
     movements
 }
 
@@ -356,12 +360,6 @@ pub fn generate_commands_ignoring_check(game_state: &GameState) -> Vec<Command> 
         generate_movements_for_player_ignoring_check(game_state, game_state.player_to_move)
     {
         commands.push(Command::Move(movement));
-    }
-    if king_castle_is_valid(game_state) {
-        commands.push(Command::CastleKingSide);
-    }
-    if queen_castle_is_valid(game_state) {
-        commands.push(Command::CastleQueenSide);
     }
     commands
 }

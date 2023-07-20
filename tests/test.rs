@@ -139,9 +139,9 @@ mod tests {
             load_game_state_from_json("tests/boards/en_passant_board.json").unwrap();
         assert_eq!(
             is_valid_movement(
-                &Movement {
-                    source: [4, 3],
-                    destination: [5, 4]
+                &Movement::Normal {
+                    from: [4, 3],
+                    to: [5, 4]
                 },
                 &en_passant_state
             ),
@@ -157,13 +157,13 @@ mod tests {
         game_state.board[0][5] = None;
         game_state.board[0][6] = None;
         assert_eq!(king_castle_is_valid(&game_state), true);
-        game_state.make_movement(Movement {
-            source: [0, 4],
-            destination: [0, 5],
+        game_state.make_movement(Movement::Normal {
+            from: [0, 4],
+            to: [0, 5],
         });
-        game_state.make_movement(Movement {
-            source: [0, 5],
-            destination: [0, 4],
+        game_state.make_movement(Movement::Normal {
+            from: [0, 5],
+            to: [0, 4],
         });
         assert_eq!(king_castle_is_valid(&game_state), false);
         game_state.board[7][5] = None;
@@ -175,9 +175,9 @@ mod tests {
         game_state.board[7][2] = None;
         game_state.board[7][3] = None;
         assert_eq!(queen_castle_is_valid(&game_state), true);
-        game_state.make_movement(Movement {
-            source: [0, 0],
-            destination: [7, 0],
+        game_state.make_movement(Movement::Normal {
+            from: [0, 0],
+            to: [7, 0],
         }); // take the rook
         assert_eq!(queen_castle_is_valid(&game_state), false);
         game_state.board[0][1] = None;
