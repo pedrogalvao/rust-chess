@@ -1,4 +1,4 @@
-use crate::model::{Color, GameState, Piece};
+use crate::{model::{Color, GameState, Piece}, rules::game_over::{is_in_check_mate, is_draw}};
 
 pub trait GameDisplay {
     fn display_line(&self) {
@@ -57,6 +57,18 @@ pub trait GameDisplay {
         }
     }
     fn piece_to_char(&self, piece: &Piece) -> char;
+
+    fn display_game_over(&self, game_state: &GameState) {
+        if is_in_check_mate(game_state, game_state.player_to_move) {
+            println!("Check mate!");
+            match game_state.player_to_move {
+                Color::White => println!("Black wins"),
+                Color::Black => println!("White wins"),
+            }
+        } else if is_draw(game_state) {
+            println!("Draw!");
+        }
+    }
 }
 
 pub struct UnicodeDisplay;
@@ -73,12 +85,6 @@ impl GameDisplay for AsciiDisplay {
     }
 }
 
-// impl fmt::Display for GameState {
-//     fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
-//         todo!()
-//     }
-// }
-
 pub struct NoDisplay;
 impl GameDisplay for NoDisplay {
     fn display_game(&self, _game_state: &GameState) {
@@ -86,5 +92,8 @@ impl GameDisplay for NoDisplay {
     }
     fn piece_to_char(&self, _piece: &Piece) -> char {
         return ' ';
+    }
+    fn display_game_over(&self, _game_state: &GameState) {
+        return;    
     }
 }

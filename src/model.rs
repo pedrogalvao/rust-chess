@@ -154,7 +154,6 @@ pub fn write_game_state_to_json(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::create(file_path)?;
     serde_json::to_writer_pretty(file, game_state)?;
-    println!("{}", serde_json::to_string_pretty(game_state).unwrap());
     Ok(())
 }
 

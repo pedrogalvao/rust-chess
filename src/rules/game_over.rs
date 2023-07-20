@@ -49,12 +49,9 @@ pub fn is_draw(game_state: &GameState) -> bool {
 pub fn is_game_over(game_state: &GameState) -> bool {
     if is_in_check(game_state, game_state.player_to_move) {
         if is_in_check_mate(game_state, game_state.player_to_move) {
-            println!("Check mate!");
             return true;
         }
-        println!("Check!");
     } else if is_draw(game_state) {
-        println!("Draw!");
         return true;
     }
     return false;

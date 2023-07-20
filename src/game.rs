@@ -22,7 +22,6 @@ impl Game {
                 let _ = write_game_state_to_json(&self.game_state, "game.json").unwrap();
             }
             Command::Undo => {
-                println!("UNDO");
                 let Some(_) = self.history.pop() else {
                     println!("Invalid command");
                     return;
@@ -40,12 +39,12 @@ impl Game {
     }
 
     pub fn player_turn(&mut self) {
-        self.game_display.display_game(&self.game_state);
         let cmd = self.controllers[self.game_state.player_to_move as usize]
             .choose_command(&mut self.game_state);
         if is_valid_cmd(&cmd, &self.game_state) {
             self.execute_command(cmd);
         }
+        self.game_display.display_game(&self.game_state);
     }
 
     pub fn play(&mut self) {
@@ -53,6 +52,7 @@ impl Game {
         loop {
             self.player_turn();
             if is_game_over(&self.game_state) {
+                self.game_display.display_game_over(&self.game_state);
                 return;
             }
         }
