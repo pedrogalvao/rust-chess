@@ -357,13 +357,3 @@ pub fn generate_movements_for_player_ignoring_check(
     }
     movements
 }
-
-pub fn generate_commands_ignoring_check(game_state: &GameState) -> Vec<Command> {
-    let mut commands = vec![];
-    for movement in
-        generate_movements_for_player_ignoring_check(game_state, game_state.player_to_move)
-    {
-        commands.push(Command::Move(movement));
-    }
-    commands
-}

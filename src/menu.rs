@@ -98,5 +98,6 @@ pub fn main_menu() -> Game {
         game_state,
         game_display: Box::new(UnicodeDisplay),
         controllers,
+        history: vec![],
     }
 }

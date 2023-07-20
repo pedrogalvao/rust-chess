@@ -16,6 +16,7 @@ mod test {
             game_state: GameState::new(),
             game_display: Box::new(NoDisplay),
             controllers: [Box::new(MinimaxBot::new(5)), Box::new(MinimaxBot::new(5))],
+            history: vec![],
         };
         let mut times = vec![];
         let mut n_turns = 0;

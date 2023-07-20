@@ -2,8 +2,7 @@ use crate::evaluation::{evaluate_game_over, evaluate_material};
 use crate::model::GameState;
 use crate::movement::Movement;
 
-use crate::rules::cmd_exec::execute_command;
-use crate::rules::move_generator::generate_commands_ignoring_check;
+use crate::rules::move_generator::generate_movements_for_player_ignoring_check;
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -69,12 +68,15 @@ impl MinimaxTree {
     }
 
     fn expand_node(&mut self) {
-        let mut possible_commands = generate_commands_ignoring_check(&self.game_state);
+        let mut possible_movements = generate_movements_for_player_ignoring_check(
+            &self.game_state,
+            self.game_state.player_to_move,
+        );
         let mut rng = thread_rng();
-        possible_commands.shuffle(&mut rng);
-        for command in possible_commands {
+        possible_movements.shuffle(&mut rng);
+        for movement in possible_movements {
             let mut game_state2 = self.game_state.clone();
-            execute_command(command, &mut game_state2);
+            game_state2.make_movement(movement);
             let score = evaluate_material(&game_state2, self.game_state.player_to_move);
             self.children.push(MinimaxTree {
                 score,

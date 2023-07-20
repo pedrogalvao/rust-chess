@@ -276,6 +276,29 @@ impl GameState {
         }
     }
 
+    pub fn deepclone(&self) -> GameState {
+        GameState {
+            board: self.deepclone_board(),
+            player_to_move: self.player_to_move.clone(),
+            last_move: self.last_move.clone(),
+            white_can_castle_queen_side: self.white_can_castle_queen_side,
+            white_can_castle_king_side: self.white_can_castle_king_side,
+            black_can_castle_queen_side: self.black_can_castle_queen_side,
+            black_can_castle_king_side: self.black_can_castle_king_side,
+        }
+    }
+
+    fn deepclone_board(&self) -> Board {
+        let mut new_board = [[None; 8]; 8];
+
+        for i in 0..8 {
+            for j in 0..8 {
+                new_board[i][j] = self.board[i][j].clone();
+            }
+        }
+        new_board
+    }
+
     pub fn get_piece_positions(&self, piece: Piece) -> Vec<[usize; 2]> {
         let mut results = vec![];
         for i in 0..8 {

@@ -56,6 +56,7 @@ mod tests {
                 game_state: GameState::new(),
                 game_display: Box::new(NoDisplay),
                 controllers: [Box::new(MinimaxBot::new(2)), Box::new(RandomBot)],
+                history: vec![],
             };
             game.play();
             game.game_display.display_game(&game.game_state);
