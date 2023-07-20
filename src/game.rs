@@ -59,7 +59,7 @@ impl Game {
             self.player_turn();
             if is_in_check_mate(&self.game_state, self.game_state.player_to_move) {
                 self.game_display.display_game_over(&self.game_state);
-                return GameResult::Winner(self.game_state.player_to_move);
+                return GameResult::Winner(self.game_state.player_to_move.get_opponent_color());
             } else if is_draw(&self.game_state){
                 self.game_display.display_game_over(&self.game_state);
                 self.game_display.display_game_over(&self.game_state);
