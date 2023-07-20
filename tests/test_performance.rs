@@ -19,7 +19,7 @@ mod test {
         };
         let mut times = vec![];
         let mut n_turns = 0;
-        for _ in 0..3 {
+        for _ in 0..5 {
             let now = Instant::now();
             game.player_turn();
             times.push(now.elapsed().as_millis());
@@ -30,5 +30,6 @@ mod test {
         println!("Minimax performance");
         println!("total time: {} ms", total_time);
         println!("average time: {} ms", total_time / n_turns);
+        assert!(total_time / n_turns < 5000)
     }
 }
