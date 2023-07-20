@@ -7,12 +7,13 @@ use rust_chess::rules::cmd_validator::{is_in_check, is_valid_movement};
 use rust_chess::rules::game_over::{is_draw, is_in_check_mate};
 use rust_chess::rules::move_generator::generate_movements;
 use rust_chess::view::{AsciiDisplay, GameDisplay, NoDisplay};
-mod boards;
-use boards::*;
-use rand::seq::SliceRandom; // 0.7.2
+use rand::seq::SliceRandom;
+use rand::Rng;
 
 #[cfg(test)]
 mod tests {
+    use rust_chess::model::{Piece, PieceType};
+
     use super::*;
 
     #[test]
@@ -58,27 +59,72 @@ mod tests {
 
     #[test]
     fn test_is_in_check() {
-        assert_eq!(is_in_check(&boards::TEST_STATE_1, Color::White), true);
-        assert_eq!(is_in_check(&boards::TEST_STATE_1, Color::Black), false);
-        assert_eq!(is_in_check(&boards::TEST_STATE_2, Color::White), false);
-        assert_eq!(is_in_check(&boards::TEST_STATE_2, Color::Black), false);
+        let mut game_state = GameState::new_empty();
+        let mut rng = rand::thread_rng();
+        let x: usize = rng.gen_range(1, 3);
+        let y: usize = rng.gen_range(1, 3);
+        game_state.board[x][y] = Some(Piece {
+            piece_type: PieceType::King,
+            color: Color::White,
+        });
+        let x2: usize = rng.gen_range(5, 7);
+        let y2: usize = rng.gen_range(5, 7);
+        game_state.board[x2][y2] = Some(Piece {
+            piece_type: PieceType::King,
+            color: Color::Black,
+        });
+        assert_eq!(is_in_check(&game_state, Color::White), false);
+        assert_eq!(is_in_check(&game_state, Color::Black), false);
+        game_state.board[x + 1][y + 1] = Some(Piece {
+            piece_type: PieceType::Queen,
+            color: Color::Black,
+        });
+        assert_eq!(is_in_check(&game_state, Color::White), true);
+        assert_eq!(is_in_check(&game_state, Color::Black), false);
     }
 
     #[test]
     fn test_rook() {
-        let movements: Vec<Movement> = generate_movements(&ONE_ROOK_STATE);
+        let mut one_rook_state = GameState::new_empty();
+        let mut rng = rand::thread_rng();
+        let x: usize = rng.gen_range(0, 7);
+        let y: usize = rng.gen_range(0, 7);
+        one_rook_state.board[x][y] = Some(Piece {
+            piece_type: PieceType::Rook,
+            color: Color::White,
+        });
+        let movements: Vec<Movement> = generate_movements(&one_rook_state);
         assert_eq!(movements.len(), 14);
     }
 
     #[test]
     fn test_bishop() {
-        let movements: Vec<Movement> = generate_movements(&ONE_BISHOP_STATE);
+        let mut one_bishop_state = GameState::new_empty();
+        one_bishop_state.board[1][2] = Some(Piece {
+            piece_type: PieceType::Bishop,
+            color: Color::White,
+        });
+        let movements: Vec<Movement> = generate_movements(&one_bishop_state);
         assert_eq!(movements.len(), 9);
     }
 
     #[test]
     fn test_king() {
-        let movements: Vec<Movement> = generate_movements(&ONE_KING_STATE);
+        let mut one_king_state = GameState::new_empty();
+        let mut rng = rand::thread_rng();
+        let x: usize = rng.gen_range(1, 6);
+        let y: usize = rng.gen_range(1, 6);
+        one_king_state.board[x][y] = Some(Piece {
+            piece_type: PieceType::King,
+            color: Color::White,
+        });
+        let movements: Vec<Movement> = generate_movements(&one_king_state);
         assert_eq!(movements.len(), 8);
+        one_king_state.board[x + 1][y + 1] = Some(Piece {
+            piece_type: PieceType::Queen,
+            color: Color::Black,
+        });
+        let movements2: Vec<Movement> = generate_movements(&one_king_state);
+        assert_eq!(movements2.len(), 3);
     }
 }

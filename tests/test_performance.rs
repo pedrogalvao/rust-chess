@@ -1,7 +1,6 @@
 use rust_chess::game::Game;
 use rust_chess::model::GameState;
 use rust_chess::view::NoDisplay;
-mod boards;
 
 #[cfg(test)]
 mod test {
