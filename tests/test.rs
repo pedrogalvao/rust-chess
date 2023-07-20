@@ -1,3 +1,4 @@
+use rust_chess::control::minimax::MinimaxBot;
 use rust_chess::control::random_bot::RandomBot;
 use rust_chess::game::Game;
 use rust_chess::model::{Color, GameState};
@@ -49,10 +50,10 @@ mod tests {
         let mut game: Game = Game {
             game_state: GameState::new(),
             game_display: Box::new(AsciiDisplay),
-            controller1: Box::new(RandomBot),
-            controller2: Box::new(RandomBot),
+            controllers: [Box::new(MinimaxBot::new(2)), Box::new(RandomBot)],
         };
         game.play();
+        game.game_display.display_game(&game.game_state);
     }
 
     #[test]

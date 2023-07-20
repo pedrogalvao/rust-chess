@@ -5,7 +5,7 @@ use crate::control::local_human::LocalHuman;
 use crate::control::minimax::MinimaxBot;
 use crate::control::random_bot::RandomBot;
 use crate::game::Game;
-use crate::model::{GameState, load_game_state_from_json};
+use crate::model::{load_game_state_from_json, GameState};
 use crate::view::UnicodeDisplay;
 
 pub fn read_number() -> u32 {
@@ -64,7 +64,7 @@ pub fn load_menu() -> GameState {
     match read_number() {
         1 => {
             return GameState::new();
-        },
+        }
         2 => {
             println!("Type file path:");
             let mut file_path: String = String::new();
@@ -78,7 +78,7 @@ pub fn load_menu() -> GameState {
                 return load_menu();
             };
             game_state
-        },
+        }
         _ => {
             println!("Invalid option\n");
             load_menu()
@@ -89,7 +89,7 @@ pub fn load_menu() -> GameState {
 pub fn main_menu() -> Game {
     let game_state = load_menu();
     let opponent_controller = opponent_menu();
-    let [controller1, controller2]: [Box<dyn Controller>; 2] = match color_menu() {
+    let controllers: [Box<dyn Controller>; 2] = match color_menu() {
         1 => [Box::new(LocalHuman), opponent_controller],
         2 => [opponent_controller, Box::new(LocalHuman)],
         _ => panic!(), // unreachable
@@ -97,7 +97,6 @@ pub fn main_menu() -> Game {
     Game {
         game_state,
         game_display: Box::new(UnicodeDisplay),
-        controller1: controller1,
-        controller2: controller2,
+        controllers,
     }
 }

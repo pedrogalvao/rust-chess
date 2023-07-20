@@ -1,5 +1,5 @@
 use crate::control::control::Command;
-use crate::model::{GameState, write_game_state_to_json};
+use crate::model::{write_game_state_to_json, GameState};
 
 pub fn execute_command(cmd: Command, game_state: &mut GameState) {
     match cmd {
@@ -9,7 +9,7 @@ pub fn execute_command(cmd: Command, game_state: &mut GameState) {
         Command::Resign => todo!(),
         Command::Save => {
             let _ = write_game_state_to_json(game_state, "game.json").unwrap();
-        },
+        }
         Command::Undo => todo!(),
     }
 }

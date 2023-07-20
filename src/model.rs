@@ -1,10 +1,9 @@
 use crate::movement::Movement;
-use std::mem;
-use serde::{Deserialize, Serialize, Serializer, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fs::File;
 use std::io::Read;
+use std::mem;
 use std::path::Path;
-
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum PieceType {
@@ -111,10 +110,7 @@ impl<'de> Deserialize<'de> for Piece {
             }
         };
 
-        Ok(Piece {
-            piece_type,
-            color,
-        })
+        Ok(Piece { piece_type, color })
     }
 }
 
@@ -152,8 +148,10 @@ pub struct GameState {
     pub black_can_castle_king_side: bool,
 }
 
-
-pub fn write_game_state_to_json(game_state: &GameState, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn write_game_state_to_json(
+    game_state: &GameState,
+    file_path: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::create(file_path)?;
     serde_json::to_writer_pretty(file, game_state)?;
     println!("{}", serde_json::to_string_pretty(game_state).unwrap());

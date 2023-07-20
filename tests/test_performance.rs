@@ -16,8 +16,7 @@ mod test {
         let mut game: Game = Game {
             game_state: GameState::new(),
             game_display: Box::new(NoDisplay),
-            controller1: Box::new(MinimaxBot::new(5)),
-            controller2: Box::new(MinimaxBot::new(5)),
+            controllers: [Box::new(MinimaxBot::new(5)), Box::new(MinimaxBot::new(5))],
         };
         let mut times = vec![];
         let mut n_turns = 0;
