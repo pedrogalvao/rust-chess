@@ -253,7 +253,7 @@ pub fn is_valid_movement_for_player(
     player_color: Color,
 ) -> bool {
     match movement {
-        Movement::Normal { from, to } => {
+        Movement::Normal { from: _, to: _ } => {
             is_valid_normal_movement_for_player(movement, game_state, player_color)
         }
         Movement::CastleKingSide(_) => king_castle_is_valid(game_state),
@@ -266,7 +266,7 @@ pub fn is_valid_normal_movement_for_player(
     game_state: &GameState,
     player_color: Color,
 ) -> bool {
-    let Movement::Normal { from, to } = movement else {
+    let Movement::Normal { from: _, to } = movement else {
         return false;
     };
     let piece: Piece = movement.get_piece(game_state);
