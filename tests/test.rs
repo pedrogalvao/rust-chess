@@ -14,7 +14,7 @@ use rust_chess::view::{GameDisplay, NoDisplay};
 mod tests {
     use rust_chess::{
         model::{load_game_state_from_json, Piece, PieceType},
-        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid},
+        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid}, game::GameResult,
     };
 
     use super::*;
@@ -51,16 +51,22 @@ mod tests {
 
     #[test]
     fn random_games2() {
-        for _ in 0..5 {
+        const N_GAMES: u8 = 5;
+        let mut n_minimax_victories = 0;
+        for _ in 0..N_GAMES {
             let mut game: Game = Game {
                 game_state: GameState::new(),
                 game_display: Box::new(NoDisplay),
                 controllers: [Box::new(MinimaxBot::new(2)), Box::new(RandomBot)],
                 history: vec![],
             };
-            game.play();
+            let game_result = game.play();
+            if game_result == GameResult::Winner(Color::White) {
+                n_minimax_victories += 1;
+            }
             game.game_display.display_game(&game.game_state);
         }
+        assert!(n_minimax_victories >= N_GAMES/2);
     }
 
     #[test]

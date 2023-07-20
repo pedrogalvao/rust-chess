@@ -1,7 +1,7 @@
 use crate::control::control::{Command, Controller};
-use crate::model::{write_game_state_to_json, GameState};
+use crate::model::{write_game_state_to_json, GameState, Color};
 use crate::rules::cmd_validator::is_valid_cmd;
-use crate::rules::game_over::is_game_over;
+use crate::rules::game_over::{is_in_check_mate, is_draw};
 use crate::view::GameDisplay;
 
 pub struct Game {
@@ -9,6 +9,12 @@ pub struct Game {
     pub game_display: Box<dyn GameDisplay>,
     pub controllers: [Box<dyn Controller>; 2],
     pub history: Vec<GameState>,
+}
+
+#[derive(PartialEq)]
+pub enum GameResult {
+    Winner(Color),
+    Draw
 }
 
 impl Game {
@@ -47,13 +53,17 @@ impl Game {
         self.game_display.display_game(&self.game_state);
     }
 
-    pub fn play(&mut self) {
+    pub fn play(&mut self) -> GameResult {
         self.game_display.display_game(&self.game_state);
         loop {
             self.player_turn();
-            if is_game_over(&self.game_state) {
+            if is_in_check_mate(&self.game_state, self.game_state.player_to_move) {
                 self.game_display.display_game_over(&self.game_state);
-                return;
+                return GameResult::Winner(self.game_state.player_to_move);
+            } else if is_draw(&self.game_state){
+                self.game_display.display_game_over(&self.game_state);
+                self.game_display.display_game_over(&self.game_state);
+                return GameResult::Draw;
             }
         }
     }

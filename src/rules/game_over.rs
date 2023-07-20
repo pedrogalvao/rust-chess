@@ -46,6 +46,7 @@ pub fn is_draw(game_state: &GameState) -> bool {
             || has_insufficient_material(game_state))
 }
 
+#[allow(dead_code)]
 pub fn is_game_over(game_state: &GameState) -> bool {
     if is_in_check(game_state, game_state.player_to_move) {
         if is_in_check_mate(game_state, game_state.player_to_move) {
