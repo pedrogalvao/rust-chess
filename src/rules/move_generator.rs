@@ -60,7 +60,11 @@ fn generate_movements_for_pawn(
 
     // En passant capture
     let en_passant_row = if piece.color == Color::White { 3 } else { 4 };
-    if let Some(Movement::Normal { from: last_from, to: last_to }) = &game_state.last_move {
+    if let Some(Movement::Normal {
+        from: last_from,
+        to: last_to,
+    }) = &game_state.last_move
+    {
         if x == en_passant_row {
             let left_y = y as i8 - 1;
             let right_y = y as i8 + 1;

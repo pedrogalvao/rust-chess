@@ -122,7 +122,11 @@ fn is_valid_movement_for_pawn(movement: &Movement, game_state: &GameState, piece
                             Color::White => 6,
                             Color::Black => 1,
                         };
-                        if let Some(Movement::Normal { from: last_from, to: last_to}) = &game_state.last_move {
+                        if let Some(Movement::Normal {
+                            from: last_from,
+                            to: last_to,
+                        }) = &game_state.last_move
+                        {
                             if last_to[0] == en_passant_row
                                 && last_from[0] == opponent_pawn_row
                                 && last_to[0] == *x0
@@ -150,9 +154,7 @@ fn is_valid_movement_for_pawn(movement: &Movement, game_state: &GameState, piece
                     if dist_x.abs() == 1 {
                         // normal movement
                         return true;
-                    } else if (dist_x == -2 && from[0] == 6)
-                        || (dist_x == 2 && from[0] == 1)
-                    {
+                    } else if (dist_x == -2 && from[0] == 6) || (dist_x == 2 && from[0] == 1) {
                         let x0 = from[0];
                         return match game_state.board[(x + x0) / 2][*y] {
                             Some(_) => false,
@@ -170,8 +172,7 @@ fn is_valid_movement_for_king(movement: &Movement) -> bool {
     let Movement::Normal { from, to } = movement else {
         return false;
     };
-    (to[0] as i8 - from[0] as i8).abs() <= 1
-        && (to[1] as i8 - from[1] as i8).abs() <= 1
+    (to[0] as i8 - from[0] as i8).abs() <= 1 && (to[1] as i8 - from[1] as i8).abs() <= 1
 }
 
 pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
@@ -192,8 +193,16 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
     return game_state.board[king_row][1] == None
         && game_state.board[king_row][2] == None
         && game_state.board[king_row][3] == None
-        && game_state.board[king_row][0] == Some(Piece { piece_type: PieceType::Rook, color: game_state.player_to_move })
-        && game_state.board[king_row][4] == Some(Piece { piece_type: PieceType::King, color: game_state.player_to_move });
+        && game_state.board[king_row][0]
+            == Some(Piece {
+                piece_type: PieceType::Rook,
+                color: game_state.player_to_move,
+            })
+        && game_state.board[king_row][4]
+            == Some(Piece {
+                piece_type: PieceType::King,
+                color: game_state.player_to_move,
+            });
 }
 
 pub fn king_castle_is_valid(game_state: &GameState) -> bool {
@@ -209,9 +218,18 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
         Color::White => 0,
         Color::Black => 7,
     };
-    return game_state.board[king_row][5] == None && game_state.board[king_row][6] == None
-        && game_state.board[king_row][7] == Some(Piece { piece_type: PieceType::Rook, color: game_state.player_to_move })
-        && game_state.board[king_row][4] == Some(Piece { piece_type: PieceType::King, color: game_state.player_to_move });
+    return game_state.board[king_row][5] == None
+        && game_state.board[king_row][6] == None
+        && game_state.board[king_row][7]
+            == Some(Piece {
+                piece_type: PieceType::Rook,
+                color: game_state.player_to_move,
+            })
+        && game_state.board[king_row][4]
+            == Some(Piece {
+                piece_type: PieceType::King,
+                color: game_state.player_to_move,
+            });
 }
 
 fn is_valid_destination(movement: &Movement, game_state: &GameState, piece: &Piece) -> bool {
@@ -234,9 +252,10 @@ pub fn is_valid_movement_for_player(
     game_state: &GameState,
     player_color: Color,
 ) -> bool {
-
     match movement {
-        Movement::Normal { from, to } => is_valid_normal_movement_for_player(movement, game_state, player_color),
+        Movement::Normal { from, to } => {
+            is_valid_normal_movement_for_player(movement, game_state, player_color)
+        }
         Movement::CastleKingSide(_) => king_castle_is_valid(game_state),
         Movement::CastleQueenSide(_) => queen_castle_is_valid(game_state),
     }
@@ -307,7 +326,10 @@ pub fn is_in_check(game_state: &GameState, player_color: Color) -> bool {
 fn square_is_threatened_by(position: [usize; 2], game_state: &GameState, color: Color) -> bool {
     for position2 in game_state.get_positions_of_color(color) {
         if is_valid_movement_for_player(
-            &Movement::Normal { from: position2, to: position } ,
+            &Movement::Normal {
+                from: position2,
+                to: position,
+            },
             game_state,
             color,
         ) {

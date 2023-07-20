@@ -1,11 +1,11 @@
-use crate::model::{GameState, Piece, PieceType, Color};
+use crate::model::{Color, GameState, Piece, PieceType};
 use serde::{Deserialize, Serialize};
 
 #[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum Movement {
     CastleKingSide(Color),
     CastleQueenSide(Color),
-    Normal {from: [usize; 2], to: [usize; 2]},
+    Normal { from: [usize; 2], to: [usize; 2] },
 }
 
 impl Movement {
@@ -21,7 +21,10 @@ impl Movement {
                 }
             }
             Movement::CastleKingSide(color) | Movement::CastleQueenSide(color) => {
-                return Piece {piece_type: PieceType::King, color: *color};
+                return Piece {
+                    piece_type: PieceType::King,
+                    color: *color,
+                };
             }
         }
     }

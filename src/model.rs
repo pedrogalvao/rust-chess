@@ -332,7 +332,10 @@ impl GameState {
 
     pub fn make_movement(&mut self, movement: Movement) {
         match movement {
-            Movement::Normal{from: source, to: destination} => {
+            Movement::Normal {
+                from: source,
+                to: destination,
+            } => {
                 let [x, y] = source;
                 let [x2, y2] = destination;
                 if (y != y2 && (x2 == 4 || x2 == 5))
@@ -343,7 +346,8 @@ impl GameState {
                     self.board[x][y2] = None;
                 }
                 self.board[x2][y2] = mem::take(&mut self.board[x][y]);
-                if (x2 == 0 || x2 == 7) && self.board[x2][y2].unwrap().piece_type == PieceType::Pawn {
+                if (x2 == 0 || x2 == 7) && self.board[x2][y2].unwrap().piece_type == PieceType::Pawn
+                {
                     self.board[x2][y2] = Some(Piece {
                         piece_type: PieceType::Queen,
                         color: self.player_to_move,
@@ -353,9 +357,8 @@ impl GameState {
                 self.player_to_move = self.player_to_move.get_opponent_color();
                 self.last_move = Some(movement);
             }
-            Movement::CastleKingSide(_) => {self.castle_king_side()},
-            Movement::CastleQueenSide(_) => {self.castle_queen_side()}
-
+            Movement::CastleKingSide(_) => self.castle_king_side(),
+            Movement::CastleQueenSide(_) => self.castle_queen_side(),
         }
     }
 
