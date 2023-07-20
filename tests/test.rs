@@ -1,3 +1,5 @@
+use rand::seq::SliceRandom;
+use rand::Rng;
 use rust_chess::control::minimax::MinimaxBot;
 use rust_chess::control::random_bot::RandomBot;
 use rust_chess::game::Game;
@@ -7,12 +9,13 @@ use rust_chess::rules::cmd_validator::{is_in_check, is_valid_movement};
 use rust_chess::rules::game_over::{is_draw, is_in_check_mate};
 use rust_chess::rules::move_generator::generate_movements;
 use rust_chess::view::{AsciiDisplay, GameDisplay, NoDisplay};
-use rand::seq::SliceRandom;
-use rand::Rng;
 
 #[cfg(test)]
 mod tests {
-    use rust_chess::model::{Piece, PieceType};
+    use rust_chess::{
+        model::{load_game_state_from_json, Piece, PieceType},
+        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid},
+    };
 
     use super::*;
 
@@ -126,5 +129,54 @@ mod tests {
         });
         let movements2: Vec<Movement> = generate_movements(&one_king_state);
         assert_eq!(movements2.len(), 3);
+    }
+
+    #[test]
+    fn test_en_passant() {
+        let en_passant_state =
+            load_game_state_from_json("tests/boards/en_passant_board.json").unwrap();
+        assert_eq!(
+            is_valid_movement(
+                &Movement {
+                    source: [4, 3],
+                    destination: [5, 4]
+                },
+                &en_passant_state
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn test_castle() {
+        let mut game_state = GameState::new();
+        assert_eq!(king_castle_is_valid(&game_state), false);
+        assert_eq!(queen_castle_is_valid(&game_state), false);
+        game_state.board[0][5] = None;
+        game_state.board[0][6] = None;
+        assert_eq!(king_castle_is_valid(&game_state), true);
+        game_state.make_movement(Movement {
+            source: [0, 4],
+            destination: [0, 5],
+        });
+        game_state.make_movement(Movement {
+            source: [0, 5],
+            destination: [0, 4],
+        });
+        assert_eq!(king_castle_is_valid(&game_state), false);
+        game_state.board[7][5] = None;
+        game_state.board[7][6] = None;
+        game_state.player_to_move = Color::Black;
+        assert_eq!(king_castle_is_valid(&game_state), true);
+        assert_eq!(queen_castle_is_valid(&game_state), false);
+        game_state.board[7][1] = None;
+        game_state.board[7][2] = None;
+        game_state.board[7][3] = None;
+        assert_eq!(queen_castle_is_valid(&game_state), true);
+        game_state.board[0][1] = None;
+        game_state.board[0][2] = None;
+        game_state.board[0][3] = None;
+        game_state.player_to_move = Color::White;
+        assert_eq!(queen_castle_is_valid(&game_state), false);
     }
 }

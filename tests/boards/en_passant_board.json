@@ -1,0 +1,21 @@
+{
+    "board": [
+      [ "R", "N","B","Q", "K", "B", "N", "R"],
+      [ "P", "P", "P", "P", null, "P", "P", "P"],
+      [ null, null, null, null, null, null, null, null],
+      [ null, null, null, null, "P", null, null, null],
+      [ null, null, null, "P", "p", null, null, null],
+      [ null, null, null, "p", null, null, null, null],
+      [ "p", "p", "p", null, null, "p", "p", "p"],
+      [ "r", "n", "b", "q", "k", "b", "n", "r"]
+    ],
+    "player_to_move": "White",
+    "last_move": {
+      "source": [6, 4],
+      "destination": [4, 4]
+    },
+    "white_can_castle_queen_side": true,
+    "white_can_castle_king_side": true,
+    "black_can_castle_queen_side": true,
+    "black_can_castle_king_side": true
+}
