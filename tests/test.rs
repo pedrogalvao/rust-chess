@@ -51,13 +51,15 @@ mod tests {
 
     #[test]
     fn random_games2() {
-        let mut game: Game = Game {
-            game_state: GameState::new(),
-            game_display: Box::new(AsciiDisplay),
-            controllers: [Box::new(MinimaxBot::new(2)), Box::new(RandomBot)],
-        };
-        game.play();
-        game.game_display.display_game(&game.game_state);
+        for _ in 0..5 {
+            let mut game: Game = Game {
+                game_state: GameState::new(),
+                game_display: Box::new(NoDisplay),
+                controllers: [Box::new(MinimaxBot::new(2)), Box::new(RandomBot)],
+            };
+            game.play();
+            game.game_display.display_game(&game.game_state);
+        }
     }
 
     #[test]
@@ -173,6 +175,11 @@ mod tests {
         game_state.board[7][2] = None;
         game_state.board[7][3] = None;
         assert_eq!(queen_castle_is_valid(&game_state), true);
+        game_state.make_movement(Movement {
+            source: [0, 0],
+            destination: [7, 0],
+        }); // take the rook
+        assert_eq!(queen_castle_is_valid(&game_state), false);
         game_state.board[0][1] = None;
         game_state.board[0][2] = None;
         game_state.board[0][3] = None;

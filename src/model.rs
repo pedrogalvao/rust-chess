@@ -301,6 +301,12 @@ impl GameState {
                     self.white_can_castle_queen_side = false
                 }
             }
+            if movement.destination == [7, 0] {
+                self.black_can_castle_queen_side = false
+            }
+            if movement.destination == [7, 7] {
+                self.black_can_castle_king_side = false
+            }
         } else {
             if self.black_can_castle_king_side {
                 if movement.source == [7, 4] || movement.source == [7, 7] {
@@ -311,6 +317,12 @@ impl GameState {
                 if movement.source == [7, 4] || movement.source == [7, 0] {
                     self.black_can_castle_queen_side = false
                 }
+            }
+            if movement.destination == [0, 0] {
+                self.white_can_castle_queen_side = false
+            }
+            if movement.destination == [0, 7] {
+                self.white_can_castle_king_side = false
             }
         }
     }
