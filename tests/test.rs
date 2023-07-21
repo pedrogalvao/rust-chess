@@ -14,7 +14,7 @@ use rust_chess::view::{GameDisplay, NoDisplay};
 mod tests {
     use rust_chess::{
         model::{load_game_state_from_json, Piece, PieceType},
-        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid}, game::GameResult,
+        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid}, game::GameResult, view::AsciiDisplay,
     };
 
     use super::*;
@@ -50,23 +50,38 @@ mod tests {
     }
 
     #[test]
-    fn random_games2() {
-        const N_GAMES: u8 = 5;
+    fn minimax_vs_random() {
+        const N_GAMES: u32 = 100;
         let mut n_minimax_victories = 0;
+        let mut n_draws = 0;
+        let mut n_defeats = 0;
         for _ in 0..N_GAMES {
             let mut game: Game = Game {
                 game_state: GameState::new(),
                 game_display: Box::new(NoDisplay),
-                controllers: [Box::new(MinimaxBot::new(2)), Box::new(RandomBot)],
+                controllers: [Box::new(MinimaxBot::new(3)), Box::new(RandomBot)],
                 history: vec![],
             };
             let game_result = game.play();
-            if game_result == GameResult::Winner(Color::White) {
-                n_minimax_victories += 1;
+            match game_result {
+                GameResult::Winner(Color::White) => {
+                    n_minimax_victories += 1;
+                },
+                GameResult::Draw => {
+                    n_draws += 1;
+                }
+                GameResult::Winner(Color::Black) => {
+                    println!("Defeat:");
+                    AsciiDisplay.display_game(&game.game_state);
+                    n_defeats += 1;
+                }
             }
-            game.game_display.display_game(&game.game_state);
         }
-        assert!(n_minimax_victories >= N_GAMES/2);
+        dbg!(n_minimax_victories);
+        dbg!(n_draws);
+        dbg!(n_defeats);
+        assert_eq!(n_defeats, 0);
+        assert!(n_minimax_victories > N_GAMES - 2);
     }
 
     #[test]

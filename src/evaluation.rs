@@ -1,12 +1,14 @@
 use crate::model::{Color, GameState, PieceType};
 use crate::rules::game_over::{is_draw, is_in_check_mate};
+use crate::view::{AsciiDisplay, GameDisplay};
 
-const KING_VALUE: i32 = 100;
+pub const KING_VALUE: i32 = 1000;
 const QUEEN_VALUE: i32 = 40;
 const KNIGHT_VALUE: i32 = 12;
 const BISHOP_VALUE: i32 = 13;
 const ROOK_VALUE: i32 = 20;
 const PAWN_VALUE: i32 = 4;
+const CHECK_MATE_VALUE: i32 = 20000;
 
 pub fn evaluate_material(game_state: &GameState, player_color: Color) -> i32 {
     let mut score = 0;
@@ -85,10 +87,12 @@ pub fn evaluate_game_over(game_state: &GameState, player_color: Color) -> i32 {
     if is_draw(game_state) {
         0
     } else if is_in_check_mate(game_state, player_color) {
-        200
+        -CHECK_MATE_VALUE
     } else if is_in_check_mate(game_state, player_color.get_opponent_color()) {
-        200
+        CHECK_MATE_VALUE
     } else {
-        0
+        println!("evaluate_game_over called for unfinished game");
+        AsciiDisplay.display_game(game_state);
+        panic!();
     }
 }

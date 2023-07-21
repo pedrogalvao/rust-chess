@@ -1,8 +1,9 @@
 use crate::evaluation::{evaluate_game_over, evaluate_material};
-use crate::model::GameState;
+use crate::model::{GameState, PieceType};
 use crate::movement::Movement;
 
 use crate::rules::move_generator::generate_movements_for_player_ignoring_check;
+use crate::view::{AsciiDisplay, GameDisplay};
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -67,7 +68,7 @@ impl MinimaxTree {
         }
     }
 
-    fn expand_node(&mut self) {
+    fn expand_node(&mut self) -> Result<(), ()> {
         let mut possible_movements = generate_movements_for_player_ignoring_check(
             &self.game_state,
             self.game_state.player_to_move,
@@ -78,11 +79,28 @@ impl MinimaxTree {
             let mut game_state2 = self.game_state.clone();
             game_state2.make_movement(movement);
             let score = evaluate_material(&game_state2, self.game_state.player_to_move);
-            self.children.push(MinimaxTree {
-                score,
-                game_state: game_state2,
-                children: BinaryHeap::new(),
-            });
+            if let Some(Movement::Normal { from: _, to: [x, y] }) = game_state2.last_move {
+                match self.game_state.board[x][y] {
+                    Some(piece) if piece.piece_type == PieceType::King => {
+                        // Captured the king
+                        return Err(());
+                    }
+                    _ => {
+                        self.children.push(MinimaxTree {
+                            score,
+                            game_state: game_state2,
+                            children: BinaryHeap::new(),
+                        });
+                    }
+                }
+            } else {
+                // castling movements
+                self.children.push(MinimaxTree {
+                    score,
+                    game_state: game_state2,
+                    children: BinaryHeap::new(),
+                });
+            }
         }
         // update score
         if let Some(child) = self.children.peek() {
@@ -90,24 +108,36 @@ impl MinimaxTree {
         } else {
             self.score = evaluate_game_over(&self.game_state, self.game_state.player_to_move)
         }
+        return Ok(());
     }
 
-    fn expand_leaves(&mut self) {
+    fn expand_leaves(&mut self) -> Result<(), ()> {
         if self.children.len() == 0 {
-            self.expand_node();
+            return self.expand_node();
         } else {
             let mut reordered_children = BinaryHeap::new();
-            let limit = 25;
-            let mut i = 0;
             while let Some(mut child) = self.children.pop() {
-                if i < limit {
-                    child.expand_leaves();
-                    i += 1;
+                match child.expand_leaves() {
+                    Ok(()) => {
+                        if child.children.len() == 0 {
+                            child.score = -evaluate_game_over(&child.game_state, child.game_state.player_to_move);
+                        }
+                        reordered_children.push(child);
+                    },
+                    Err(()) => {
+                        // invalid child node
+                        continue;
+                    }
                 }
-                reordered_children.push(child);
             }
             self.children = reordered_children;
-            self.score = -self.children.peek().unwrap().score;
+            // update score
+            if let Some(child) = self.children.peek() {
+                self.score = -child.score;
+            } else {
+                self.score = evaluate_game_over(&self.game_state, self.game_state.player_to_move);
+            }
+            return Ok(());
         }
     }
 }
@@ -130,7 +160,9 @@ impl MinimaxBot {
                 return;
             }
         }
-
+        AsciiDisplay.display_game(game_state);
+        dbg!(&game_state.last_move);
+        println!("Unexpected movement");
         // movement was not in the tree
         self.tree = MinimaxTree {
             score: evaluate_material(game_state, game_state.player_to_move),
@@ -144,10 +176,22 @@ impl MinimaxBot {
             self.update_tree(game_state);
         }
         for _ in 0..2 {
-            self.tree.expand_leaves();
+            match self.tree.expand_leaves() {
+                Ok(_) => {},
+                Err(_) => {
+                    println!("Invalid state:");
+                    AsciiDisplay.display_game(game_state);
+                }
+            };
         }
         while self.tree.get_depth() < self.depth {
-            self.tree.expand_leaves();
+            match self.tree.expand_leaves() {
+                Ok(_) => {},
+                Err(_) => {
+                    println!("Invalid state:");
+                    AsciiDisplay.display_game(game_state);
+                }
+            };
         }
         let chosen_child = self.tree.children.pop().unwrap();
         let chosen_movement = chosen_child.game_state.last_move.clone().unwrap();
