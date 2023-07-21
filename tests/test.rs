@@ -13,8 +13,10 @@ use rust_chess::view::{GameDisplay, NoDisplay};
 #[cfg(test)]
 mod tests {
     use rust_chess::{
+        game::GameResult,
         model::{load_game_state_from_json, Piece, PieceType},
-        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid}, game::GameResult, view::AsciiDisplay,
+        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid},
+        view::AsciiDisplay,
     };
 
     use super::*;
@@ -66,7 +68,7 @@ mod tests {
             match game_result {
                 GameResult::Winner(Color::White) => {
                     n_minimax_victories += 1;
-                },
+                }
                 GameResult::Draw => {
                     n_draws += 1;
                 }

@@ -1,4 +1,7 @@
-use crate::{model::{Color, GameState, Piece}, rules::game_over::{is_in_check_mate, is_draw}};
+use crate::{
+    model::{Color, GameState, Piece},
+    rules::game_over::{is_draw, is_in_check_mate},
+};
 
 pub trait GameDisplay {
     fn display_line(&self) {
@@ -94,6 +97,6 @@ impl GameDisplay for NoDisplay {
         return ' ';
     }
     fn display_game_over(&self, _game_state: &GameState) {
-        return;    
+        return;
     }
 }

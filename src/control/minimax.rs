@@ -79,7 +79,11 @@ impl MinimaxTree {
             let mut game_state2 = self.game_state.clone();
             game_state2.make_movement(movement);
             let score = evaluate_material(&game_state2, self.game_state.player_to_move);
-            if let Some(Movement::Normal { from: _, to: [x, y] }) = game_state2.last_move {
+            if let Some(Movement::Normal {
+                from: _,
+                to: [x, y],
+            }) = game_state2.last_move
+            {
                 match self.game_state.board[x][y] {
                     Some(piece) if piece.piece_type == PieceType::King => {
                         // Captured the king
@@ -120,10 +124,13 @@ impl MinimaxTree {
                 match child.expand_leaves() {
                     Ok(()) => {
                         if child.children.len() == 0 {
-                            child.score = -evaluate_game_over(&child.game_state, child.game_state.player_to_move);
+                            child.score = -evaluate_game_over(
+                                &child.game_state,
+                                child.game_state.player_to_move,
+                            );
                         }
                         reordered_children.push(child);
-                    },
+                    }
                     Err(()) => {
                         // invalid child node
                         continue;
@@ -177,7 +184,7 @@ impl MinimaxBot {
         }
         for _ in 0..2 {
             match self.tree.expand_leaves() {
-                Ok(_) => {},
+                Ok(_) => {}
                 Err(_) => {
                     println!("Invalid state:");
                     AsciiDisplay.display_game(game_state);
@@ -186,7 +193,7 @@ impl MinimaxBot {
         }
         while self.tree.get_depth() < self.depth {
             match self.tree.expand_leaves() {
-                Ok(_) => {},
+                Ok(_) => {}
                 Err(_) => {
                     println!("Invalid state:");
                     AsciiDisplay.display_game(game_state);

@@ -1,7 +1,7 @@
 use crate::control::control::{Command, Controller};
-use crate::model::{write_game_state_to_json, GameState, Color};
+use crate::model::{write_game_state_to_json, Color, GameState};
 use crate::rules::cmd_validator::is_valid_cmd;
-use crate::rules::game_over::{is_in_check_mate, is_draw};
+use crate::rules::game_over::{is_draw, is_in_check_mate};
 use crate::view::GameDisplay;
 
 pub struct Game {
@@ -14,7 +14,7 @@ pub struct Game {
 #[derive(PartialEq)]
 pub enum GameResult {
     Winner(Color),
-    Draw
+    Draw,
 }
 
 impl Game {
@@ -60,7 +60,7 @@ impl Game {
             if is_in_check_mate(&self.game_state, self.game_state.player_to_move) {
                 self.game_display.display_game_over(&self.game_state);
                 return GameResult::Winner(self.game_state.player_to_move.get_opponent_color());
-            } else if is_draw(&self.game_state){
+            } else if is_draw(&self.game_state) {
                 self.game_display.display_game_over(&self.game_state);
                 self.game_display.display_game_over(&self.game_state);
                 return GameResult::Draw;
