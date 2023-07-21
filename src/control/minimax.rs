@@ -109,9 +109,7 @@ impl MinimaxTree {
         // update score
         if let Some(child) = self.children.peek() {
             self.score = -child.score;
-        } else {
-            self.score = evaluate_game_over(&self.game_state, self.game_state.player_to_move)
-        }
+        } 
         return Ok(());
     }
 
@@ -141,8 +139,6 @@ impl MinimaxTree {
             // update score
             if let Some(child) = self.children.peek() {
                 self.score = -child.score;
-            } else {
-                self.score = evaluate_game_over(&self.game_state, self.game_state.player_to_move);
             }
             return Ok(());
         }
