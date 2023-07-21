@@ -113,16 +113,15 @@ impl MinimaxTree {
         return Ok(());
     }
 
-    fn expand_leaves(&mut self) -> Result<(), ()> {
+    fn expand_leaves(&mut self, branch_limit: u32) -> Result<(), ()> {
         if self.children.len() == 0 {
             return self.expand_node();
         } else {
             let mut reordered_children = BinaryHeap::new();
-            const BRANCH_LIMIT: i32 = 25;
             let mut branch_count = 0;
             while let Some(mut child) = self.children.pop() {
-                if branch_count < BRANCH_LIMIT {
-                    match child.expand_leaves() {
+                if branch_count < branch_limit {
+                    match child.expand_leaves(25) {
                         Ok(()) => {
                             if child.children.len() == 0 {
                                 child.score = -evaluate_game_over(
@@ -186,7 +185,7 @@ impl MinimaxBot {
             self.update_tree(game_state);
         }
         for _ in 0..2 {
-            match self.tree.expand_leaves() {
+            match self.tree.expand_leaves(255) {
                 Ok(_) => {}
                 Err(_) => {
                     println!("Invalid state:");
@@ -195,7 +194,7 @@ impl MinimaxBot {
             };
         }
         while self.tree.get_depth() < self.depth {
-            match self.tree.expand_leaves() {
+            match self.tree.expand_leaves(25) {
                 Ok(_) => {}
                 Err(_) => {
                     println!("Invalid state:");
