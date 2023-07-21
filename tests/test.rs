@@ -9,6 +9,7 @@ use rust_chess::rules::cmd_validator::{is_in_check, is_valid_movement};
 use rust_chess::rules::game_over::{is_draw, is_in_check_mate};
 use rust_chess::rules::move_generator::generate_movements;
 use rust_chess::view::{GameDisplay, NoDisplay};
+use std::thread;
 
 #[cfg(test)]
 mod tests {
@@ -57,15 +58,22 @@ mod tests {
         let mut n_minimax_victories = 0;
         let mut n_draws = 0;
         let mut n_defeats = 0;
+        let mut thread_join_handles = vec![];
         for _ in 0..N_GAMES {
-            let mut game: Game = Game {
-                game_state: GameState::new(),
-                game_display: Box::new(NoDisplay),
-                controllers: [Box::new(MinimaxBot::new(3)), Box::new(RandomBot)],
-                history: vec![],
-            };
-            let game_result = game.play();
-            match game_result {
+            let thread_join_handle = thread::spawn(move || {
+                let mut game: Game = Game {
+                    game_state: GameState::new(),
+                    game_display: Box::new(NoDisplay),
+                    controllers: [Box::new(MinimaxBot::new(3)), Box::new(RandomBot)],
+                    history: vec![],
+                };
+                return game.play();
+            });
+            thread_join_handles.push(thread_join_handle);
+        }
+        for thread_join_handle in thread_join_handles {
+            let received = thread_join_handle.join().unwrap();
+            match received {
                 GameResult::Winner(Color::White) => {
                     n_minimax_victories += 1;
                 }
@@ -73,8 +81,8 @@ mod tests {
                     n_draws += 1;
                 }
                 GameResult::Winner(Color::Black) => {
-                    println!("Defeat:");
-                    AsciiDisplay.display_game(&game.game_state);
+                    // println!("Defeat:");
+                    // AsciiDisplay.display_game(&game.game_state);
                     n_defeats += 1;
                 }
             }
