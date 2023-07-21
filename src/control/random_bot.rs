@@ -4,6 +4,7 @@ use crate::model::GameState;
 use crate::rules::move_generator::generate_commands;
 use rand::seq::SliceRandom;
 
+#[derive(Clone)]
 pub struct RandomBot;
 
 impl Controller for RandomBot {

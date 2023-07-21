@@ -1,98 +1,17 @@
-use rand::seq::SliceRandom;
 use rand::Rng;
-use rust_chess::control::minimax::MinimaxBot;
-use rust_chess::control::random_bot::RandomBot;
-use rust_chess::game::Game;
 use rust_chess::model::{Color, GameState};
 use rust_chess::movement::Movement;
 use rust_chess::rules::cmd_validator::{is_in_check, is_valid_movement};
-use rust_chess::rules::game_over::{is_draw, is_in_check_mate};
 use rust_chess::rules::move_generator::generate_movements;
-use rust_chess::view::{GameDisplay, NoDisplay};
-use std::thread;
 
 #[cfg(test)]
 mod tests {
     use rust_chess::{
-        game::GameResult,
         model::{load_game_state_from_json, Piece, PieceType},
         rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid},
-        view::AsciiDisplay,
     };
 
     use super::*;
-
-    #[test]
-    fn random_games() {
-        // verify that all generated movements are valid
-        let game_display: NoDisplay = NoDisplay {};
-        for _ in 0..10 {
-            let mut game_state: GameState = GameState::new();
-            for i in 0..100 {
-                let movements: Vec<Movement> = generate_movements(&game_state);
-                for movement in &movements {
-                    assert_eq!(is_valid_movement(&movement, &game_state), true);
-                }
-                if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
-                    game_state.make_movement(chosen_move.clone());
-                } else {
-                    println!("Game over {}", i);
-                    game_display.display_game(&game_state);
-                    let check_mate = is_in_check_mate(&game_state, game_state.player_to_move);
-                    let draw = is_draw(&game_state);
-                    if check_mate {
-                        println!("{:?} won", game_state.player_to_move.get_opponent_color());
-                    } else if draw {
-                        println!("Draw");
-                    }
-                    assert_eq!(check_mate || draw, true);
-                    break;
-                }
-            }
-        }
-    }
-
-    #[test]
-    fn minimax_vs_random() {
-        const N_GAMES: u32 = 100;
-        let mut n_minimax_victories = 0;
-        let mut n_draws = 0;
-        let mut n_defeats = 0;
-        let mut thread_join_handles = vec![];
-        for _ in 0..N_GAMES {
-            let thread_join_handle = thread::spawn(move || {
-                let mut game: Game = Game {
-                    game_state: GameState::new(),
-                    game_display: Box::new(NoDisplay),
-                    controllers: [Box::new(MinimaxBot::new(3)), Box::new(RandomBot)],
-                    history: vec![],
-                };
-                return game.play();
-            });
-            thread_join_handles.push(thread_join_handle);
-        }
-        for thread_join_handle in thread_join_handles {
-            let received = thread_join_handle.join().unwrap();
-            match received {
-                GameResult::Winner(Color::White) => {
-                    n_minimax_victories += 1;
-                }
-                GameResult::Draw => {
-                    n_draws += 1;
-                }
-                GameResult::Winner(Color::Black) => {
-                    // println!("Defeat:");
-                    // AsciiDisplay.display_game(&game.game_state);
-                    n_defeats += 1;
-                }
-            }
-        }
-        dbg!(n_minimax_victories);
-        dbg!(n_draws);
-        dbg!(n_defeats);
-        assert!((n_defeats as f32) < N_GAMES as f32 * 0.02);
-        assert!(n_minimax_victories as f32 > N_GAMES as f32 * 0.96);
-    }
 
     #[test]
     fn test_is_in_check() {

@@ -12,6 +12,7 @@ use std::collections::BinaryHeap;
 
 use super::control::{Command, Controller};
 
+#[derive(Clone)]
 struct MinimaxTree {
     game_state: GameState,
     score: i32,
@@ -37,6 +38,7 @@ impl Ord for MinimaxTree {
     }
 }
 
+#[derive(Clone)]
 pub struct MinimaxBot {
     depth: u32,
     tree: MinimaxTree,
