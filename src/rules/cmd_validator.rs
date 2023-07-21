@@ -202,8 +202,8 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
             == Some(Piece {
                 piece_type: PieceType::King,
                 color: game_state.player_to_move,
-            }) {
-            
+            })
+    {
         let mut game_state2 = game_state.clone();
         game_state2.make_movement(Movement::CastleQueenSide(game_state.player_to_move));
         if is_in_check(&game_state2, game_state.player_to_move) {
@@ -238,7 +238,8 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
             == Some(Piece {
                 piece_type: PieceType::King,
                 color: game_state.player_to_move,
-            }) {
+            })
+    {
         let mut game_state2 = game_state.clone();
         game_state2.make_movement(Movement::CastleKingSide(game_state.player_to_move));
         if is_in_check(&game_state2, game_state.player_to_move) {

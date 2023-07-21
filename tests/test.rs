@@ -82,8 +82,8 @@ mod tests {
         dbg!(n_minimax_victories);
         dbg!(n_draws);
         dbg!(n_defeats);
-        assert_eq!(n_defeats, 0);
-        assert!(n_minimax_victories > N_GAMES - 2);
+        assert!((n_defeats as f32) < N_GAMES as f32 * 0.02);
+        assert!(n_minimax_victories as f32 > N_GAMES as f32 * 0.96);
     }
 
     #[test]

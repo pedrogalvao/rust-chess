@@ -109,7 +109,7 @@ impl MinimaxTree {
         // update score
         if let Some(child) = self.children.peek() {
             self.score = -child.score;
-        } 
+        }
         return Ok(());
     }
 
@@ -118,21 +118,28 @@ impl MinimaxTree {
             return self.expand_node();
         } else {
             let mut reordered_children = BinaryHeap::new();
+            const BRANCH_LIMIT: i32 = 25;
+            let mut branch_count = 0;
             while let Some(mut child) = self.children.pop() {
-                match child.expand_leaves() {
-                    Ok(()) => {
-                        if child.children.len() == 0 {
-                            child.score = -evaluate_game_over(
-                                &child.game_state,
-                                child.game_state.player_to_move,
-                            );
+                if branch_count < BRANCH_LIMIT {
+                    match child.expand_leaves() {
+                        Ok(()) => {
+                            if child.children.len() == 0 {
+                                child.score = -evaluate_game_over(
+                                    &child.game_state,
+                                    child.game_state.player_to_move,
+                                );
+                            }
+                            reordered_children.push(child);
                         }
-                        reordered_children.push(child);
+                        Err(()) => {
+                            // invalid child node
+                            continue;
+                        }
                     }
-                    Err(()) => {
-                        // invalid child node
-                        continue;
-                    }
+                    branch_count += 1;
+                } else {
+                    reordered_children.push(child);
                 }
             }
             self.children = reordered_children;
