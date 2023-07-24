@@ -12,12 +12,12 @@ mod test {
 
     #[test]
     fn test_minimax_time() {
-        let mut game: Game = Game {
-            game_state: GameState::new(),
-            game_display: Box::new(NoDisplay),
-            controllers: [Box::new(MinimaxBot::new(5)), Box::new(MinimaxBot::new(5))],
-            history: vec![],
-        };
+        let mut game: Game = Game::new(
+            GameState::new(),
+            Box::new(NoDisplay),
+            [Box::new(MinimaxBot::new(5)), Box::new(MinimaxBot::new(5))],
+        );
+
         let mut times = vec![];
         let mut n_turns = 0;
         for _ in 0..5 {

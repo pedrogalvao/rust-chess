@@ -1,5 +1,6 @@
 use crate::control::control::{Command, Controller};
 use crate::model::{write_game_state_to_json, Color, GameState};
+use crate::movement::Movement;
 use crate::rules::cmd_validator::is_valid_cmd;
 use crate::rules::game_over::{is_draw, is_in_check_mate};
 use crate::view::GameDisplay;
@@ -9,6 +10,7 @@ pub struct Game {
     pub game_display: Box<dyn GameDisplay>,
     pub controllers: [Box<dyn Controller>; 2],
     pub history: Vec<GameState>,
+    move_limit: u32,
 }
 
 #[derive(PartialEq)]
@@ -18,10 +20,35 @@ pub enum GameResult {
 }
 
 impl Game {
+    pub fn new(
+        game_state: GameState,
+        game_display: Box<dyn GameDisplay>,
+        controllers: [Box<dyn Controller>; 2],
+    ) -> Self {
+        Self {
+            game_state,
+            game_display,
+            controllers,
+            history: vec![],
+            move_limit: 100, // limit of 50 moves per player without captures
+        }
+    }
+
     pub fn execute_command(&mut self, cmd: Command) {
         match cmd {
             Command::Move(movement) => {
                 self.history.push(self.game_state.deepclone());
+                match movement { // check if it is a capture
+                    Movement::Normal {
+                        to: [x, y],
+                        from: _,
+                    } => {
+                        if self.game_state.board[x][y] != None {
+                            self.move_limit = 100;
+                        }
+                    }
+                    _ => {}
+                }
                 self.game_state.make_movement(movement);
             }
             Command::Save => {
@@ -55,7 +82,7 @@ impl Game {
 
     pub fn play(&mut self) -> GameResult {
         self.game_display.display_game(&self.game_state);
-        loop {
+        while self.move_limit > 0 {
             self.player_turn();
             if is_in_check_mate(&self.game_state, self.game_state.player_to_move) {
                 self.game_display.display_game_over(&self.game_state);
@@ -65,6 +92,8 @@ impl Game {
                 self.game_display.display_game_over(&self.game_state);
                 return GameResult::Draw;
             }
+            self.move_limit -= 1;
         }
+        return GameResult::Draw;
     }
 }

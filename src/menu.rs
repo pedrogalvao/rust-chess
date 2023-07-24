@@ -94,10 +94,5 @@ pub fn main_menu() -> Game {
         2 => [opponent_controller, Box::new(LocalHuman)],
         _ => panic!(), // unreachable
     };
-    Game {
-        game_state,
-        game_display: Box::new(UnicodeDisplay),
-        controllers,
-        history: vec![],
-    }
+    Game::new(game_state, Box::new(UnicodeDisplay), controllers)
 }
