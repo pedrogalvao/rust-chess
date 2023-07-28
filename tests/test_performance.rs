@@ -1,5 +1,5 @@
 use rust_chess::game::Game;
-use rust_chess::model::GameState;
+use rust_chess::model::game_state::GameState;
 use rust_chess::view::NoDisplay;
 
 #[cfg(test)]

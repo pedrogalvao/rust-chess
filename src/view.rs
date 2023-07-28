@@ -1,5 +1,5 @@
 use crate::{
-    model::{Color, GameState, Piece},
+    model::{game_state::GameState, piece::Color, piece::Piece},
     rules::game_over::{is_draw, is_in_check_mate},
 };
 

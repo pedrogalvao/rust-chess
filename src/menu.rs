@@ -1,11 +1,12 @@
 use std::io;
 
+use crate::control::alphabeta::AlphaBetaBot;
 use crate::control::control::Controller;
 use crate::control::local_human::LocalHuman;
 use crate::control::minimax::MinimaxBot;
 use crate::control::random_bot::RandomBot;
 use crate::game::Game;
-use crate::model::{load_game_state_from_json, GameState};
+use crate::model::game_state::{load_game_state_from_json, GameState};
 use crate::view::UnicodeDisplay;
 
 pub fn read_number() -> u32 {
@@ -26,6 +27,7 @@ fn opponent_menu() -> Box<dyn Controller> {
     println!(" 1 - Human");
     println!(" 2 - RandomBot");
     println!(" 3 - MinimaxBot");
+    println!(" 4 - AlphaBetaBot");
     let controller: Box<dyn Controller> = match read_number() {
         1 => Box::new(LocalHuman),
         2 => Box::new(RandomBot),
@@ -35,6 +37,13 @@ fn opponent_menu() -> Box<dyn Controller> {
             println!(" 5 - Medium");
             println!(" * - Other");
             Box::new(MinimaxBot::new(read_number()))
+        }
+        4 => {
+            println!("Depth:");
+            println!(" 2 - Easy");
+            println!(" 5 - Medium");
+            println!(" * - Other");
+            Box::new(AlphaBetaBot::new(read_number()))
         }
         _ => {
             println!("Invalid option\n");

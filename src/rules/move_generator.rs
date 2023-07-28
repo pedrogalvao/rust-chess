@@ -1,6 +1,7 @@
 use crate::control::control::Command;
-use crate::model::{Color, GameState, Piece, PieceType};
-use crate::movement::Movement;
+use crate::model::{
+    game_state::GameState, movement::Movement, piece::Color, piece::Piece, piece::PieceType,
+};
 use crate::rules::cmd_validator::is_in_check;
 
 use super::cmd_validator::{king_castle_is_valid, queen_castle_is_valid};

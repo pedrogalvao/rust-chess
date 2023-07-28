@@ -1,6 +1,7 @@
 use crate::control::control::Command;
-use crate::model::{Color, GameState, Piece, PieceType};
-use crate::movement::Movement;
+use crate::model::{
+    game_state::GameState, movement::Movement, piece::Color, piece::Piece, piece::PieceType,
+};
 
 fn is_valid_movement_for_rook(movement: &Movement, game_state: &GameState) -> bool {
     let Movement::Normal { from, to } = movement else {

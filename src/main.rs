@@ -3,7 +3,6 @@ mod evaluation;
 mod game;
 mod menu;
 mod model;
-mod movement;
 mod rules;
 mod view;
 

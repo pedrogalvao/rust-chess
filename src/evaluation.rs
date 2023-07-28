@@ -1,4 +1,4 @@
-use crate::model::{Color, GameState, PieceType};
+use crate::model::{game_state::GameState, piece::Color, piece::PieceType};
 use crate::rules::game_over::{is_draw, is_in_check_mate};
 use crate::view::{AsciiDisplay, GameDisplay};
 

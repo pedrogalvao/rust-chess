@@ -1,6 +1,5 @@
 use crate::control::control::{Command, Controller};
-use crate::model::{GameState, Piece, PieceType};
-use crate::movement::Movement;
+use crate::model::{game_state::GameState, movement::Movement, piece::Piece, piece::PieceType};
 use crate::rules::cmd_validator::is_valid_movement;
 
 use std::io;

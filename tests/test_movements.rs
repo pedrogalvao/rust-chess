@@ -1,13 +1,16 @@
 use rand::Rng;
-use rust_chess::model::{Color, GameState};
-use rust_chess::movement::Movement;
+use rust_chess::model::movement::Movement;
+use rust_chess::model::{game_state::GameState, piece::Color};
 use rust_chess::rules::cmd_validator::{is_in_check, is_valid_movement};
 use rust_chess::rules::move_generator::generate_movements;
 
 #[cfg(test)]
 mod tests {
     use rust_chess::{
-        model::{load_game_state_from_json, Piece, PieceType},
+        model::{
+            game_state::load_game_state_from_json,
+            piece::{Piece, PieceType},
+        },
         rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid},
     };
 

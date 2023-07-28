@@ -2,8 +2,7 @@ use rand::seq::SliceRandom;
 use rust_chess::control::minimax::MinimaxBot;
 use rust_chess::control::random_bot::RandomBot;
 use rust_chess::game::Game;
-use rust_chess::model::{Color, GameState};
-use rust_chess::movement::Movement;
+use rust_chess::model::{game_state::GameState, movement::Movement, piece::Color};
 use rust_chess::rules::cmd_validator::is_valid_movement;
 use rust_chess::rules::game_over::{is_draw, is_in_check_mate};
 use rust_chess::rules::move_generator::generate_movements;
@@ -13,6 +12,8 @@ use std::thread;
 
 #[cfg(test)]
 mod tests {
+    use rust_chess::control::alphabeta::AlphaBetaBot;
+
     use super::*;
 
     #[test]
@@ -93,8 +94,13 @@ mod tests {
             let results = bot_vs_bot(MinimaxBot::new(4), MinimaxBot::new(3), 5);
             assert!(results[0] >= results[2]);
         });
+        // let handle4 = thread::spawn(move || {
+        //     let results = bot_vs_bot(AlphaBetaBot::new(5), MinimaxBot::new(3), 15);
+        //     assert!(results[0] >= results[2]);
+        // });
         handle1.join().unwrap();
         handle2.join().unwrap();
         handle3.join().unwrap();
+        // handle4.join().unwrap();
     }
 }

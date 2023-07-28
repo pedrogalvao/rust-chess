@@ -1,5 +1,5 @@
-use crate::model::GameState;
-use crate::movement::Movement;
+use crate::model::game_state::GameState;
+use crate::model::movement::Movement;
 
 #[derive(Clone)]
 pub enum Command {

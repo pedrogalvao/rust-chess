@@ -1,4 +1,4 @@
-use crate::model::{Color, GameState, PieceType};
+use crate::model::{game_state::GameState, piece::Color, piece::PieceType};
 use crate::rules::cmd_validator::is_in_check;
 use crate::rules::move_generator::generate_movements;
 // use crate::move_generator::generate_movements_for_player;

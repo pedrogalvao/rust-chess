@@ -1,4 +1,4 @@
-use crate::model::{Color, GameState, Piece, PieceType};
+use crate::model::{game_state::GameState, piece::Color, piece::Piece, piece::PieceType};
 use serde::{Deserialize, Serialize};
 
 #[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]

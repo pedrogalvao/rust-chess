@@ -1,7 +1,5 @@
 use crate::evaluation::{evaluate_game_over, evaluate_material};
-use crate::model::{GameState, PieceType};
-use crate::movement::Movement;
-
+use crate::model::{game_state::GameState, movement::Movement, piece::PieceType};
 use crate::rules::move_generator::generate_movements_for_player_ignoring_check;
 use crate::view::{AsciiDisplay, GameDisplay};
 

@@ -1,6 +1,7 @@
 use crate::control::control::{Command, Controller};
-use crate::model::{write_game_state_to_json, Color, GameState};
-use crate::movement::Movement;
+use crate::model::{
+    game_state::write_game_state_to_json, game_state::GameState, movement::Movement, piece::Color,
+};
 use crate::rules::cmd_validator::is_valid_cmd;
 use crate::rules::game_over::{is_draw, is_in_check_mate};
 use crate::view::GameDisplay;
@@ -38,7 +39,8 @@ impl Game {
         match cmd {
             Command::Move(movement) => {
                 self.history.push(self.game_state.deepclone());
-                match movement { // check if it is a capture
+                match movement {
+                    // check if it is a capture
                     Movement::Normal {
                         to: [x, y],
                         from: _,
