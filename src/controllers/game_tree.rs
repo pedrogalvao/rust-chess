@@ -38,6 +38,18 @@ impl Ord for GameTree {
 }
 
 impl GameTree {
+    pub fn get_depth(&self) -> u32 {
+        let mut depth_heap = BinaryHeap::new();
+        for child in &self.children {
+            depth_heap.push(child.get_depth());
+        }
+        if let Some(n) = depth_heap.pop() {
+            return n + 1;
+        } else {
+            return 0;
+        }
+    }
+
     fn is_king_capture(movement: &Option<Movement>, game_state: &GameState) -> bool {
         if let Some(Movement::Normal {
             from: _,
@@ -156,5 +168,42 @@ impl GameTree {
             self.score = -evaluate_game_over(&self.game_state, self.game_state.player_to_move);
         }
         return Ok(());
+    }
+
+    pub fn expand_leaves(&mut self, branch_limit: u32) -> Result<(), ()> {
+        if self.children.len() == 0 {
+            return self.expand_node();
+        } else {
+            let mut reordered_children = BinaryHeap::new();
+            let mut branch_count = 0;
+            while let Some(mut child) = self.children.pop() {
+                if branch_count < branch_limit {
+                    match child.expand_leaves(25) {
+                        Ok(()) => {
+                            if child.children.len() == 0 {
+                                child.score = -evaluate_game_over(
+                                    &child.game_state,
+                                    child.game_state.player_to_move,
+                                );
+                            }
+                            reordered_children.push(child);
+                        }
+                        Err(()) => {
+                            // invalid child node
+                            continue;
+                        }
+                    }
+                    branch_count += 1;
+                } else {
+                    reordered_children.push(child);
+                }
+            }
+            self.children = reordered_children;
+            // update score
+            if let Some(child) = self.children.peek() {
+                self.score = -child.score;
+            }
+            return Ok(());
+        }
     }
 }

@@ -205,7 +205,8 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
                 color: game_state.player_to_move,
             })
     {
-        let game_state2 = game_state.clone_and_move(Movement::CastleQueenSide(game_state.player_to_move));
+        let game_state2 =
+            game_state.clone_and_move(Movement::CastleQueenSide(game_state.player_to_move));
         if is_in_check(&game_state2, game_state.player_to_move) {
             return false;
         }
@@ -240,7 +241,8 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
                 color: game_state.player_to_move,
             })
     {
-        let game_state2 = game_state.clone_and_move(Movement::CastleKingSide(game_state.player_to_move));
+        let game_state2 =
+            game_state.clone_and_move(Movement::CastleKingSide(game_state.player_to_move));
         if is_in_check(&game_state2, game_state.player_to_move) {
             return false;
         }
