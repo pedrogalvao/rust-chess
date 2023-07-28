@@ -1,4 +1,4 @@
-use super::control::{Command, Controller};
+use super::controller::{Command, Controller};
 use super::game_tree::GameTree;
 use crate::evaluation::evaluate_material;
 use crate::model::game_state::GameState;
@@ -77,7 +77,7 @@ impl AlphaBetaBot {
 }
 
 impl Controller for AlphaBetaBot {
-    fn choose_command(&mut self, game_state: &mut GameState) -> super::control::Command {
+    fn choose_command(&mut self, game_state: &mut GameState) -> super::controller::Command {
         return Command::Move(self.choose_move(game_state));
     }
 }

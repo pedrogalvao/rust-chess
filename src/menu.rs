@@ -1,10 +1,10 @@
 use std::io;
 
-use crate::control::alphabeta::AlphaBetaBot;
-use crate::control::control::Controller;
-use crate::control::local_human::LocalHuman;
-use crate::control::minimax::MinimaxBot;
-use crate::control::random_bot::RandomBot;
+use crate::controllers::alphabeta::AlphaBetaBot;
+use crate::controllers::controller::Controller;
+use crate::controllers::local_human::LocalHuman;
+use crate::controllers::minimax::MinimaxBot;
+use crate::controllers::random_bot::RandomBot;
 use crate::game::Game;
 use crate::model::game_state::{load_game_state_from_json, GameState};
 use crate::view::UnicodeDisplay;

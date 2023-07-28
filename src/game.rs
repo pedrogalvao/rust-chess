@@ -1,4 +1,4 @@
-use crate::control::control::{Command, Controller};
+use crate::controllers::controller::{Command, Controller};
 use crate::model::{
     game_state::write_game_state_to_json, game_state::GameState, movement::Movement, piece::Color,
 };

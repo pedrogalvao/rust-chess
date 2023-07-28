@@ -1,5 +1,5 @@
-use crate::control::control::Command;
-use crate::control::control::Controller;
+use crate::controllers::controller::Command;
+use crate::controllers::controller::Controller;
 use crate::model::game_state::GameState;
 use crate::rules::move_generator::generate_commands;
 use rand::seq::SliceRandom;

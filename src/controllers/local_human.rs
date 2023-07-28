@@ -1,4 +1,4 @@
-use crate::control::control::{Command, Controller};
+use crate::controllers::controller::{Command, Controller};
 use crate::model::{game_state::GameState, movement::Movement, piece::Piece, piece::PieceType};
 use crate::rules::cmd_validator::is_valid_movement;
 
@@ -123,7 +123,7 @@ impl LocalHuman {
 }
 
 impl Controller for LocalHuman {
-    fn choose_command(&mut self, game_state: &mut GameState) -> super::control::Command {
+    fn choose_command(&mut self, game_state: &mut GameState) -> super::controller::Command {
         let mut buffer: String = String::new();
         let stdin = io::stdin();
         let _ = stdin.read_line(&mut buffer);

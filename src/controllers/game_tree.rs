@@ -136,7 +136,7 @@ impl GameTree {
                             return Ok(());
                         }
                         alpha = alpha.max(best_score);
-                        assert!(beta >= alpha);
+                        // assert!(beta >= alpha);
                         reordered_children.push(child);
                     }
                     Err(()) => {

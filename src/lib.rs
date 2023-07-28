@@ -1,4 +1,4 @@
-pub mod control;
+pub mod controllers;
 pub mod evaluation;
 pub mod game;
 pub mod model;

@@ -1,18 +1,18 @@
 use rand::seq::SliceRandom;
-use rust_chess::control::minimax::MinimaxBot;
-use rust_chess::control::random_bot::RandomBot;
+use rust_chess::controllers::minimax::MinimaxBot;
+use rust_chess::controllers::random_bot::RandomBot;
 use rust_chess::game::Game;
 use rust_chess::model::{game_state::GameState, movement::Movement, piece::Color};
 use rust_chess::rules::cmd_validator::is_valid_movement;
 use rust_chess::rules::game_over::{is_draw, is_in_check_mate};
 use rust_chess::rules::move_generator::generate_movements;
 use rust_chess::view::{GameDisplay, NoDisplay};
-use rust_chess::{control::control::Controller, game::GameResult};
+use rust_chess::{controllers::controller::Controller, game::GameResult};
 use std::thread;
 
 #[cfg(test)]
 mod tests {
-    use rust_chess::control::alphabeta::AlphaBetaBot;
+    use rust_chess::controllers::alphabeta::AlphaBetaBot;
 
     use super::*;
 

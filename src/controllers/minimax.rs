@@ -8,7 +8,7 @@ use rand::thread_rng;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
-use super::control::{Command, Controller};
+use super::controller::{Command, Controller};
 
 #[derive(Clone)]
 struct MinimaxTree {
@@ -210,7 +210,7 @@ impl MinimaxBot {
 }
 
 impl Controller for MinimaxBot {
-    fn choose_command(&mut self, game_state: &mut GameState) -> super::control::Command {
+    fn choose_command(&mut self, game_state: &mut GameState) -> super::controller::Command {
         return Command::Move(self.choose_move(game_state));
     }
 }

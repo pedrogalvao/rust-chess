@@ -1,5 +1,5 @@
 pub mod alphabeta;
-pub mod control;
+pub mod controller;
 mod game_tree;
 pub mod local_human;
 pub mod minimax;

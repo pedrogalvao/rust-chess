@@ -1,4 +1,4 @@
-mod control;
+mod controllers;
 mod evaluation;
 mod game;
 mod menu;

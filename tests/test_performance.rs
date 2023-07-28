@@ -6,7 +6,7 @@ use rust_chess::view::NoDisplay;
 mod test {
     use std::time::Instant;
 
-    use rust_chess::control::minimax::MinimaxBot;
+    use rust_chess::controllers::minimax::MinimaxBot;
 
     use super::*;
 

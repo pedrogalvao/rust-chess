@@ -1,4 +1,4 @@
-use crate::control::control::Command;
+use crate::controllers::controller::Command;
 use crate::model::{
     game_state::GameState, movement::Movement, piece::Color, piece::Piece, piece::PieceType,
 };
