@@ -65,8 +65,7 @@ impl GameTree {
         let mut rng = thread_rng();
         possible_movements.shuffle(&mut rng);
         for movement in possible_movements {
-            let mut game_state2 = self.game_state.clone();
-            game_state2.make_movement(movement);
+            let game_state2 = self.game_state.clone_and_move(movement);
             let score = evaluate_material(&game_state2, self.game_state.player_to_move);
             if Self::is_king_capture(&game_state2.last_move, &self.game_state) {
                 return Err(());

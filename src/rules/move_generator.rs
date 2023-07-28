@@ -288,8 +288,7 @@ pub fn generate_movements_for_player(game_state: &GameState, color: Color) -> Ve
             match game_state.board[x][y] {
                 Some(piece) if piece.color == color => {
                     for movement in generate_movements_for_piece(game_state, x, y, piece) {
-                        let mut game_state2 = game_state.clone();
-                        game_state2.make_movement(movement.clone());
+                        let game_state2 = game_state.clone_and_move(movement.clone());
                         if !is_in_check(&game_state2, color) {
                             // Player can't put himself in check
                             movements.push(movement);
@@ -328,8 +327,7 @@ fn push_if_not_in_check(
     color: Color,
     game_state: &GameState,
 ) {
-    let mut game_state2 = game_state.clone();
-    game_state2.make_movement(movement.clone());
+    let game_state2 = game_state.clone_and_move(movement.clone());
     if !is_in_check(&game_state2, color) {
         movements.push(movement);
     }

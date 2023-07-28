@@ -205,8 +205,7 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
                 color: game_state.player_to_move,
             })
     {
-        let mut game_state2 = game_state.clone();
-        game_state2.make_movement(Movement::CastleQueenSide(game_state.player_to_move));
+        let game_state2 = game_state.clone_and_move(Movement::CastleQueenSide(game_state.player_to_move));
         if is_in_check(&game_state2, game_state.player_to_move) {
             return false;
         }
@@ -241,8 +240,7 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
                 color: game_state.player_to_move,
             })
     {
-        let mut game_state2 = game_state.clone();
-        game_state2.make_movement(Movement::CastleKingSide(game_state.player_to_move));
+        let game_state2 = game_state.clone_and_move(Movement::CastleKingSide(game_state.player_to_move));
         if is_in_check(&game_state2, game_state.player_to_move) {
             return false;
         }
@@ -294,8 +292,7 @@ pub fn is_valid_normal_movement_for_player(
             // capturing the king must be a valid movement even if it puts the player in check
         }
         _ => {
-            let mut game_state2 = game_state.clone();
-            game_state2.make_movement(movement.clone());
+            let game_state2 = game_state.clone_and_move(movement.clone());
             if is_in_check(&game_state2, player_color) {
                 return false;
             }

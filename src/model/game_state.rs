@@ -239,4 +239,10 @@ impl GameState {
         }
         results
     }
+
+    pub fn clone_and_move(&self, movement: Movement) -> Self {
+        let mut next_state = self.clone();
+        next_state.make_movement(movement);
+        next_state
+    }
 }
