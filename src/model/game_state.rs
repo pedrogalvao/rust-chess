@@ -175,7 +175,7 @@ impl GameState {
         }
     }
 
-    pub fn castle_king_side(&mut self) {
+    fn set_curr_player_cant_castle(&mut self) {
         if self.player_to_move == Color::White {
             self.white_can_castle_king_side = false;
             self.white_can_castle_queen_side = false;
@@ -183,6 +183,10 @@ impl GameState {
             self.black_can_castle_king_side = false;
             self.black_can_castle_queen_side = false;
         }
+    }
+
+    pub fn castle_king_side(&mut self) {
+        self.set_curr_player_cant_castle();
         let king_row = match self.player_to_move {
             Color::White => 0,
             Color::Black => 7,
@@ -203,13 +207,7 @@ impl GameState {
     }
 
     pub fn castle_queen_side(&mut self) {
-        if self.player_to_move == Color::White {
-            self.white_can_castle_king_side = false;
-            self.white_can_castle_queen_side = false;
-        } else {
-            self.black_can_castle_king_side = false;
-            self.black_can_castle_queen_side = false;
-        }
+        self.set_curr_player_cant_castle();
         let king_row = match self.player_to_move {
             Color::White => 0,
             Color::Black => 7,
