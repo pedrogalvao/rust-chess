@@ -78,10 +78,10 @@ pub fn load_menu() -> GameState {
             match read_number() {
                 1 => {
                     return GameState::new();
-                },
+                }
                 2 => {
                     return GameState::new960();
-                },
+                }
                 _ => {
                     println!("Invalid option\n");
                     load_menu()

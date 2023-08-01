@@ -182,6 +182,9 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
     {
         return false;
     }
+    if game_state.get_king_position(game_state.player_to_move) == None {
+        return false;
+    }
 
     if free_space_between_rook_and_king(game_state, false)
         && castle_queen_side_destination_is_free(game_state)
@@ -201,7 +204,9 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
 
 fn free_space_between_rook_and_king(game_state: &GameState, king_side: bool) -> bool {
     let mut rook_column = 0;
-    let king_col = game_state.get_king_position(game_state.player_to_move)[1];
+    let Some([_, king_col]) = game_state.get_king_position(game_state.player_to_move) else {
+        return false;
+    };
     if king_side {
         for col in king_col + 1..8 {
             match game_state.board[0][col] {
@@ -223,16 +228,15 @@ fn free_space_between_rook_and_king(game_state: &GameState, king_side: bool) -> 
             }
         }
     }
-    let king_position = game_state.get_king_position(game_state.player_to_move);
-    if king_position[1] < rook_column {
-        for i in king_position[1] + 1..rook_column {
-            if game_state.board[king_position[0]][i] != None {
+    if king_col < rook_column {
+        for i in king_col + 1..rook_column {
+            if game_state.board[king_col][i] != None {
                 return false;
             }
         }
     } else {
-        for i in rook_column + 1..king_position[1] {
-            if game_state.board[king_position[0]][i] != None {
+        for i in rook_column + 1..king_col {
+            if game_state.board[king_col][i] != None {
                 return false;
             }
         }
@@ -241,7 +245,9 @@ fn free_space_between_rook_and_king(game_state: &GameState, king_side: bool) -> 
 }
 
 fn castle_king_side_destination_is_free(game_state: &GameState) -> bool {
-    let king_row = game_state.get_king_position(game_state.player_to_move)[0];
+    let king_row = game_state
+        .get_king_position(game_state.player_to_move)
+        .unwrap()[0];
     for col in [5, 6] {
         if game_state.board[king_row][col] != None {
             // TODO: Edge case when the other rook is in the king's destination
@@ -256,7 +262,9 @@ fn castle_king_side_destination_is_free(game_state: &GameState) -> bool {
 }
 
 fn castle_queen_side_destination_is_free(game_state: &GameState) -> bool {
-    let king_row = game_state.get_king_position(game_state.player_to_move)[0];
+    let king_row = game_state
+        .get_king_position(game_state.player_to_move)
+        .unwrap()[0];
     for col in [2, 3] {
         if game_state.board[king_row][col] != None {
             // TODO: Edge case when the other rook is in the king's destination
@@ -274,6 +282,9 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
     if !((game_state.player_to_move == Color::White && game_state.white_can_castle_king_side)
         || (game_state.player_to_move == Color::Black && game_state.black_can_castle_king_side))
     {
+        return false;
+    }
+    if game_state.get_king_position(game_state.player_to_move) == None {
         return false;
     }
     if free_space_between_rook_and_king(game_state, true)
