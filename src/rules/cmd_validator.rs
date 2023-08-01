@@ -183,36 +183,91 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
         return false;
     }
 
-    if is_in_check(game_state, game_state.player_to_move) {
-        return false;
-    }
-
-    let king_row = match game_state.player_to_move {
-        Color::White => 0,
-        Color::Black => 7,
-    };
-    if game_state.board[king_row][1] == None
-        && game_state.board[king_row][2] == None
-        && game_state.board[king_row][3] == None
-        && game_state.board[king_row][0]
-            == Some(Piece {
-                piece_type: PieceType::Rook,
-                color: game_state.player_to_move,
-            })
-        && game_state.board[king_row][4]
-            == Some(Piece {
-                piece_type: PieceType::King,
-                color: game_state.player_to_move,
-            })
+    if free_space_between_rook_and_king(game_state, false)
+        && castle_queen_side_destination_is_free(game_state)
     {
         let game_state2 =
             game_state.clone_and_move(Movement::CastleQueenSide(game_state.player_to_move));
         if is_in_check(&game_state2, game_state.player_to_move) {
             return false;
         }
+        if is_in_check(game_state, game_state.player_to_move) {
+            return false;
+        }
         return true;
     }
     false
+}
+
+fn free_space_between_rook_and_king(game_state: &GameState, king_side: bool) -> bool {
+    let mut rook_column = 0;
+    let king_col = game_state.get_king_position(game_state.player_to_move)[1];
+    if king_side {
+        for col in king_col + 1..8 {
+            match game_state.board[0][col] {
+                Some(piece) if piece.piece_type == PieceType::Rook => {
+                    rook_column = col;
+                    break;
+                }
+                _ => {}
+            }
+        }
+    } else {
+        for col in 0..king_col {
+            match game_state.board[0][col] {
+                Some(piece) if piece.piece_type == PieceType::Rook => {
+                    rook_column = col;
+                    break;
+                }
+                _ => {}
+            }
+        }
+    }
+    let king_position = game_state.get_king_position(game_state.player_to_move);
+    if king_position[1] < rook_column {
+        for i in king_position[1] + 1..rook_column {
+            if game_state.board[king_position[0]][i] != None {
+                return false;
+            }
+        }
+    } else {
+        for i in rook_column + 1..king_position[1] {
+            if game_state.board[king_position[0]][i] != None {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+fn castle_king_side_destination_is_free(game_state: &GameState) -> bool {
+    let king_row = game_state.get_king_position(game_state.player_to_move)[0];
+    for col in [5, 6] {
+        if game_state.board[king_row][col] != None {
+            // TODO: Edge case when the other rook is in the king's destination
+            if game_state.board[king_row][col].unwrap().piece_type != PieceType::King
+                && game_state.board[king_row][col].unwrap().piece_type != PieceType::Rook
+            {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+fn castle_queen_side_destination_is_free(game_state: &GameState) -> bool {
+    let king_row = game_state.get_king_position(game_state.player_to_move)[0];
+    for col in [2, 3] {
+        if game_state.board[king_row][col] != None {
+            // TODO: Edge case when the other rook is in the king's destination
+            if game_state.board[king_row][col].unwrap().piece_type != PieceType::King
+                && game_state.board[king_row][col].unwrap().piece_type != PieceType::Rook
+            {
+                return false;
+            }
+        }
+    }
+    true
 }
 
 pub fn king_castle_is_valid(game_state: &GameState) -> bool {
@@ -221,28 +276,14 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
     {
         return false;
     }
-    if is_in_check(game_state, game_state.player_to_move) {
-        return false;
-    }
-    let king_row = match game_state.player_to_move {
-        Color::White => 0,
-        Color::Black => 7,
-    };
-    if game_state.board[king_row][5] == None
-        && game_state.board[king_row][6] == None
-        && game_state.board[king_row][7]
-            == Some(Piece {
-                piece_type: PieceType::Rook,
-                color: game_state.player_to_move,
-            })
-        && game_state.board[king_row][4]
-            == Some(Piece {
-                piece_type: PieceType::King,
-                color: game_state.player_to_move,
-            })
+    if free_space_between_rook_and_king(game_state, true)
+        && castle_king_side_destination_is_free(game_state)
     {
         let game_state2 =
             game_state.clone_and_move(Movement::CastleKingSide(game_state.player_to_move));
+        if is_in_check(game_state, game_state.player_to_move) {
+            return false;
+        }
         if is_in_check(&game_state2, game_state.player_to_move) {
             return false;
         }

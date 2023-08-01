@@ -95,18 +95,15 @@ impl GameTree {
         return Ok(());
     }
 
-    pub fn dfs(
-        &mut self,
-        depth_limit: u32,
-        branch_limit: u32,
-    ) -> Result<(), ()> {
+    pub fn dfs(&mut self, depth_limit: u32, branch_limit: u32) -> Result<(), ()> {
         if depth_limit == 0 {
             self.score = -evaluate_material(&self.game_state, self.game_state.player_to_move);
             return Ok(());
-        } 
-        else if depth_limit == 1 {
+        } else if depth_limit == 1 {
             match self.expand_node() {
-                Err(()) => {return Err(());},
+                Err(()) => {
+                    return Err(());
+                }
                 Ok(()) => {
                     if let Some(child) = self.children.peek() {
                         self.score = -child.score;
@@ -114,8 +111,7 @@ impl GameTree {
                     return Ok(());
                 }
             }
-        } 
-        else if self.children.len() == 0 {
+        } else if self.children.len() == 0 {
             match self.expand_node() {
                 Ok(()) => {}
                 Err(()) => {
@@ -223,7 +219,7 @@ impl GameTree {
         }
 
         let mut best_score = alpha;
-        
+
         // Create a new BinaryHeap to hold the updated child nodes
         let mut updated_children = BinaryHeap::new();
 
@@ -232,7 +228,7 @@ impl GameTree {
             let Ok(_) = child.alphabeta_search(depth_limit - 1, branch_limit, -beta, -best_score) else {
                 continue;
             };
-            
+
             // Update the best_score using the maximum value (`.max()`)
             best_score = best_score.max(child.score);
 
@@ -246,11 +242,8 @@ impl GameTree {
 
         // Replace the children with the updated BinaryHeap
         self.children = updated_children;
-        
+
         self.score = -best_score;
         Ok(best_score)
-
     }
-
-
 }

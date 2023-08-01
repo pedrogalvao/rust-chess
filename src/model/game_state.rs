@@ -6,7 +6,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 use super::{
-    board::{Board, INIT_POSITIONS},
+    board::{create_960_board, Board, INIT_POSITIONS},
     movement::Movement,
     piece::{Color, Piece, PieceType},
 };
@@ -20,6 +20,7 @@ pub struct GameState {
     pub white_can_castle_king_side: bool,
     pub black_can_castle_queen_side: bool,
     pub black_can_castle_king_side: bool,
+    pub king_positions: [[usize; 2]; 2],
 }
 
 pub fn write_game_state_to_json(
@@ -50,6 +51,30 @@ impl GameState {
             white_can_castle_king_side: true,
             black_can_castle_king_side: true,
             black_can_castle_queen_side: true,
+            king_positions: [[0, 4], [7, 4]],
+        }
+    }
+
+    pub fn new960() -> Self {
+        let initial_positions = create_960_board();
+        let mut king_positions = [[0, 4], [7, 4]];
+        for i in 1..6 {
+            match initial_positions[0][i] {
+                Some(piece) if piece.piece_type == PieceType::King => {
+                    king_positions = [[0, i], [7, i]];
+                }
+                _ => {}
+            }
+        }
+        Self {
+            board: initial_positions,
+            player_to_move: Color::White,
+            last_move: None,
+            white_can_castle_queen_side: true,
+            white_can_castle_king_side: true,
+            black_can_castle_king_side: true,
+            black_can_castle_queen_side: true,
+            king_positions: king_positions,
         }
     }
 
@@ -63,6 +88,7 @@ impl GameState {
             white_can_castle_king_side: true,
             black_can_castle_king_side: true,
             black_can_castle_queen_side: true,
+            king_positions: [[0, 4], [7, 4]],
         }
     }
 
@@ -75,6 +101,7 @@ impl GameState {
             white_can_castle_king_side: self.white_can_castle_king_side,
             black_can_castle_queen_side: self.black_can_castle_queen_side,
             black_can_castle_king_side: self.black_can_castle_king_side,
+            king_positions: self.king_positions.clone(),
         }
     }
 
@@ -102,18 +129,22 @@ impl GameState {
         results
     }
 
+    pub fn get_king_position(&self, player: Color) -> [usize; 2] {
+        return self.king_positions[player as usize];
+    }
+
     fn update_can_castle(&mut self, movement: &Movement) {
         let Movement::Normal { from: source, to: destination } = movement else {
             return;
         };
+        let white_king_position = self.get_king_position(Color::White);
+        let black_king_position = self.get_king_position(Color::Black);
         if self.player_to_move == Color::White {
             if self.white_can_castle_king_side {
-                if source == &[0, 4] || source == &[0, 7] {
+                if source == &white_king_position || source == &[0, 7] {
                     self.white_can_castle_king_side = false
                 }
-            }
-            if self.white_can_castle_queen_side {
-                if source == &[0, 4] || source == &[0, 0] {
+                if source == &white_king_position || source == &[0, 0] {
                     self.white_can_castle_queen_side = false
                 }
             }
@@ -125,12 +156,12 @@ impl GameState {
             }
         } else {
             if self.black_can_castle_king_side {
-                if source == &[7, 4] || source == &[7, 7] {
+                if source == &black_king_position || source == &[7, 7] {
                     self.black_can_castle_king_side = false
                 }
             }
             if self.black_can_castle_queen_side {
-                if source == &[7, 4] || source == &[7, 0] {
+                if source == &black_king_position || source == &[7, 0] {
                     self.black_can_castle_queen_side = false
                 }
             }
@@ -187,20 +218,24 @@ impl GameState {
 
     pub fn castle_king_side(&mut self) {
         self.set_curr_player_cant_castle();
-        let king_row = match self.player_to_move {
-            Color::White => 0,
-            Color::Black => 7,
-        };
+        let [king_row, king_col] = self.get_king_position(self.player_to_move);
         self.board[king_row][6] = Some(Piece {
             piece_type: PieceType::King,
             color: self.player_to_move,
         });
+        for col in king_col..8 {
+            match self.board[king_row][col] {
+                Some(piece) if piece.piece_type == PieceType::Rook => {
+                    self.board[king_row][col] = None;
+                }
+                _ => {}
+            }
+        }
         self.board[king_row][5] = Some(Piece {
             piece_type: PieceType::Rook,
             color: self.player_to_move,
         });
-        self.board[king_row][7] = None;
-        self.board[king_row][4] = None;
+        self.board[king_row][king_col] = None;
 
         self.last_move = Some(Movement::CastleKingSide(self.player_to_move));
         self.player_to_move = self.player_to_move.get_opponent_color();

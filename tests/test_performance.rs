@@ -6,7 +6,7 @@ use rust_chess::view::NoDisplay;
 mod test {
     use std::time::Instant;
 
-    use rust_chess::controllers::{minimax::MinimaxBot, alphabeta::AlphaBetaBot};
+    use rust_chess::controllers::{alphabeta::AlphaBetaBot, minimax::MinimaxBot};
 
     use super::*;
 
@@ -40,7 +40,10 @@ mod test {
         let mut game: Game = Game::new(
             GameState::new(),
             Box::new(NoDisplay),
-            [Box::new(AlphaBetaBot::new(depth)), Box::new(AlphaBetaBot::new(depth))],
+            [
+                Box::new(AlphaBetaBot::new(depth)),
+                Box::new(AlphaBetaBot::new(depth)),
+            ],
         );
 
         let mut times = vec![];

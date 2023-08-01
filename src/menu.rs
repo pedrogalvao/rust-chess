@@ -72,7 +72,21 @@ pub fn load_menu() -> GameState {
     println!(" 2 - Open saved game");
     match read_number() {
         1 => {
-            return GameState::new();
+            println!("Game type");
+            println!(" 1 - Normal");
+            println!(" 2 - Fischer Random Chess (960)");
+            match read_number() {
+                1 => {
+                    return GameState::new();
+                },
+                2 => {
+                    return GameState::new960();
+                },
+                _ => {
+                    println!("Invalid option\n");
+                    load_menu()
+                }
+            }
         }
         2 => {
             println!("Type file path:");

@@ -59,7 +59,9 @@ impl AlphaBetaBot {
         if *game_state != self.tree.game_state {
             self.update_tree(game_state);
         }
-        self.tree.alphabeta_search(self.depth, 255, -20000, 20000).unwrap();
+        self.tree
+            .alphabeta_search(self.depth, 255, -20000, 20000)
+            .unwrap();
         let c = self.tree.children.pop();
         match c {
             None => {
