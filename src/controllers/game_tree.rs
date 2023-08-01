@@ -4,7 +4,6 @@ use crate::model::{game_state::GameState, piece::PieceType};
 
 use crate::rules::game_over::is_game_over;
 use crate::rules::move_generator::generate_movements_for_player_ignoring_check;
-use crate::view::{AsciiDisplay, GameDisplay};
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -100,18 +99,23 @@ impl GameTree {
         &mut self,
         depth_limit: u32,
         branch_limit: u32,
-        mut alpha: i32,
-        mut beta: i32,
     ) -> Result<(), ()> {
-        // if -self.score < alpha || -self.score > beta {
-        //     return Ok(());
-        // }
         if depth_limit == 0 {
             self.score = -evaluate_material(&self.game_state, self.game_state.player_to_move);
             return Ok(());
-        } else if depth_limit == 1 {
-            return self.expand_node();
-        } else if self.children.len() == 0 {
+        } 
+        else if depth_limit == 1 {
+            match self.expand_node() {
+                Err(()) => {return Err(());},
+                Ok(()) => {
+                    if let Some(child) = self.children.peek() {
+                        self.score = -child.score;
+                    }
+                    return Ok(());
+                }
+            }
+        } 
+        else if self.children.len() == 0 {
             match self.expand_node() {
                 Ok(()) => {}
                 Err(()) => {
@@ -121,33 +125,19 @@ impl GameTree {
         }
         let mut reordered_children = BinaryHeap::new();
         let mut branch_count = 0;
-        let mut best_score = alpha;
+        dbg!(self.children.peek().unwrap().score);
         while let Some(mut child) = self.children.pop() {
             if branch_count < branch_limit {
-                match child.dfs(depth_limit - 1, branch_limit, -beta, -alpha) {
+                match child.dfs(depth_limit - 1, branch_limit) {
                     Ok(()) => {
                         if child.children.len() == 0 {
-                            if is_game_over(&child.game_state) {
+                            if depth_limit > 1 && is_game_over(&child.game_state) {
                                 child.score = -evaluate_game_over(
                                     &child.game_state,
                                     child.game_state.player_to_move,
                                 );
                             }
-                            // else {
-                            //     //continue;
-                            //     child.score = -evaluate_material(
-                            //         &child.game_state,
-                            //         child.game_state.player_to_move,
-                            //     );
-                            // }
                         }
-                        best_score = best_score.max(child.score);
-                        if best_score > beta {
-                            self.score = best_score;
-                            return Ok(());
-                        }
-                        alpha = alpha.max(best_score);
-                        // assert!(beta >= alpha);
                         reordered_children.push(child);
                     }
                     Err(()) => {
@@ -206,4 +196,61 @@ impl GameTree {
             return Ok(());
         }
     }
+
+    pub fn alphabeta_search(
+        &mut self,
+        depth_limit: u32,
+        branch_limit: u32,
+        alpha: i32,
+        beta: i32,
+    ) -> Result<i32, ()> {
+        if depth_limit == 0 {
+            // If we've reached the maximum depth or a leaf node, evaluate the node and return its score.
+            self.score = -evaluate_material(&self.game_state, self.game_state.player_to_move);
+            return Ok(self.score);
+        }
+        self.children = BinaryHeap::new();
+        match self.expand_node() {
+            Ok(()) => {}
+            Err(()) => {
+                return Err(());
+            }
+        }
+        if self.children.is_empty() {
+            // No possibilities for next moves (game over)
+            self.score = -evaluate_game_over(&self.game_state, self.game_state.player_to_move);
+            return Ok(self.score);
+        }
+
+        let mut best_score = alpha;
+        
+        // Create a new BinaryHeap to hold the updated child nodes
+        let mut updated_children = BinaryHeap::new();
+
+        while let Some(mut child) = self.children.pop() {
+            // Recursively call alphabeta on the child nodes with negated alpha and beta for the opposite player
+            let Ok(_) = child.alphabeta_search(depth_limit - 1, branch_limit, -beta, -best_score) else {
+                continue;
+            };
+            
+            // Update the best_score using the maximum value (`.max()`)
+            best_score = best_score.max(child.score);
+
+            // Push the updated child back into the new BinaryHeap
+            updated_children.push(child);
+            if best_score >= beta {
+                // Prune the remaining nodes as the current player has already found a better move.
+                break;
+            }
+        }
+
+        // Replace the children with the updated BinaryHeap
+        self.children = updated_children;
+        
+        self.score = -best_score;
+        Ok(best_score)
+
+    }
+
+
 }

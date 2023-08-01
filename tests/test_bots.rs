@@ -94,13 +94,13 @@ mod tests {
             let results = bot_vs_bot(MinimaxBot::new(4), MinimaxBot::new(3), 5);
             assert!(results[0] >= results[2]);
         });
-        // let handle4 = thread::spawn(move || {
-        //     let results = bot_vs_bot(AlphaBetaBot::new(5), MinimaxBot::new(3), 15);
-        //     assert!(results[0] >= results[2]);
-        // });
+        let handle4 = thread::spawn(move || {
+            let results = bot_vs_bot(AlphaBetaBot::new(4), MinimaxBot::new(3), 5);
+            assert!(results[0] >= results[2]);
+        });
         handle1.join().unwrap();
         handle2.join().unwrap();
         handle3.join().unwrap();
-        // handle4.join().unwrap();
+        handle4.join().unwrap();
     }
 }
