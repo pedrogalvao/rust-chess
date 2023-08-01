@@ -229,10 +229,6 @@ impl GameState {
         let Some([king_row, king_col]) = self.get_king_position(self.player_to_move) else {
             return;
         };
-        self.board[king_row][6] = Some(Piece {
-            piece_type: PieceType::King,
-            color: self.player_to_move,
-        });
         for col in king_col..8 {
             match self.board[king_row][col] {
                 Some(piece) if piece.piece_type == PieceType::Rook => {
@@ -241,11 +237,15 @@ impl GameState {
                 _ => {}
             }
         }
+        self.board[king_row][6] = Some(Piece {
+            piece_type: PieceType::King,
+            color: self.player_to_move,
+        });
+        self.board[king_row][king_col] = None;
         self.board[king_row][5] = Some(Piece {
             piece_type: PieceType::Rook,
             color: self.player_to_move,
         });
-        self.board[king_row][king_col] = None;
 
         self.last_move = Some(Movement::CastleKingSide(self.player_to_move));
         self.player_to_move = self.player_to_move.get_opponent_color();
@@ -253,10 +253,19 @@ impl GameState {
 
     pub fn castle_queen_side(&mut self) {
         self.set_curr_player_cant_castle();
-        let king_row = match self.player_to_move {
-            Color::White => 0,
-            Color::Black => 7,
+        let Some([king_row, king_col]) = self.get_king_position(self.player_to_move) else {
+            println!("Tried to castle without having a king");
+            panic!();
         };
+        for col in 0..king_col {
+            match self.board[king_row][col] {
+                Some(piece) if piece.piece_type == PieceType::Rook => {
+                    self.board[king_row][col] = None;
+                }
+                _ => {}
+            }
+        }
+        self.board[king_row][king_col] = None;
         self.board[king_row][2] = Some(Piece {
             piece_type: PieceType::King,
             color: self.player_to_move,
@@ -265,8 +274,6 @@ impl GameState {
             piece_type: PieceType::Rook,
             color: self.player_to_move,
         });
-        self.board[king_row][0] = None;
-        self.board[king_row][4] = None;
 
         self.last_move = Some(Movement::CastleQueenSide(self.player_to_move));
         self.player_to_move = self.player_to_move.get_opponent_color();
