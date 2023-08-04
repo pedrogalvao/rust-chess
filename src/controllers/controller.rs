@@ -1,7 +1,8 @@
 use crate::model::game_state::GameState;
 use crate::model::movement::Movement;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize, Serialize)]
 pub enum Command {
     Undo,
     Resign,

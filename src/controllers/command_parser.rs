@@ -1,15 +1,19 @@
 use substring::Substring;
 
-use crate::{model::{movement::Movement, game_state::GameState, piece::{Piece, PieceType}}, rules::cmd_validator::is_valid_movement};
+use crate::{
+    model::{
+        game_state::GameState,
+        movement::Movement,
+        piece::{Piece, PieceType},
+    },
+    rules::cmd_validator::is_valid_movement,
+};
 
 use super::controller::Command;
-
-
 
 pub struct CommandParser;
 
 impl CommandParser {
-    
     pub fn parse_command(&self, cmd_str: &str, game_state: &GameState) -> Result<Command, ()> {
         match cmd_str.replace("\n", "").replace("\r", "").as_str() {
             "undo" => Ok(Command::Undo),

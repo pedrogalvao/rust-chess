@@ -5,6 +5,7 @@ use crate::controllers::controller::Controller;
 use crate::controllers::local_human::LocalHuman;
 use crate::controllers::minimax::MinimaxBot;
 use crate::controllers::random_bot::RandomBot;
+use crate::controllers::remote_human::RemoteHuman;
 use crate::game::Game;
 use crate::model::game_state::{load_game_state_from_json, GameState};
 use crate::view::UnicodeDisplay;
@@ -28,6 +29,7 @@ fn opponent_menu() -> Box<dyn Controller> {
     println!(" 2 - RandomBot");
     println!(" 3 - MinimaxBot");
     println!(" 4 - AlphaBetaBot");
+    println!(" 5 - Remote Human");
     let controller: Box<dyn Controller> = match read_number() {
         1 => Box::new(LocalHuman),
         2 => Box::new(RandomBot),
@@ -45,6 +47,7 @@ fn opponent_menu() -> Box<dyn Controller> {
             println!(" * - Other");
             Box::new(AlphaBetaBot::new(read_number()))
         }
+        5 => Box::new(remote_menu()),
         _ => {
             println!("Invalid option\n");
             opponent_menu()
@@ -65,6 +68,33 @@ fn color_menu() -> u32 {
             color_menu()
         }
     }
+}
+
+pub fn remote_menu() -> RemoteHuman {
+    let mut buffer: String = String::new();
+    let stdin = io::stdin();
+    println!("1 - Host");
+    println!("2 - Connect");
+    let _ = stdin.read_line(&mut buffer);
+    let rh = match buffer.as_str().trim() {
+        "1" => {
+            println!("Waiting for connection");
+            RemoteHuman::new_listener()
+        }
+        "2" => {
+            println!("Type host address");
+            buffer = String::new();
+            let _ = stdin.read_line(&mut buffer);
+            println!("try to connect to {}", buffer.as_str().trim());
+            RemoteHuman::new_client(buffer.as_str().trim())
+        }
+        _ => {
+            println!("Invalid option");
+            return remote_menu();
+        }
+    };
+    println!("connected");
+    return rh;
 }
 
 pub fn load_menu() -> GameState {
