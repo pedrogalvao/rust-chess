@@ -3,6 +3,7 @@ use std::net::{TcpListener, TcpStream};
 
 use crate::controllers::controller::{Command, Controller};
 use crate::model::game_state::GameState;
+use crate::model::piece::Color;
 
 pub struct RemoteHuman {
     stream: TcpStream,
@@ -47,6 +48,48 @@ impl RemoteHuman {
         }
         return String::from_utf8_lossy(&buffer[..n]).to_string();
     }
+
+    pub fn get_game_state(&mut self) -> GameState {
+        println!("send GET_STATE");
+        let _ = self.stream.write("GET_STATE".as_bytes());
+        let response = self.receive_message();
+        dbg!(&response);
+        let Ok(game_state) = serde_json::from_str(response.as_str()) else {
+            let response = self.receive_message();
+            dbg!(&response);
+            let Ok(game_state) = serde_json::from_str(response.as_str()) else {
+                let response = self.receive_message();
+                dbg!(&response);
+                todo!()
+            };
+            return game_state;
+        };
+        return game_state;
+    }
+
+    pub fn get_color(&mut self) -> Color {
+        println!("send GET_COLOR");
+        let _ = self.stream.write("GET_COLOR".as_bytes());
+        let response = self.receive_message();
+        return serde_json::from_str(response.as_str()).unwrap();
+    }
+
+    pub fn handle_message(
+        &mut self,
+        received_message: String,
+        game_state: &GameState,
+        color: &Color,
+    ) {
+        if received_message == "GET_STATE" {
+            let send_msg = serde_json::to_string(game_state).unwrap();
+            let _ = self.stream.write(send_msg.as_bytes());
+        } else if received_message == "GET_COLOR" {
+            let send_msg = serde_json::to_string(color).unwrap();
+            let _ = self.stream.write(send_msg.as_bytes());
+        } else {
+            println!("Invalid move");
+        }
+    }
 }
 
 impl Controller for RemoteHuman {
@@ -56,9 +99,10 @@ impl Controller for RemoteHuman {
             let _ = self.stream.write(send_msg.as_bytes());
         };
         let received_message = self.receive_message();
+        dbg!(&received_message);
 
         let Ok(cmd) = serde_json::from_str(&received_message.as_str()) else {
-            println!("Invalid move");
+            self.handle_message(received_message, game_state, &game_state.player_to_move);
             return self.choose_command(game_state);
         };
         return cmd;

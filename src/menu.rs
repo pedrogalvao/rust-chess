@@ -8,6 +8,7 @@ use crate::controllers::random_bot::RandomBot;
 use crate::controllers::remote_human::RemoteHuman;
 use crate::game::Game;
 use crate::model::game_state::{load_game_state_from_json, GameState};
+use crate::model::piece::Color;
 use crate::view::UnicodeDisplay;
 
 pub fn read_number() -> u32 {
@@ -23,7 +24,7 @@ pub fn read_number() -> u32 {
     return number;
 }
 
-fn opponent_menu() -> Box<dyn Controller> {
+fn opponent_menu(game_state: &GameState, color: Color) -> Box<dyn Controller> {
     println!("Play against:");
     println!(" 1 - Human");
     println!(" 2 - RandomBot");
@@ -47,10 +48,18 @@ fn opponent_menu() -> Box<dyn Controller> {
             println!(" * - Other");
             Box::new(AlphaBetaBot::new(read_number()))
         }
-        5 => Box::new(remote_menu()),
+        5 => {
+            println!("Waiting for connection");
+            let mut remote_human = RemoteHuman::new_listener();
+            for i in 0..2 {
+                let received_message = remote_human.receive_message();
+                remote_human.handle_message(received_message, game_state, &color);
+            }
+            Box::new(remote_human)
+        }
         _ => {
             println!("Invalid option\n");
-            opponent_menu()
+            opponent_menu(game_state, color)
         }
     };
     return controller;
@@ -70,82 +79,80 @@ fn color_menu() -> u32 {
     }
 }
 
-pub fn remote_menu() -> RemoteHuman {
-    let mut buffer: String = String::new();
-    let stdin = io::stdin();
-    println!("1 - Host");
-    println!("2 - Connect");
-    let _ = stdin.read_line(&mut buffer);
-    let rh = match buffer.as_str().trim() {
-        "1" => {
-            println!("Waiting for connection");
-            RemoteHuman::new_listener()
-        }
-        "2" => {
-            println!("Type host address");
-            buffer = String::new();
-            let _ = stdin.read_line(&mut buffer);
-            println!("try to connect to {}", buffer.as_str().trim());
-            RemoteHuman::new_client(buffer.as_str().trim())
-        }
-        _ => {
-            println!("Invalid option");
-            return remote_menu();
-        }
-    };
-    println!("connected");
-    return rh;
-}
-
-pub fn load_menu() -> GameState {
-    println!(" 1 - Start new game");
-    println!(" 2 - Open saved game");
+fn new_game_menu() -> GameState {
+    println!("Game type");
+    println!(" 1 - Normal");
+    println!(" 2 - Fischer Random Chess (960)");
     match read_number() {
-        1 => {
-            println!("Game type");
-            println!(" 1 - Normal");
-            println!(" 2 - Fischer Random Chess (960)");
-            match read_number() {
-                1 => {
-                    return GameState::new();
-                }
-                2 => {
-                    return GameState::new960();
-                }
-                _ => {
-                    println!("Invalid option\n");
-                    load_menu()
-                }
-            }
-        }
-        2 => {
-            println!("Type file path:");
-            let mut file_path: String = String::new();
-            let stdin: io::Stdin = io::stdin();
-            let Ok(_) = stdin.read_line(&mut file_path) else {
-                println!("Error");
-                return load_menu();
-            };
-            let Ok(game_state) = load_game_state_from_json(file_path.trim()) else {
-                println!("No such file");
-                return load_menu();
-            };
-            game_state
-        }
+        1 => GameState::new(),
+        2 => GameState::new960(),
         _ => {
             println!("Invalid option\n");
-            load_menu()
+            new_game_menu()
         }
     }
 }
 
-pub fn main_menu() -> Game {
-    let game_state = load_menu();
-    let opponent_controller = opponent_menu();
-    let controllers: [Box<dyn Controller>; 2] = match color_menu() {
-        1 => [Box::new(LocalHuman), opponent_controller],
-        2 => [opponent_controller, Box::new(LocalHuman)],
-        _ => panic!(), // unreachable
+fn load_game() -> GameState {
+    println!("Type file path:");
+    let mut file_path: String = String::new();
+    let stdin: io::Stdin = io::stdin();
+    let Ok(_) = stdin.read_line(&mut file_path) else {
+        println!("Error");
+        return load_game();
     };
-    Game::new(game_state, Box::new(UnicodeDisplay), controllers)
+    let Ok(game_state) = load_game_state_from_json(file_path.trim()) else {
+        println!("No such file");
+        return load_game();
+    };
+    game_state
+}
+
+fn join_host() -> Game {
+    let mut buffer: String = String::new();
+    let stdin = io::stdin();
+    println!("Type host address");
+    let _ = stdin.read_line(&mut buffer);
+    println!("trying to connect to {}", buffer.as_str().trim());
+    let mut remote_human = RemoteHuman::new_client(buffer.as_str().trim());
+    let game_state = remote_human.get_game_state();
+    println!("received game state");
+    let color = remote_human.get_color();
+    let controllers: [Box<dyn Controller>; 2] = match color {
+        Color::White => [Box::new(LocalHuman), Box::new(remote_human)],
+        Color::Black => [Box::new(remote_human), Box::new(LocalHuman)],
+    };
+    return Game::new(game_state, Box::new(UnicodeDisplay), controllers);
+}
+
+pub fn main_menu() -> Game {
+    println!(" 1 - Start new game");
+    println!(" 2 - Open saved game");
+    println!(" 3 - Join host");
+    let n = read_number();
+    if n == 1 || n == 2 {
+        let game_state;
+        if n == 1 {
+            game_state = new_game_menu();
+        } else {
+            game_state = load_game();
+        }
+        // let opponent_controller = opponent_menu(&game_state);
+        let controllers: [Box<dyn Controller>; 2] = match color_menu() {
+            1 => [
+                Box::new(LocalHuman),
+                opponent_menu(&game_state, Color::Black),
+            ],
+            2 => [
+                opponent_menu(&game_state, Color::White),
+                Box::new(LocalHuman),
+            ],
+            _ => panic!(), // unreachable
+        };
+        return Game::new(game_state, Box::new(UnicodeDisplay), controllers);
+    } else if n == 3 {
+        return join_host();
+    } else {
+        main_menu()
+    }
 }
