@@ -5,6 +5,7 @@ use std::io;
 
 use super::command_parser::CommandParser;
 
+/// Controller for the program's user. Chooses commands based on input directly typed on the command line.
 pub struct LocalHuman;
 
 impl Controller for LocalHuman {

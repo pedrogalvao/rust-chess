@@ -7,6 +7,7 @@ use crate::view::{AsciiDisplay, GameDisplay};
 
 use std::collections::BinaryHeap;
 
+/// Controller that uses Minimax algorithm with alpha-beta pruning
 #[derive(Clone)]
 pub struct AlphaBetaBot {
     depth: u32,

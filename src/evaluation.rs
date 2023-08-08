@@ -10,6 +10,7 @@ const ROOK_VALUE: i32 = 20;
 const PAWN_VALUE: i32 = 4;
 const CHECK_MATE_VALUE: i32 = 20000;
 
+/// Sums the value of all pieces of the player, minus the opponent's pieces.
 pub fn evaluate_material(game_state: &GameState, player_color: Color) -> i32 {
     let mut score = 0;
     for x in 0..8 {

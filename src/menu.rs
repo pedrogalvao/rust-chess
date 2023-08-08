@@ -11,7 +11,7 @@ use crate::model::game_state::{load_game_state_from_json, GameState};
 use crate::model::piece::Color;
 use crate::view::UnicodeDisplay;
 
-pub fn read_number() -> u32 {
+fn read_number() -> u32 {
     let mut buffer: String = String::new();
     let stdin = io::stdin();
     let Ok(_) = stdin.read_line(&mut buffer) else {

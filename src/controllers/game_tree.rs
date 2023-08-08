@@ -10,6 +10,7 @@ use rand::thread_rng;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
+/// Representation for possible ramifications of the game from a given state.
 #[derive(Clone)]
 pub struct GameTree {
     pub game_state: GameState,

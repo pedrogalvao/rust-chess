@@ -11,6 +11,7 @@ use super::{
     piece::{Color, Piece, PieceType},
 };
 
+/// Representation of the game state including all variables that are necessary to continue the match.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GameState {
     pub board: Board,
@@ -42,6 +43,7 @@ pub fn load_game_state_from_json(file_path: &str) -> Result<GameState, Box<dyn s
 }
 
 impl GameState {
+    /// Initialization for standard chess match.
     pub const fn new() -> Self {
         Self {
             board: INIT_POSITIONS,
@@ -55,6 +57,7 @@ impl GameState {
         }
     }
 
+    /// Initialization for Fischer's Random Chess.
     pub fn new960() -> Self {
         let initial_positions = create_960_board();
         let mut king_positions = [None, None];
@@ -133,6 +136,7 @@ impl GameState {
         return self.king_positions[player as usize];
     }
 
+    /// Verify if after a certain movement it is still possible to castle and update attributes accordingly.
     fn update_can_castle(&mut self, movement: &Movement) {
         let Movement::Normal { from: source, to: destination } = movement else {
             return;
@@ -183,7 +187,8 @@ impl GameState {
             }
         }
     }
-
+    
+    /// Update game state with a movement.
     pub fn make_movement(&mut self, movement: Movement) {
         match movement {
             Movement::Normal {
@@ -294,6 +299,7 @@ impl GameState {
         results
     }
 
+    /// Create new game state and make a movement on it.
     pub fn clone_and_move(&self, movement: Movement) -> Self {
         let mut next_state = self.clone();
         next_state.make_movement(movement);

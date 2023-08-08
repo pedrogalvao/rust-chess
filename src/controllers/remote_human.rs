@@ -5,9 +5,9 @@ use crate::controllers::controller::{Command, Controller};
 use crate::model::game_state::GameState;
 use crate::model::piece::Color;
 
+/// Controller for receiving commands from another device through TCP connection.
 pub struct RemoteHuman {
-    stream: TcpStream,
-    // listener : TcpStream
+    stream: TcpStream
 }
 
 impl RemoteHuman {

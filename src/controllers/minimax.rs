@@ -7,6 +7,7 @@ use std::collections::BinaryHeap;
 use super::controller::{Command, Controller};
 use super::game_tree::GameTree;
 
+/// Controller that uses Minimax algorithm.
 #[derive(Clone)]
 pub struct MinimaxBot {
     depth: u32,

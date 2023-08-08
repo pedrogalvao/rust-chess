@@ -4,6 +4,7 @@ use crate::model::game_state::GameState;
 use crate::rules::move_generator::generate_commands;
 use rand::seq::SliceRandom;
 
+/// Controller that chooses moves randomly.
 #[derive(Clone)]
 pub struct RandomBot;
 
