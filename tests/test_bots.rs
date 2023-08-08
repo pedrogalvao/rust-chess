@@ -12,16 +12,20 @@ use std::thread;
 
 #[cfg(test)]
 mod tests {
-    use rust_chess::{controllers::alphabeta::AlphaBetaBot, model::piece::PieceType, view::AsciiDisplay};
+    use rust_chess::{
+        controllers::alphabeta::AlphaBetaBot, model::piece::PieceType, view::AsciiDisplay,
+    };
 
     use super::*;
 
     fn is_valid_position(game_state: &GameState) -> bool {
         let mut king_count = 0;
         for row in game_state.board {
-            for square  in row {
+            for square in row {
                 match square {
-                    Some(piece) if piece.piece_type == PieceType::King => {king_count += 1;},
+                    Some(piece) if piece.piece_type == PieceType::King => {
+                        king_count += 1;
+                    }
                     _ => {}
                 }
             }

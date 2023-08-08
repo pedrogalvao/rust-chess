@@ -178,7 +178,6 @@ fn is_valid_movement_for_king(movement: &Movement) -> bool {
     (to[0] as i8 - from[0] as i8).abs() <= 1 && (to[1] as i8 - from[1] as i8).abs() <= 1
 }
 
-
 fn is_valid_destination(movement: &Movement, game_state: &GameState, piece: &Piece) -> bool {
     let Movement::Normal { from: _, to: [x, y] } = movement else {
         return false;

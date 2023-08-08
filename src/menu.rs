@@ -51,10 +51,7 @@ fn opponent_menu(game_state: &GameState, color: Color) -> Box<dyn Controller> {
         5 => {
             println!("Waiting for connection");
             let mut remote_human = RemoteHuman::new_listener();
-            for i in 0..2 {
-                let received_message = remote_human.receive_message();
-                remote_human.handle_message(received_message, game_state, &color);
-            }
+            remote_human.reply_to_initial_messages(game_state, &color);
             Box::new(remote_human)
         }
         _ => {

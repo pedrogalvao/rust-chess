@@ -1,7 +1,10 @@
-use crate::model::{piece::{PieceType, Color}, game_state::GameState, movement::Movement};
+use crate::model::{
+    game_state::GameState,
+    movement::Movement,
+    piece::{Color, PieceType},
+};
 
 use super::cmd_validator::is_in_check;
-
 
 fn castle_king_side_destination_is_free(game_state: &GameState) -> bool {
     let king_row = game_state

@@ -95,6 +95,7 @@ impl GameTree {
         return Ok(());
     }
 
+    #[allow(dead_code)]
     pub fn dfs(&mut self, depth_limit: u32, branch_limit: u32) -> Result<(), ()> {
         if depth_limit == 0 {
             self.score = -evaluate_material(&self.game_state, self.game_state.player_to_move);

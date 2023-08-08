@@ -90,6 +90,14 @@ impl RemoteHuman {
             println!("Invalid move");
         }
     }
+
+    pub fn reply_to_initial_messages(&mut self, game_state: &GameState, color: &Color) {
+        // Handle requests for color and game state
+        for _ in 0..2 {
+            let received_message = self.receive_message();
+            self.handle_message(received_message, game_state, &color);
+        }
+    }
 }
 
 impl Controller for RemoteHuman {

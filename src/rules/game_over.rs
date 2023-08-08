@@ -1,7 +1,6 @@
 use crate::model::{game_state::GameState, piece::Color, piece::PieceType};
 use crate::rules::cmd_validator::is_in_check;
 use crate::rules::move_generator::generate_movements;
-// use crate::move_generator::generate_movements_for_player;
 
 pub fn is_in_check_mate(game_state: &GameState, player_color: Color) -> bool {
     is_in_check(game_state, player_color) && generate_movements(game_state).len() == 0
