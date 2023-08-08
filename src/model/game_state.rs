@@ -152,6 +152,8 @@ impl GameState {
                 if source == &white_king_position || source == &[0, 7] {
                     self.white_can_castle_king_side = false
                 }
+            }
+            if self.white_can_castle_queen_side {
                 if source == &white_king_position || source == &[0, 0] {
                     self.white_can_castle_queen_side = false
                 }
