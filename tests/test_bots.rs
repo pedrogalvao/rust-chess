@@ -20,25 +20,33 @@ mod tests {
 
     fn is_valid_position(game_state: &GameState) -> bool {
         let mut king_count = 0;
+        let mut white_rook_count = 0;
+        let mut black_rook_count = 0;
         for row in game_state.board {
             for square in row {
                 match square {
                     Some(piece) if piece.piece_type == PieceType::King => {
                         king_count += 1;
+                    },
+                    Some(piece) if piece.piece_type == PieceType::Rook => {
+                        match piece.color {
+                            Color::White => {white_rook_count += 1;},
+                            Color::Black => {black_rook_count += 1;},
+                        }
                     }
                     _ => {}
                 }
             }
         }
-        return king_count == 2;
+        return king_count == 2 && white_rook_count <= 2 && black_rook_count <= 2;
     }
 
     #[test]
     fn random_games() {
         // verify that all generated movements are valid
         let game_display: NoDisplay = NoDisplay {};
-        for _ in 0..10 {
-            let mut game_state: GameState = GameState::new();
+        for _ in 0..20 {
+            let mut game_state: GameState = GameState::new960();
             for i in 0..100 {
                 let movements: Vec<Movement> = generate_movements(&game_state);
                 for movement in &movements {
@@ -78,7 +86,7 @@ mod tests {
         let mut n_defeats = 0;
         for _ in 0..n_games {
             let mut game: Game = Game::new(
-                GameState::new(),
+                GameState::new960(),
                 Box::new(NoDisplay),
                 [Box::new(bot1.clone()), Box::new(bot2.clone())],
             );
