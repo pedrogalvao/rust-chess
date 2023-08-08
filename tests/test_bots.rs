@@ -27,13 +27,15 @@ mod tests {
                 match square {
                     Some(piece) if piece.piece_type == PieceType::King => {
                         king_count += 1;
-                    },
-                    Some(piece) if piece.piece_type == PieceType::Rook => {
-                        match piece.color {
-                            Color::White => {white_rook_count += 1;},
-                            Color::Black => {black_rook_count += 1;},
-                        }
                     }
+                    Some(piece) if piece.piece_type == PieceType::Rook => match piece.color {
+                        Color::White => {
+                            white_rook_count += 1;
+                        }
+                        Color::Black => {
+                            black_rook_count += 1;
+                        }
+                    },
                     _ => {}
                 }
             }

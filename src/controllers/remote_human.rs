@@ -7,14 +7,13 @@ use crate::model::piece::Color;
 
 /// Controller for receiving commands from another device through TCP connection.
 pub struct RemoteHuman {
-    stream: TcpStream
+    stream: TcpStream,
 }
 
-const GET_COLOR : &str = "GET_COLOR";
-const GET_STATE : &str = "GET_STATE";
+const GET_COLOR: &str = "GET_COLOR";
+const GET_STATE: &str = "GET_STATE";
 
 impl RemoteHuman {
-
     /// Create controller and wait for connection
     pub fn new_listener() -> Self {
         let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind to a random port");

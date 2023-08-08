@@ -187,7 +187,7 @@ impl GameState {
             }
         }
     }
-    
+
     /// Update game state with a movement.
     pub fn make_movement(&mut self, movement: Movement) {
         match movement {
