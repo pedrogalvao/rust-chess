@@ -12,9 +12,22 @@ use std::thread;
 
 #[cfg(test)]
 mod tests {
-    use rust_chess::controllers::alphabeta::AlphaBetaBot;
+    use rust_chess::{controllers::alphabeta::AlphaBetaBot, model::piece::PieceType, view::AsciiDisplay};
 
     use super::*;
+
+    fn is_valid_position(game_state: &GameState) -> bool {
+        let mut king_count = 0;
+        for row in game_state.board {
+            for square  in row {
+                match square {
+                    Some(piece) if piece.piece_type == PieceType::King => {king_count += 1;},
+                    _ => {}
+                }
+            }
+        }
+        return king_count == 2;
+    }
 
     #[test]
     fn random_games() {
@@ -29,6 +42,11 @@ mod tests {
                 }
                 if let Some(chosen_move) = movements.choose(&mut rand::thread_rng()) {
                     game_state.make_movement(chosen_move.clone());
+                    if !is_valid_position(&game_state) {
+                        AsciiDisplay.display_game(&game_state);
+                        dbg!(&game_state.last_move);
+                        panic!();
+                    }
                 } else {
                     println!("Game over {}", i);
                     game_display.display_game(&game_state);
@@ -95,7 +113,7 @@ mod tests {
             assert!(results[0] >= results[2]);
         });
         let handle4 = thread::spawn(move || {
-            let results = bot_vs_bot(AlphaBetaBot::new(4), MinimaxBot::new(3), 5);
+            let results = bot_vs_bot(AlphaBetaBot::new(3), MinimaxBot::new(2), 20);
             assert!(results[0] >= results[2]);
         });
         handle1.join().unwrap();

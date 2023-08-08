@@ -11,7 +11,7 @@ mod tests {
             game_state::load_game_state_from_json,
             piece::{Piece, PieceType},
         },
-        rules::cmd_validator::{king_castle_is_valid, queen_castle_is_valid},
+        rules::castle_validator::{king_castle_is_valid, queen_castle_is_valid},
     };
 
     use super::*;

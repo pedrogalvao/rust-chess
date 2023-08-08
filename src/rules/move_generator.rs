@@ -4,7 +4,7 @@ use crate::model::{
 };
 use crate::rules::cmd_validator::is_in_check;
 
-use super::cmd_validator::{king_castle_is_valid, queen_castle_is_valid};
+use super::castle_validator::{king_castle_is_valid, queen_castle_is_valid};
 
 fn generate_movements_for_pawn(
     game_state: &GameState,
