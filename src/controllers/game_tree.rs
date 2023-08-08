@@ -121,7 +121,6 @@ impl GameTree {
         }
         let mut reordered_children = BinaryHeap::new();
         let mut branch_count = 0;
-        dbg!(self.children.peek().unwrap().score);
         while let Some(mut child) = self.children.pop() {
             if branch_count < branch_limit {
                 match child.dfs(depth_limit - 1, branch_limit) {

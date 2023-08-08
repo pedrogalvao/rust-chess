@@ -28,25 +28,25 @@ impl AlphaBetaBot {
 
 impl AlphaBetaBot {
     fn update_tree(&mut self, game_state: &GameState) {
-        // if self.tree.children.len() == 0 {
-        //     self.tree = AlphaBetaTree {
-        //         score: evaluate_material(game_state, game_state.player_to_move),
-        //         game_state: game_state.clone(),
-        //         children: BinaryHeap::new(),
-        //     };
-        //     return;
-        // }
+        if self.tree.children.len() == 0 {
+            self.tree = GameTree {
+                score: evaluate_material(game_state, game_state.player_to_move),
+                game_state: game_state.clone(),
+                children: BinaryHeap::new(),
+            };
+            return;
+        }
 
-        // // look for corresponding tree node
-        // while let Some(child) = self.tree.children.pop() {
-        //     if child.game_state == *game_state {
-        //         self.tree = child;
-        //         return;
-        //     }
-        // }
-        // AsciiDisplay.display_game(game_state);
-        // dbg!(&game_state.last_move);
-        // println!("Unexpected movement");
+        // look for corresponding tree node
+        while let Some(child) = self.tree.children.pop() {
+            if child.game_state == *game_state {
+                self.tree = child;
+                return;
+            }
+        }
+        AsciiDisplay.display_game(game_state);
+        dbg!(&game_state.last_move);
+        println!("Unexpected movement");
         // movement was not in the tree
         self.tree = GameTree {
             score: -evaluate_material(game_state, game_state.player_to_move),
@@ -65,7 +65,6 @@ impl AlphaBetaBot {
         let c = self.tree.children.pop();
         match c {
             None => {
-                // dbg!(game_state);
                 AsciiDisplay.display_game(game_state);
                 panic!();
             }

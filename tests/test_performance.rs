@@ -36,7 +36,7 @@ mod test {
 
     #[test]
     fn test_alphabeta_time() {
-        let depth = 6;
+        let depth = 7;
         let mut game: Game = Game::new(
             GameState::new(),
             Box::new(NoDisplay),

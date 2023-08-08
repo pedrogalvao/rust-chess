@@ -14,7 +14,7 @@ impl RemoteHuman {
     pub fn new_listener() -> Self {
         let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind to a random port");
         let port = listener.local_addr().unwrap().port();
-        println!("Listening on port {}", port);
+        println!("Listening on 127.0.0.1:{}", port);
 
         for stream in listener.incoming() {
             let rh = RemoteHuman {
@@ -99,7 +99,6 @@ impl Controller for RemoteHuman {
             let _ = self.stream.write(send_msg.as_bytes());
         };
         let received_message = self.receive_message();
-        dbg!(&received_message);
 
         let Ok(cmd) = serde_json::from_str(&received_message.as_str()) else {
             self.handle_message(received_message, game_state, &game_state.player_to_move);
