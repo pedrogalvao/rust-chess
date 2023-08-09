@@ -91,9 +91,6 @@ pub fn create_960_board() -> Board {
     let rook_col1 = rand::thread_rng().gen_range(0, 5);
     let rook_col2 = rand::thread_rng().gen_range(rook_col1 + 2, 8);
     let king_col = rand::thread_rng().gen_range(rook_col1 + 1, rook_col2);
-    dbg!(rook_col1);
-    dbg!(rook_col2);
-    dbg!(king_col);
     let mut unused_cols: Vec<usize> = vec![0, 1, 2, 3, 4, 5, 6, 7];
     unused_cols.remove(unused_cols.iter().position(|x| *x == rook_col1).unwrap());
     unused_cols.remove(unused_cols.iter().position(|x| *x == rook_col2).unwrap());

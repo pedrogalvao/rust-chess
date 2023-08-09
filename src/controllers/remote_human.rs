@@ -58,10 +58,8 @@ impl RemoteHuman {
     pub fn get_game_state(&mut self) -> GameState {
         let _ = self.stream.write(GET_STATE.as_bytes());
         let response = self.receive_message();
-        dbg!(&response);
         let Ok(game_state) = serde_json::from_str(response.as_str()) else {
             let response = self.receive_message();
-            dbg!(&response);
             let Ok(game_state) = serde_json::from_str(response.as_str()) else {
                 let response = self.receive_message();
                 dbg!(&response);

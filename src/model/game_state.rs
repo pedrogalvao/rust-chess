@@ -93,21 +93,6 @@ impl GameState {
         }
     }
 
-    #[allow(dead_code)]
-    pub const fn new_empty() -> Self {
-        Self {
-            board: [[None; 8]; 8],
-            player_to_move: Color::White,
-            last_move: None,
-            white_can_castle_queen_side: true,
-            white_can_castle_king_side: true,
-            black_can_castle_king_side: true,
-            black_can_castle_queen_side: true,
-            king_initial_positions: [None, None],
-            rook_initial_positions: [[None, None], [None, None]],
-        }
-    }
-
     pub fn deepclone(&self) -> GameState {
         GameState {
             board: self.deepclone_board(),

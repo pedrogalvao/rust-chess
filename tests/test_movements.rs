@@ -14,11 +14,25 @@ mod tests {
         rules::castle_validator::{king_castle_is_valid, queen_castle_is_valid},
     };
 
+    pub const fn new_empty_game_state() -> GameState {
+        GameState {
+            board: [[None; 8]; 8],
+            player_to_move: Color::White,
+            last_move: None,
+            white_can_castle_queen_side: true,
+            white_can_castle_king_side: true,
+            black_can_castle_king_side: true,
+            black_can_castle_queen_side: true,
+            king_initial_positions: [None, None],
+            rook_initial_positions: [[None, None], [None, None]],
+        }
+    }
+
     use super::*;
 
     #[test]
     fn test_is_in_check() {
-        let mut game_state = GameState::new_empty();
+        let mut game_state = new_empty_game_state();
         let mut rng = rand::thread_rng();
         let x: usize = rng.gen_range(1, 3);
         let y: usize = rng.gen_range(1, 3);
@@ -44,7 +58,7 @@ mod tests {
 
     #[test]
     fn test_rook() {
-        let mut one_rook_state = GameState::new_empty();
+        let mut one_rook_state = new_empty_game_state();
         let mut rng = rand::thread_rng();
         let x: usize = rng.gen_range(0, 7);
         let y: usize = rng.gen_range(0, 7);
@@ -58,7 +72,7 @@ mod tests {
 
     #[test]
     fn test_bishop() {
-        let mut one_bishop_state = GameState::new_empty();
+        let mut one_bishop_state = new_empty_game_state();
         one_bishop_state.board[1][2] = Some(Piece {
             piece_type: PieceType::Bishop,
             color: Color::White,
@@ -69,7 +83,7 @@ mod tests {
 
     #[test]
     fn test_king() {
-        let mut one_king_state = GameState::new_empty();
+        let mut one_king_state = new_empty_game_state();
         let mut rng = rand::thread_rng();
         let x: usize = rng.gen_range(1, 6);
         let y: usize = rng.gen_range(1, 6);
