@@ -153,30 +153,62 @@ mod tests {
         game_state.board[0][3] = None;
         game_state.player_to_move = Color::White;
         assert_eq!(queen_castle_is_valid(&game_state), false);
+    }
 
+    #[test]
+    fn test_castle_960() {
         // test for different starting position
         let mut state960 =
             load_game_state_from_json("tests/boards/board_960.json").unwrap();
         assert_eq!(queen_castle_is_valid(&state960), false);
         assert_eq!(king_castle_is_valid(&state960), true);
-        game_state.make_movement(Movement::Normal {
+        // move white knight
+        state960.make_movement(Movement::Normal {
             from: [0, 7],
             to: [2, 6],
         });
         assert_eq!(queen_castle_is_valid(&state960), false);
         assert_eq!(king_castle_is_valid(&state960), true);
+        // move black knight
         state960.make_movement(Movement::Normal {
-            from: [7, 7],
+            from: [6, 7],
             to: [5, 6],
         });
         AsciiDisplay.display_game(&state960);
         assert_eq!(queen_castle_is_valid(&state960), false);
         assert_eq!(king_castle_is_valid(&state960), true);
+        // move white rook
         state960.make_movement(Movement::Normal {
             from: [0, 6],
             to: [0, 7],
         });
-        AsciiDisplay.display_game(&state960);
+        assert_eq!(state960.white_can_castle_queen_side, true);
+        assert_eq!(state960.white_can_castle_king_side, false);
+        assert_eq!(king_castle_is_valid(&state960), false);
+        assert_eq!(queen_castle_is_valid(&state960), false);
+        // move black pawn
+        state960.make_movement(Movement::Normal {
+            from: [6, 7],
+            to: [5, 7],
+        });
+        // move white rook back to initial position
+        state960.make_movement(Movement::Normal {
+            from: [0, 7],
+            to: [0, 6],
+        });
+        assert_eq!(queen_castle_is_valid(&state960), false);
+        assert_eq!(king_castle_is_valid(&state960), true);
+        // move black rook
+        state960.make_movement(Movement::Normal {
+            from: [7, 6],
+            to: [6, 6],
+        });
+        assert_eq!(queen_castle_is_valid(&state960), false);
+        assert_eq!(king_castle_is_valid(&state960), false);
+        state960.make_movement(Movement::Normal {
+            from: [1, 0],
+            to: [2, 0],
+        });
         assert_eq!(queen_castle_is_valid(&state960), false);
         assert_eq!(king_castle_is_valid(&state960), false);
 
