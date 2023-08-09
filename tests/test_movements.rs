@@ -11,7 +11,7 @@ mod tests {
             game_state::load_game_state_from_json,
             piece::{Piece, PieceType},
         },
-        rules::castle_validator::{king_castle_is_valid, queen_castle_is_valid},
+        rules::castle_validator::{king_castle_is_valid, queen_castle_is_valid}, view::{AsciiDisplay, GameDisplay},
     };
 
     pub const fn new_empty_game_state() -> GameState {
@@ -155,10 +155,30 @@ mod tests {
         assert_eq!(queen_castle_is_valid(&game_state), false);
 
         // test for different starting position
-        let state960 =
+        let mut state960 =
             load_game_state_from_json("tests/boards/board_960.json").unwrap();
         assert_eq!(queen_castle_is_valid(&state960), false);
         assert_eq!(king_castle_is_valid(&state960), true);
+        game_state.make_movement(Movement::Normal {
+            from: [0, 7],
+            to: [2, 6],
+        });
+        assert_eq!(queen_castle_is_valid(&state960), false);
+        assert_eq!(king_castle_is_valid(&state960), true);
+        state960.make_movement(Movement::Normal {
+            from: [7, 7],
+            to: [5, 6],
+        });
+        AsciiDisplay.display_game(&state960);
+        assert_eq!(queen_castle_is_valid(&state960), false);
+        assert_eq!(king_castle_is_valid(&state960), true);
+        state960.make_movement(Movement::Normal {
+            from: [0, 6],
+            to: [0, 7],
+        });
+        AsciiDisplay.display_game(&state960);
+        assert_eq!(queen_castle_is_valid(&state960), false);
+        assert_eq!(king_castle_is_valid(&state960), false);
 
     }
 }
