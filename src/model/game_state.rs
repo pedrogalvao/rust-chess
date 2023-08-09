@@ -21,7 +21,8 @@ pub struct GameState {
     pub white_can_castle_king_side: bool,
     pub black_can_castle_queen_side: bool,
     pub black_can_castle_king_side: bool,
-    pub king_positions: [Option<[usize; 2]>; 2],
+    pub king_initial_positions: [Option<[usize; 2]>; 2],
+    pub rook_initial_positions: [[Option<[usize; 2]>; 2]; 2],
 }
 
 pub fn write_game_state_to_json(
@@ -53,7 +54,8 @@ impl GameState {
             white_can_castle_king_side: true,
             black_can_castle_king_side: true,
             black_can_castle_queen_side: true,
-            king_positions: [Some([0, 4]), Some([7, 4])],
+            king_initial_positions: [Some([0, 4]), Some([7, 4])],
+            rook_initial_positions: [[Some([0, 0]), Some([0, 7])], [Some([7, 0]), Some([7, 7])]],
         }
     }
 
@@ -61,10 +63,19 @@ impl GameState {
     pub fn new960() -> Self {
         let initial_positions = create_960_board();
         let mut king_positions = [None, None];
+        let mut king_rook_positions = [None, None];
+        let mut queen_rook_positions = [None, None];
         for i in 1..6 {
             match initial_positions[0][i] {
                 Some(piece) if piece.piece_type == PieceType::King => {
                     king_positions = [Some([0, i]), Some([7, i])];
+                }
+                Some(piece) if piece.piece_type == PieceType::Rook => {
+                    if queen_rook_positions == [None, None] {
+                        queen_rook_positions = [Some([0, i]), Some([7, i])];
+                    } else {
+                        king_rook_positions = [Some([0, i]), Some([7, i])];
+                    }
                 }
                 _ => {}
             }
@@ -77,7 +88,8 @@ impl GameState {
             white_can_castle_king_side: true,
             black_can_castle_king_side: true,
             black_can_castle_queen_side: true,
-            king_positions: king_positions,
+            king_initial_positions: king_positions,
+            rook_initial_positions: [king_rook_positions, queen_rook_positions],
         }
     }
 
@@ -91,7 +103,8 @@ impl GameState {
             white_can_castle_king_side: true,
             black_can_castle_king_side: true,
             black_can_castle_queen_side: true,
-            king_positions: [None, None],
+            king_initial_positions: [None, None],
+            rook_initial_positions: [[None, None], [None, None]],
         }
     }
 
@@ -104,7 +117,8 @@ impl GameState {
             white_can_castle_king_side: self.white_can_castle_king_side,
             black_can_castle_queen_side: self.black_can_castle_queen_side,
             black_can_castle_king_side: self.black_can_castle_king_side,
-            king_positions: self.king_positions.clone(),
+            king_initial_positions: self.king_initial_positions, // constant, doesnt need cloning
+            rook_initial_positions: self.rook_initial_positions, // constant, doesnt need cloning
         }
     }
 
@@ -132,8 +146,12 @@ impl GameState {
         results
     }
 
-    pub fn get_king_position(&self, player: Color) -> Option<[usize; 2]> {
-        return self.king_positions[player as usize];
+    pub fn get_rook_initial_position(&self, player: Color, queen_side: bool) -> Option<[usize; 2]> {
+        return self.rook_initial_positions[player as usize][queen_side as usize];
+    }
+
+    pub fn get_king_initial_position(&self, player: Color) -> Option<[usize; 2]> {
+        return self.king_initial_positions[player as usize];
     }
 
     /// Verify if after a certain movement it is still possible to castle and update attributes accordingly.
@@ -141,48 +159,84 @@ impl GameState {
         let Movement::Normal { from: source, to: destination } = movement else {
             return;
         };
-        let Some(white_king_position) = self.get_king_position(Color::White) else {
+        let Some(white_king_position) = self.get_king_initial_position(Color::White) else {
             self.white_can_castle_king_side = false;
             self.white_can_castle_queen_side = false;
             return;
         };
-        let Some(black_king_position) = self.get_king_position(Color::Black) else {
+        let Some(black_king_position) = self.get_king_initial_position(Color::Black) else {
             self.black_can_castle_king_side = false;
             self.black_can_castle_queen_side = false;
             return;
         };
         if self.player_to_move == Color::White {
             if self.white_can_castle_king_side {
-                if source == &white_king_position || source == &[0, 7] {
+                if source == &white_king_position
+                    || source
+                        == &self
+                            .get_rook_initial_position(Color::White, false)
+                            .unwrap_or([9, 9])
+                {
                     self.white_can_castle_king_side = false
                 }
             }
             if self.white_can_castle_queen_side {
-                if source == &white_king_position || source == &[0, 0] {
+                if source == &white_king_position
+                    || source
+                        == &self
+                            .get_rook_initial_position(Color::White, true)
+                            .unwrap_or([9, 9])
+                {
                     self.white_can_castle_queen_side = false
                 }
             }
-            if destination == &[7, 0] {
+            if destination
+                == &self
+                    .get_rook_initial_position(Color::Black, true)
+                    .unwrap_or([9, 9])
+            {
                 self.black_can_castle_queen_side = false
             }
-            if destination == &[7, 7] {
+            if destination
+                == &self
+                    .get_rook_initial_position(Color::Black, false)
+                    .unwrap_or([9, 9])
+            {
                 self.black_can_castle_king_side = false
             }
         } else {
             if self.black_can_castle_king_side {
-                if source == &black_king_position || source == &[7, 7] {
+                if source == &black_king_position
+                    || source
+                        == &self
+                            .get_rook_initial_position(Color::Black, false)
+                            .unwrap_or([9, 9])
+                {
                     self.black_can_castle_king_side = false
                 }
             }
             if self.black_can_castle_queen_side {
-                if source == &black_king_position || source == &[7, 0] {
+                if source == &black_king_position
+                    || source
+                        == &self
+                            .get_rook_initial_position(Color::Black, true)
+                            .unwrap_or([9, 9])
+                {
                     self.black_can_castle_queen_side = false
                 }
             }
-            if destination == &[0, 0] {
+            if destination
+                == &self
+                    .get_rook_initial_position(Color::White, true)
+                    .unwrap_or([9, 9])
+            {
                 self.white_can_castle_queen_side = false
             }
-            if destination == &[0, 7] {
+            if destination
+                == &self
+                    .get_rook_initial_position(Color::White, false)
+                    .unwrap_or([9, 9])
+            {
                 self.white_can_castle_king_side = false
             }
         }
@@ -233,7 +287,7 @@ impl GameState {
 
     pub fn castle_king_side(&mut self) {
         self.set_curr_player_cant_castle();
-        let Some([king_row, king_col]) = self.get_king_position(self.player_to_move) else {
+        let Some([king_row, king_col]) = self.get_king_initial_position(self.player_to_move) else {
             return;
         };
         for col in king_col..8 {
@@ -260,7 +314,7 @@ impl GameState {
 
     pub fn castle_queen_side(&mut self) {
         self.set_curr_player_cant_castle();
-        let Some([king_row, king_col]) = self.get_king_position(self.player_to_move) else {
+        let Some([king_row, king_col]) = self.get_king_initial_position(self.player_to_move) else {
             println!("Tried to castle without having a king");
             panic!();
         };

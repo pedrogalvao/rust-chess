@@ -8,7 +8,7 @@ use super::cmd_validator::is_in_check;
 
 fn castle_king_side_destination_is_free(game_state: &GameState) -> bool {
     let king_row = game_state
-        .get_king_position(game_state.player_to_move)
+        .get_king_initial_position(game_state.player_to_move)
         .unwrap()[0];
     for col in [5, 6] {
         if game_state.board[king_row][col] != None {
@@ -25,7 +25,7 @@ fn castle_king_side_destination_is_free(game_state: &GameState) -> bool {
 
 fn castle_queen_side_destination_is_free(game_state: &GameState) -> bool {
     let king_row = game_state
-        .get_king_position(game_state.player_to_move)
+        .get_king_initial_position(game_state.player_to_move)
         .unwrap()[0];
     for col in [2, 3] {
         if game_state.board[king_row][col] != None {
@@ -46,7 +46,7 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
     {
         return false;
     }
-    if game_state.get_king_position(game_state.player_to_move) == None {
+    if game_state.get_king_initial_position(game_state.player_to_move) == None {
         return false;
     }
     if free_space_between_rook_and_king(game_state, true)
@@ -71,7 +71,7 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
     {
         return false;
     }
-    if game_state.get_king_position(game_state.player_to_move) == None {
+    if game_state.get_king_initial_position(game_state.player_to_move) == None {
         return false;
     }
 
@@ -93,7 +93,7 @@ pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
 
 fn free_space_between_rook_and_king(game_state: &GameState, king_side: bool) -> bool {
     let mut rook_column = 0;
-    let Some([_, king_col]) = game_state.get_king_position(game_state.player_to_move) else {
+    let Some([_, king_col]) = game_state.get_king_initial_position(game_state.player_to_move) else {
         return false;
     };
     if king_side {
