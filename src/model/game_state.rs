@@ -131,8 +131,8 @@ impl GameState {
         results
     }
 
-    pub fn get_rook_initial_position(&self, player: Color, queen_side: bool) -> Option<[usize; 2]> {
-        return self.rook_initial_positions[player as usize][queen_side as usize];
+    pub fn get_rook_initial_position(&self, player: Color, king_side: bool) -> Option<[usize; 2]> {
+        return self.rook_initial_positions[player as usize][king_side as usize];
     }
 
     pub fn get_king_initial_position(&self, player: Color) -> Option<[usize; 2]> {
@@ -159,7 +159,7 @@ impl GameState {
                 if source == &white_king_position
                     || source
                         == &self
-                            .get_rook_initial_position(Color::White, false)
+                            .get_rook_initial_position(Color::White, true)
                             .unwrap_or([9, 9])
                 {
                     self.white_can_castle_king_side = false
@@ -169,7 +169,7 @@ impl GameState {
                 if source == &white_king_position
                     || source
                         == &self
-                            .get_rook_initial_position(Color::White, true)
+                            .get_rook_initial_position(Color::White, false)
                             .unwrap_or([9, 9])
                 {
                     self.white_can_castle_queen_side = false
@@ -177,14 +177,14 @@ impl GameState {
             }
             if destination
                 == &self
-                    .get_rook_initial_position(Color::Black, true)
+                    .get_rook_initial_position(Color::Black, false)
                     .unwrap_or([9, 9])
             {
                 self.black_can_castle_queen_side = false
             }
             if destination
                 == &self
-                    .get_rook_initial_position(Color::Black, false)
+                    .get_rook_initial_position(Color::Black, true)
                     .unwrap_or([9, 9])
             {
                 self.black_can_castle_king_side = false
@@ -194,7 +194,7 @@ impl GameState {
                 if source == &black_king_position
                     || source
                         == &self
-                            .get_rook_initial_position(Color::Black, false)
+                            .get_rook_initial_position(Color::Black, true)
                             .unwrap_or([9, 9])
                 {
                     self.black_can_castle_king_side = false
@@ -204,7 +204,7 @@ impl GameState {
                 if source == &black_king_position
                     || source
                         == &self
-                            .get_rook_initial_position(Color::Black, true)
+                            .get_rook_initial_position(Color::Black, false)
                             .unwrap_or([9, 9])
                 {
                     self.black_can_castle_queen_side = false
@@ -212,14 +212,14 @@ impl GameState {
             }
             if destination
                 == &self
-                    .get_rook_initial_position(Color::White, true)
+                    .get_rook_initial_position(Color::White, false)
                     .unwrap_or([9, 9])
             {
                 self.white_can_castle_queen_side = false
             }
             if destination
                 == &self
-                    .get_rook_initial_position(Color::White, false)
+                    .get_rook_initial_position(Color::White, true)
                     .unwrap_or([9, 9])
             {
                 self.white_can_castle_king_side = false

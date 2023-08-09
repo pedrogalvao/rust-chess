@@ -153,5 +153,12 @@ mod tests {
         game_state.board[0][3] = None;
         game_state.player_to_move = Color::White;
         assert_eq!(queen_castle_is_valid(&game_state), false);
+
+        // test for different starting position
+        let state960 =
+            load_game_state_from_json("tests/boards/board_960.json").unwrap();
+        assert_eq!(queen_castle_is_valid(&state960), false);
+        assert_eq!(king_castle_is_valid(&state960), true);
+
     }
 }

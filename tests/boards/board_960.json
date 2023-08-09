@@ -1,0 +1,25 @@
+{
+    "board": [
+      [ "R", "N","B","Q", "B", "K", "R", "N"],
+      [ "P", "P", "P", "P", "P", "P", "P", "P"],
+      [ null, null, null, null, null, null, null, null],
+      [ null, null, null, null, null, null, null, null],
+      [ null, null, null, null, null, null, null, null],
+      [ null, null, null, null, null, null, null, null],
+      [ "p", "p", "p", "p", "p", "p", "p", "p"],
+      [ "r", "n", "b", "q", "b", "k", "r", "n"]
+    ],
+    "player_to_move": "White",
+    "last_move": {
+      "Normal": {
+        "from": [6, 4],
+        "to": [4, 4]
+      }
+    },
+    "white_can_castle_queen_side": true,
+    "white_can_castle_king_side": true,
+    "black_can_castle_queen_side": true,
+    "black_can_castle_king_side": true,
+    "king_initial_positions": [[0,5], [7,5]],
+    "rook_initial_positions": [[[0,0], [0,6]], [[7,0], [7,6]]]
+}
