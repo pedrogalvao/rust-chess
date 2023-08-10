@@ -41,8 +41,8 @@ fn castle_queen_side_destination_is_free(game_state: &GameState) -> bool {
 }
 
 pub fn king_castle_is_valid(game_state: &GameState) -> bool {
-    if (game_state.player_to_move == Color::White && !game_state.white_can_castle_king_side)
-        || (game_state.player_to_move == Color::Black && !game_state.black_can_castle_king_side)
+    if !((game_state.player_to_move == Color::White && game_state.white_can_castle_king_side)
+        || (game_state.player_to_move == Color::Black && game_state.black_can_castle_king_side))
     {
         return false;
     }
@@ -66,8 +66,8 @@ pub fn king_castle_is_valid(game_state: &GameState) -> bool {
 }
 
 pub fn queen_castle_is_valid(game_state: &GameState) -> bool {
-    if (game_state.player_to_move == Color::White && !game_state.white_can_castle_queen_side)
-        || (game_state.player_to_move == Color::Black && !game_state.black_can_castle_queen_side)
+    if !((game_state.player_to_move == Color::White && game_state.white_can_castle_queen_side)
+        || (game_state.player_to_move == Color::Black && game_state.black_can_castle_queen_side))
     {
         return false;
     }

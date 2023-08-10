@@ -55,7 +55,7 @@ impl GameState {
             black_can_castle_king_side: true,
             black_can_castle_queen_side: true,
             king_initial_positions: [Some([0, 4]), Some([7, 4])],
-            rook_initial_positions: [[Some([0, 0]), Some([0, 7])], [Some([7, 0]), Some([7, 7])]],
+            rook_initial_positions: [[Some([0, 0]), Some([7, 0])], [Some([0, 7]), Some([7, 7])]],
         }
     }
 
@@ -65,7 +65,7 @@ impl GameState {
         let mut king_positions = [None, None];
         let mut king_rook_positions = [None, None];
         let mut queen_rook_positions = [None, None];
-        for i in 1..6 {
+        for i in 0..8 {
             match initial_positions[0][i] {
                 Some(piece) if piece.piece_type == PieceType::King => {
                     king_positions = [Some([0, i]), Some([7, i])];
@@ -89,7 +89,7 @@ impl GameState {
             black_can_castle_king_side: true,
             black_can_castle_queen_side: true,
             king_initial_positions: king_positions,
-            rook_initial_positions: [king_rook_positions, queen_rook_positions],
+            rook_initial_positions: [queen_rook_positions, king_rook_positions],
         }
     }
 
@@ -132,7 +132,7 @@ impl GameState {
     }
 
     pub fn get_rook_initial_position(&self, player: Color, king_side: bool) -> Option<[usize; 2]> {
-        return self.rook_initial_positions[player as usize][king_side as usize];
+        return self.rook_initial_positions[king_side as usize][player as usize];
     }
 
     pub fn get_king_initial_position(&self, player: Color) -> Option<[usize; 2]> {
@@ -160,9 +160,9 @@ impl GameState {
                     || source
                         == &self
                             .get_rook_initial_position(Color::White, true)
-                            .unwrap_or([9, 9])
+                            .unwrap()
                 {
-                    self.white_can_castle_king_side = false
+                    self.white_can_castle_king_side = false;
                 }
             }
             if self.white_can_castle_queen_side {
@@ -170,24 +170,24 @@ impl GameState {
                     || source
                         == &self
                             .get_rook_initial_position(Color::White, false)
-                            .unwrap_or([9, 9])
+                            .unwrap()
                 {
-                    self.white_can_castle_queen_side = false
+                    self.white_can_castle_queen_side = false;
                 }
             }
             if destination
                 == &self
                     .get_rook_initial_position(Color::Black, false)
-                    .unwrap_or([9, 9])
+                    .unwrap()
             {
-                self.black_can_castle_queen_side = false
+                self.black_can_castle_queen_side = false;
             }
             if destination
                 == &self
                     .get_rook_initial_position(Color::Black, true)
-                    .unwrap_or([9, 9])
+                    .unwrap()
             {
-                self.black_can_castle_king_side = false
+                self.black_can_castle_king_side = false;
             }
         } else {
             if self.black_can_castle_king_side {
@@ -195,9 +195,9 @@ impl GameState {
                     || source
                         == &self
                             .get_rook_initial_position(Color::Black, true)
-                            .unwrap_or([9, 9])
+                            .unwrap()
                 {
-                    self.black_can_castle_king_side = false
+                    self.black_can_castle_king_side = false;
                 }
             }
             if self.black_can_castle_queen_side {
@@ -205,24 +205,24 @@ impl GameState {
                     || source
                         == &self
                             .get_rook_initial_position(Color::Black, false)
-                            .unwrap_or([9, 9])
+                            .unwrap()
                 {
-                    self.black_can_castle_queen_side = false
+                    self.black_can_castle_queen_side = false;
                 }
             }
             if destination
                 == &self
                     .get_rook_initial_position(Color::White, false)
-                    .unwrap_or([9, 9])
+                    .unwrap()
             {
-                self.white_can_castle_queen_side = false
+                self.white_can_castle_queen_side = false;
             }
             if destination
                 == &self
                     .get_rook_initial_position(Color::White, true)
-                    .unwrap_or([9, 9])
+                    .unwrap()
             {
-                self.white_can_castle_king_side = false
+                self.white_can_castle_king_side = false;
             }
         }
     }
@@ -234,6 +234,7 @@ impl GameState {
                 from: source,
                 to: destination,
             } => {
+                self.update_can_castle(&movement);
                 let [x, y] = source;
                 let [x2, y2] = destination;
                 if (y != y2 && (x2 == 4 || x2 == 5))
@@ -251,7 +252,6 @@ impl GameState {
                         color: self.player_to_move,
                     }); // promote the pawn
                 }
-                self.update_can_castle(&movement);
                 self.player_to_move = self.player_to_move.get_opponent_color();
                 self.last_move = Some(movement);
             }
@@ -283,11 +283,11 @@ impl GameState {
                 _ => {}
             }
         }
+        self.board[king_row][king_col] = None;
         self.board[king_row][6] = Some(Piece {
             piece_type: PieceType::King,
             color: self.player_to_move,
         });
-        self.board[king_row][king_col] = None;
         self.board[king_row][5] = Some(Piece {
             piece_type: PieceType::Rook,
             color: self.player_to_move,

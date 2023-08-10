@@ -47,7 +47,7 @@ mod tests {
     fn random_games() {
         // verify that all generated movements are valid
         let game_display: NoDisplay = NoDisplay {};
-        for _ in 0..20 {
+        for _ in 0..200 {
             let mut game_state: GameState = GameState::new960();
             for i in 0..100 {
                 let movements: Vec<Movement> = generate_movements(&game_state);

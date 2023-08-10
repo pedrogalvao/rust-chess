@@ -213,4 +213,19 @@ mod tests {
         assert_eq!(king_castle_is_valid(&state960), false);
 
     }
+
+    #[test]
+    fn test_960_init() {
+        for _ in 0..10 {
+            let game_state = GameState::new960();
+            for king_pos in game_state.king_initial_positions {
+                assert_eq!(game_state.board[king_pos.unwrap()[0]][king_pos.unwrap()[1]].unwrap().piece_type, PieceType::King);
+            }
+            for arr in game_state.rook_initial_positions {
+                for rook_pos in arr {
+                    assert_eq!(game_state.board[rook_pos.unwrap()[0]][rook_pos.unwrap()[1]].unwrap().piece_type, PieceType::Rook);
+                }
+            }
+        }
+    }
 }
