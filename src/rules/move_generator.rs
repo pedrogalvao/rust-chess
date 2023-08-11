@@ -320,19 +320,6 @@ pub fn generate_commands(game_state: &GameState) -> Vec<Command> {
     commands
 }
 
-#[allow(dead_code)]
-fn push_if_not_in_check(
-    movements: &mut Vec<Movement>,
-    movement: Movement,
-    color: Color,
-    game_state: &GameState,
-) {
-    let game_state2 = game_state.clone_and_move(movement.clone());
-    if !is_in_check(&game_state2, color) {
-        movements.push(movement);
-    }
-}
-
 pub fn generate_movements_for_player_ignoring_check(
     game_state: &GameState,
     color: Color,

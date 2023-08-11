@@ -24,7 +24,6 @@ mod test {
             let now = Instant::now();
             game.player_turn();
             times.push(now.elapsed().as_millis());
-            //evaluate_state(&game.game_state, game.game_state.player_to_move);
             n_turns += 1;
         }
         let total_time: u128 = times.iter().sum();
@@ -52,7 +51,6 @@ mod test {
             let now = Instant::now();
             game.player_turn();
             times.push(now.elapsed().as_millis());
-            //evaluate_state(&game.game_state, game.game_state.player_to_move);
             n_turns += 1;
         }
         let total_time: u128 = times.iter().sum();
