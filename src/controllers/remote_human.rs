@@ -11,7 +11,7 @@ pub struct RemoteHuman {
     stream: TcpStream,
     pub color: Color,
     dont_send_last_move: bool,
-    undo_accepted: bool
+    undo_accepted: bool,
 }
 
 const GET_COLOR: &str = "GET_COLOR";
@@ -32,7 +32,7 @@ impl RemoteHuman {
                 color,
                 stream: stream.unwrap(),
                 dont_send_last_move: true,
-                undo_accepted: false
+                undo_accepted: false,
             };
             println!("Connection established!");
             return rh;
@@ -47,9 +47,12 @@ impl RemoteHuman {
             println!("could not connect to host");
             return Err(());
         };
-        let mut rh = RemoteHuman { color: Color::White, stream ,
+        let mut rh = RemoteHuman {
+            color: Color::White,
+            stream,
             dont_send_last_move: true,
-            undo_accepted: false};
+            undo_accepted: false,
+        };
         println!("Connection established!");
         rh.color = rh.get_color().get_opponent_color();
         return Ok(rh);
@@ -96,11 +99,7 @@ impl RemoteHuman {
     }
 
     /// Handle messages that don't contain movements
-    pub fn handle_message(
-        &mut self,
-        received_message: String,
-        game_state: &GameState,
-    ) {
+    pub fn handle_message(&mut self, received_message: String, game_state: &GameState) {
         if received_message == GET_STATE {
             if game_state.player_to_move == self.color {
                 self.dont_send_last_move = true;
@@ -135,7 +134,6 @@ impl RemoteHuman {
 }
 
 impl Controller for RemoteHuman {
-    
     fn accept_undo(&mut self) -> bool {
         let _ = self.stream.write(UNDO_MSG.as_bytes());
         let reply = self.receive_message();
@@ -154,7 +152,7 @@ impl Controller for RemoteHuman {
         } else if self.dont_send_last_move {
             self.dont_send_last_move = false;
         } else if let Some(last_move) = game_state.last_move.clone() {
-            if game_state.player_to_move == self.color { 
+            if game_state.player_to_move == self.color {
                 let send_msg = serde_json::to_string(&Command::Move(last_move)).unwrap();
                 let _ = self.stream.write(send_msg.as_bytes());
             }

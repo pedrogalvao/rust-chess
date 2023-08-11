@@ -161,71 +161,43 @@ impl GameState {
         if self.player_to_move == Color::White {
             if self.white_can_castle_king_side {
                 if source == &white_king_position
-                    || source
-                        == &self
-                            .get_rook_initial_position(Color::White, true)
-                            .unwrap()
+                    || source == &self.get_rook_initial_position(Color::White, true).unwrap()
                 {
                     self.white_can_castle_king_side = false;
                 }
             }
             if self.white_can_castle_queen_side {
                 if source == &white_king_position
-                    || source
-                        == &self
-                            .get_rook_initial_position(Color::White, false)
-                            .unwrap()
+                    || source == &self.get_rook_initial_position(Color::White, false).unwrap()
                 {
                     self.white_can_castle_queen_side = false;
                 }
             }
-            if destination
-                == &self
-                    .get_rook_initial_position(Color::Black, false)
-                    .unwrap()
-            {
+            if destination == &self.get_rook_initial_position(Color::Black, false).unwrap() {
                 self.black_can_castle_queen_side = false;
             }
-            if destination
-                == &self
-                    .get_rook_initial_position(Color::Black, true)
-                    .unwrap()
-            {
+            if destination == &self.get_rook_initial_position(Color::Black, true).unwrap() {
                 self.black_can_castle_king_side = false;
             }
         } else {
             if self.black_can_castle_king_side {
                 if source == &black_king_position
-                    || source
-                        == &self
-                            .get_rook_initial_position(Color::Black, true)
-                            .unwrap()
+                    || source == &self.get_rook_initial_position(Color::Black, true).unwrap()
                 {
                     self.black_can_castle_king_side = false;
                 }
             }
             if self.black_can_castle_queen_side {
                 if source == &black_king_position
-                    || source
-                        == &self
-                            .get_rook_initial_position(Color::Black, false)
-                            .unwrap()
+                    || source == &self.get_rook_initial_position(Color::Black, false).unwrap()
                 {
                     self.black_can_castle_queen_side = false;
                 }
             }
-            if destination
-                == &self
-                    .get_rook_initial_position(Color::White, false)
-                    .unwrap()
-            {
+            if destination == &self.get_rook_initial_position(Color::White, false).unwrap() {
                 self.white_can_castle_queen_side = false;
             }
-            if destination
-                == &self
-                    .get_rook_initial_position(Color::White, true)
-                    .unwrap()
-            {
+            if destination == &self.get_rook_initial_position(Color::White, true).unwrap() {
                 self.white_can_castle_king_side = false;
             }
         }

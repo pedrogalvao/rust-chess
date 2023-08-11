@@ -1,7 +1,5 @@
 use crate::controllers::controller::{Command, Controller};
-use crate::model::{
-    game_state::write_game_state_to_json, game_state::GameState, piece::Color,
-};
+use crate::model::{game_state::write_game_state_to_json, game_state::GameState, piece::Color};
 use crate::rules::cmd_validator::is_valid_cmd;
 use crate::rules::game_over::{is_draw, is_in_check_mate};
 use crate::view::GameDisplay;
@@ -57,7 +55,10 @@ impl Game {
             Command::Undo => {
                 if self.history.len() < 2 {
                     println!("Invalid command. Not enough moves to undo");
-                } else if (*self.controllers[self.game_state.player_to_move.get_opponent_color() as usize]).accept_undo() {
+                } else if (*self.controllers
+                    [self.game_state.player_to_move.get_opponent_color() as usize])
+                    .accept_undo()
+                {
                     self.undo();
                 } else {
                     println!("The opponent refuses to undo the last movement");

@@ -11,7 +11,8 @@ mod tests {
             game_state::load_game_state_from_json,
             piece::{Piece, PieceType},
         },
-        rules::castle_validator::{king_castle_is_valid, queen_castle_is_valid}, view::{AsciiDisplay, GameDisplay},
+        rules::castle_validator::{king_castle_is_valid, queen_castle_is_valid},
+        view::{AsciiDisplay, GameDisplay},
     };
 
     pub const fn new_empty_game_state() -> GameState {
@@ -25,7 +26,7 @@ mod tests {
             black_can_castle_queen_side: true,
             king_initial_positions: [None, None],
             rook_initial_positions: [[None, None], [None, None]],
-            move_limit: 100
+            move_limit: 100,
         }
     }
 
@@ -159,8 +160,7 @@ mod tests {
     #[test]
     fn test_castle_960() {
         // test for different starting position
-        let mut state960 =
-            load_game_state_from_json("tests/boards/board_960.json").unwrap();
+        let mut state960 = load_game_state_from_json("tests/boards/board_960.json").unwrap();
         assert_eq!(queen_castle_is_valid(&state960), false);
         assert_eq!(king_castle_is_valid(&state960), true);
         // move white knight
@@ -212,7 +212,6 @@ mod tests {
         });
         assert_eq!(queen_castle_is_valid(&state960), false);
         assert_eq!(king_castle_is_valid(&state960), false);
-
     }
 
     #[test]
@@ -220,11 +219,21 @@ mod tests {
         for _ in 0..10 {
             let game_state = GameState::new960();
             for king_pos in game_state.king_initial_positions {
-                assert_eq!(game_state.board[king_pos.unwrap()[0]][king_pos.unwrap()[1]].unwrap().piece_type, PieceType::King);
+                assert_eq!(
+                    game_state.board[king_pos.unwrap()[0]][king_pos.unwrap()[1]]
+                        .unwrap()
+                        .piece_type,
+                    PieceType::King
+                );
             }
             for arr in game_state.rook_initial_positions {
                 for rook_pos in arr {
-                    assert_eq!(game_state.board[rook_pos.unwrap()[0]][rook_pos.unwrap()[1]].unwrap().piece_type, PieceType::Rook);
+                    assert_eq!(
+                        game_state.board[rook_pos.unwrap()[0]][rook_pos.unwrap()[1]]
+                            .unwrap()
+                            .piece_type,
+                        PieceType::Rook
+                    );
                 }
             }
         }

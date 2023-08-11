@@ -13,6 +13,8 @@ pub enum Command {
 
 /// Interface for objects responsible for the choices of one player.
 pub trait Controller {
-    fn accept_undo(&mut self) -> bool {return true;}
+    fn accept_undo(&mut self) -> bool {
+        return true;
+    }
     fn choose_command(&mut self, game_state: &mut GameState) -> Command;
 }

@@ -34,9 +34,9 @@ pub fn accept_undo_menu() -> bool {
     };
     let s = buffer.trim();
     match s {
-        "y"|"Y" => true,
-        "f"|"F" => false,
-        _ => accept_undo_menu()
+        "y" | "Y" => true,
+        "f" | "F" => false,
+        _ => accept_undo_menu(),
     }
 }
 
