@@ -1,7 +1,8 @@
-use std::io::{Read, Write, self};
+use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 
 use crate::controllers::controller::{Command, Controller};
+use crate::menu::accept_undo_menu;
 use crate::model::game_state::GameState;
 use crate::model::piece::Color;
 
@@ -107,17 +108,7 @@ impl RemoteHuman {
             let send_msg = serde_json::to_string(&self.color).unwrap();
             let _ = self.stream.write(send_msg.as_bytes());
         } else if received_message == UNDO_MSG {
-            // todo: create menu
-            println!("The opponent wants to undo the last movement");
-            println!("Accept? [y/n]");
-            let mut buffer: String = String::new();
-            let stdin = io::stdin();
-            let Ok(_) = stdin.read_line(&mut buffer) else {
-                let _ = self.stream.write("no".as_bytes());
-                return;
-            };
-            let s = buffer.trim();
-            if s == "y" {
+            if accept_undo_menu() {
                 self.undo_accepted = true;
                 let _ = self.stream.write(ACCEPT_UNDO.as_bytes());
             } else {

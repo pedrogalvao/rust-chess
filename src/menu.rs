@@ -24,6 +24,22 @@ fn read_number() -> u32 {
     return number;
 }
 
+pub fn accept_undo_menu() -> bool {
+    println!("The opponent wants to undo the last movement");
+    println!("Accept? [y/n]");
+    let mut buffer: String = String::new();
+    let stdin = io::stdin();
+    let Ok(_) = stdin.read_line(&mut buffer) else {
+        return false;
+    };
+    let s = buffer.trim();
+    match s {
+        "y"|"Y" => true,
+        "f"|"F" => false,
+        _ => accept_undo_menu()
+    }
+}
+
 fn opponent_menu(game_state: &GameState, opponent_color: Color) -> Box<dyn Controller> {
     println!("Play against:");
     println!(" 1 - Human");
