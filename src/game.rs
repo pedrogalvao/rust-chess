@@ -69,14 +69,20 @@ impl Game {
                 let _ = write_game_state_to_json(&self.game_state, "game.json").unwrap();
             }
             Command::Undo => {
-                if (*self.controllers[self.game_state.player_to_move.get_opponent_color() as usize]).accept_undo() {
+                if self.history.len() < 2 {
+                    println!("Invalid command. Not enough moves to undo");
+                } else if (*self.controllers[self.game_state.player_to_move.get_opponent_color() as usize]).accept_undo() {
                     self.undo();
                 } else {
                     println!("The opponent refuses to undo the last movement");
                 }
             }
             Command::AcceptUndo => {
-                self.undo();
+                if self.history.len() < 2 {
+                    println!("Invalid command. Not enough moves to undo");
+                } else {
+                    self.undo();
+                }
             }
             Command::Resign => todo!(),
         }
