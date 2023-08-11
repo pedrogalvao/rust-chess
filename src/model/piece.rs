@@ -47,7 +47,7 @@ impl Piece {
                 PieceType::Rook => '♜',
                 PieceType::Bishop => '♝',
                 PieceType::Knight => '♞',
-                PieceType::Pawn => 'p',
+                PieceType::Pawn => '♟',
             },
         }
     }
