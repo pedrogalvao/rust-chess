@@ -72,7 +72,8 @@ impl RemoteHuman {
         let _ = self.stream.write(GET_STATE.as_bytes());
         let response = self.receive_message();
         let Ok(game_state) = serde_json::from_str::<GameState>(response.as_str()) else {
-            todo!()
+            println!("Received invalid response from server");
+            panic!()
         };
         if game_state.player_to_move == self.color {
             self.dont_send_last_move = true;
@@ -86,7 +87,10 @@ impl RemoteHuman {
     fn get_color(&mut self) -> Color {
         let _ = self.stream.write(GET_COLOR.as_bytes());
         let response = self.receive_message();
-        let opponent_color: Color = serde_json::from_str(response.as_str()).unwrap();
+        let Ok(opponent_color) = serde_json::from_str(response.as_str()) else {
+            println!("Received invalid response from server");
+            panic!()
+        };
         return opponent_color;
     }
 
