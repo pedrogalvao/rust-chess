@@ -127,7 +127,10 @@ fn join_host() -> Game {
     println!("Type host address");
     let _ = stdin.read_line(&mut buffer);
     println!("trying to connect to {}", buffer.as_str().trim());
-    let mut remote_human = RemoteHuman::new_client(buffer.as_str().trim());
+    let Ok(mut remote_human) = RemoteHuman::new_client(buffer.as_str().trim()) else {
+        // try again if connection fails
+        return join_host();
+    };
     let game_state = remote_human.get_game_state();
     println!("received game state");
     let controllers: [Box<dyn Controller>; 2] = match remote_human.color {

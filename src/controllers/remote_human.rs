@@ -41,17 +41,18 @@ impl RemoteHuman {
     }
 
     /// Create controller and connect to an existing host
-    pub fn new_client(address: &str) -> Self {
+    pub fn new_client(address: &str) -> Result<Self, ()> {
         println!("try to connect to {}", address);
-        if let Ok(stream) = TcpStream::connect(address) {
-            let mut rh = RemoteHuman { color: Color::White, stream ,
-                dont_send_last_move: true,
-                undo_accepted: false};
-            println!("Connection established!");
-            rh.color = rh.get_color().get_opponent_color();
-            return rh;
-        }
-        panic!()
+        let Ok(stream) = TcpStream::connect(address) else {
+            println!("could not connect to host");
+            return Err(());
+        };
+        let mut rh = RemoteHuman { color: Color::White, stream ,
+            dont_send_last_move: true,
+            undo_accepted: false};
+        println!("Connection established!");
+        rh.color = rh.get_color().get_opponent_color();
+        return Ok(rh);
     }
 
     pub fn receive_message(&mut self) -> String {
