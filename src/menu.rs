@@ -24,7 +24,7 @@ fn read_number() -> u32 {
     return number;
 }
 
-fn opponent_menu(game_state: &GameState, color: Color) -> Box<dyn Controller> {
+fn opponent_menu(game_state: &GameState, opponent_color: Color) -> Box<dyn Controller> {
     println!("Play against:");
     println!(" 1 - Human");
     println!(" 2 - RandomBot");
@@ -50,13 +50,13 @@ fn opponent_menu(game_state: &GameState, color: Color) -> Box<dyn Controller> {
         }
         5 => {
             println!("Waiting for connection");
-            let mut remote_human = RemoteHuman::new_listener();
-            remote_human.reply_to_initial_messages(game_state, &color);
+            let mut remote_human = RemoteHuman::new_listener(opponent_color);
+            remote_human.reply_to_initial_messages(game_state);
             Box::new(remote_human)
         }
         _ => {
             println!("Invalid option\n");
-            opponent_menu(game_state, color)
+            opponent_menu(game_state, opponent_color)
         }
     };
     return controller;
@@ -114,10 +114,9 @@ fn join_host() -> Game {
     let mut remote_human = RemoteHuman::new_client(buffer.as_str().trim());
     let game_state = remote_human.get_game_state();
     println!("received game state");
-    let color = remote_human.get_color();
-    let controllers: [Box<dyn Controller>; 2] = match color {
-        Color::White => [Box::new(LocalHuman), Box::new(remote_human)],
-        Color::Black => [Box::new(remote_human), Box::new(LocalHuman)],
+    let controllers: [Box<dyn Controller>; 2] = match remote_human.color {
+        Color::White => [Box::new(remote_human), Box::new(LocalHuman)],
+        Color::Black => [Box::new(LocalHuman), Box::new(remote_human)],
     };
     return Game::new(game_state, Box::new(UnicodeDisplay), controllers);
 }
@@ -134,7 +133,6 @@ pub fn main_menu() -> Game {
         } else {
             game_state = load_game();
         }
-        // let opponent_controller = opponent_menu(&game_state);
         let controllers: [Box<dyn Controller>; 2] = match color_menu() {
             1 => [
                 Box::new(LocalHuman),

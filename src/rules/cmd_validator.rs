@@ -282,6 +282,7 @@ pub fn is_valid_cmd(cmd: &Command, game_state: &GameState) -> bool {
         Command::Resign => true,
         Command::Save => true,
         Command::Undo => true,
+        Command::AcceptUndo => true,
         Command::Move(movement) => is_valid_movement(&movement, game_state),
     }
 }

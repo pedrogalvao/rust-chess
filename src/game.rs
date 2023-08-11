@@ -35,6 +35,18 @@ impl Game {
         }
     }
 
+    fn undo(&mut self) {
+        let Some(_) = self.history.pop() else {
+            println!("Invalid command");
+            return;
+        };
+        let Some(previous_state) = self.history.pop() else {
+            println!("Invalid command");
+            return;
+        };
+        self.game_state = previous_state;
+    }
+
     pub fn execute_command(&mut self, cmd: Command) {
         match cmd {
             Command::Move(movement) => {
@@ -57,17 +69,14 @@ impl Game {
                 let _ = write_game_state_to_json(&self.game_state, "game.json").unwrap();
             }
             Command::Undo => {
-                let Some(_) = self.history.pop() else {
-                    println!("Invalid command");
-                    return;
-                };
-                let Some(previous_state) = self.history.pop() else {
-                    println!("Invalid command");
-                    return;
-                };
-                self.game_display.display_game(&self.game_state);
-                self.game_display.display_game(&previous_state);
-                self.game_state = previous_state;
+                if (*self.controllers[self.game_state.player_to_move.get_opponent_color() as usize]).accept_undo() {
+                    self.undo();
+                } else {
+                    println!("The opponent refuses to undo the last movement");
+                }
+            }
+            Command::AcceptUndo => {
+                self.undo();
             }
             Command::Resign => todo!(),
         }
