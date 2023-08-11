@@ -21,5 +21,6 @@
     "black_can_castle_queen_side": true,
     "black_can_castle_king_side": true,
     "king_initial_positions": [[0,4], [7,4]],
-    "rook_initial_positions": [[[0,0], [7,0]], [[0,7], [7,7]]]
+    "rook_initial_positions": [[[0,0], [7,0]], [[0,7], [7,7]]],
+    "move_limit": 100
 }

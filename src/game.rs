@@ -1,6 +1,6 @@
 use crate::controllers::controller::{Command, Controller};
 use crate::model::{
-    game_state::write_game_state_to_json, game_state::GameState, movement::Movement, piece::Color,
+    game_state::write_game_state_to_json, game_state::GameState, piece::Color,
 };
 use crate::rules::cmd_validator::is_valid_cmd;
 use crate::rules::game_over::{is_draw, is_in_check_mate};
@@ -11,7 +11,6 @@ pub struct Game {
     pub game_display: Box<dyn GameDisplay>,
     pub controllers: [Box<dyn Controller>; 2],
     pub history: Vec<GameState>,
-    move_limit: u32,
 }
 
 #[derive(PartialEq)]
@@ -30,8 +29,7 @@ impl Game {
             game_state,
             game_display,
             controllers,
-            history: vec![],
-            move_limit: 100, // limit of 50 moves per player without captures
+            history: vec![], // limit of 50 moves per player without captures
         }
     }
 
@@ -51,18 +49,6 @@ impl Game {
         match cmd {
             Command::Move(movement) => {
                 self.history.push(self.game_state.deepclone());
-                match movement {
-                    // check if it is a capture
-                    Movement::Normal {
-                        to: [x, y],
-                        from: _,
-                    } => {
-                        if self.game_state.board[x][y] != None {
-                            self.move_limit = 100;
-                        }
-                    }
-                    _ => {}
-                }
                 self.game_state.make_movement(movement);
             }
             Command::Save => {
@@ -99,7 +85,7 @@ impl Game {
 
     pub fn play(&mut self) -> GameResult {
         self.game_display.display_game(&self.game_state);
-        while self.move_limit > 0 {
+        while self.game_state.move_limit > 0 {
             self.player_turn();
             if is_in_check_mate(&self.game_state, self.game_state.player_to_move) {
                 self.game_display.display_game_over(&self.game_state);
@@ -109,7 +95,6 @@ impl Game {
                 self.game_display.display_game_over(&self.game_state);
                 return GameResult::Draw;
             }
-            self.move_limit -= 1;
         }
         return GameResult::Draw;
     }

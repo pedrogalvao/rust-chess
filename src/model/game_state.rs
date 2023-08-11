@@ -23,6 +23,7 @@ pub struct GameState {
     pub black_can_castle_king_side: bool,
     pub king_initial_positions: [Option<[usize; 2]>; 2],
     pub rook_initial_positions: [[Option<[usize; 2]>; 2]; 2],
+    pub move_limit: i32,
 }
 
 pub fn write_game_state_to_json(
@@ -56,6 +57,7 @@ impl GameState {
             black_can_castle_queen_side: true,
             king_initial_positions: [Some([0, 4]), Some([7, 4])],
             rook_initial_positions: [[Some([0, 0]), Some([7, 0])], [Some([0, 7]), Some([7, 7])]],
+            move_limit: 100,
         }
     }
 
@@ -90,6 +92,7 @@ impl GameState {
             black_can_castle_queen_side: true,
             king_initial_positions: king_positions,
             rook_initial_positions: [queen_rook_positions, king_rook_positions],
+            move_limit: 100,
         }
     }
 
@@ -104,6 +107,7 @@ impl GameState {
             black_can_castle_king_side: self.black_can_castle_king_side,
             king_initial_positions: self.king_initial_positions, // constant, doesnt need cloning
             rook_initial_positions: self.rook_initial_positions, // constant, doesnt need cloning
+            move_limit: self.move_limit,
         }
     }
 
@@ -227,8 +231,25 @@ impl GameState {
         }
     }
 
+    fn update_move_limit(&mut self, movement: &Movement) {
+        self.move_limit -= 1;
+        match movement {
+            // check if it is a capture
+            Movement::Normal {
+                to: [x, y],
+                from: _,
+            } => {
+                if self.board[*x][*y] != None {
+                    self.move_limit = 100;
+                }
+            }
+            _ => {}
+        }
+    }
+
     /// Update game state with a movement.
     pub fn make_movement(&mut self, movement: Movement) {
+        self.update_move_limit(&movement);
         match movement {
             Movement::Normal {
                 from: source,

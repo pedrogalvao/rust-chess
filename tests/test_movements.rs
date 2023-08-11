@@ -25,6 +25,7 @@ mod tests {
             black_can_castle_queen_side: true,
             king_initial_positions: [None, None],
             rook_initial_positions: [[None, None], [None, None]],
+            move_limit: 100
         }
     }
 
