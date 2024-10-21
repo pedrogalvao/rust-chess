@@ -20,4 +20,4 @@ Type "save" to save the current game and "load" to load a previous game.
 
 ### Architecture
 
-![image](https://github.com/user-attachments/assets/700db56f-95e6-44fd-855d-75e7f5500405)
+![image](https://github.com/user-attachments/assets/e42d6b7f-fb9f-49d6-bb5d-9d8b56b88e26)
