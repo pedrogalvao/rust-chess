@@ -17,3 +17,7 @@ Type "save" to save the current game and "load" to load a previous game.
  - Play against human using the same computer
  - Play against human through TCP connection
  - Includes standard chess and Fischer's random chess
+
+### Architecture
+
+![image](https://github.com/user-attachments/assets/700db56f-95e6-44fd-855d-75e7f5500405)
